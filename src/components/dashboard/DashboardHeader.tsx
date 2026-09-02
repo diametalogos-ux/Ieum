@@ -1,10 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { currentUser } from '@/lib/mock/dashboard-invitations'
+import { useAuth } from '@/components/providers/AuthProvider'
 
 export default function DashboardHeader() {
+  const router = useRouter()
+  const { user, signOut } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -18,6 +21,21 @@ export default function DashboardHeader() {
     document.addEventListener('mousedown', onClick)
     return () => document.removeEventListener('mousedown', onClick)
   }, [menuOpen])
+
+  const displayName =
+    (user?.user_metadata?.name as string) ||
+    (user?.user_metadata?.full_name as string) ||
+    user?.email?.split('@')[0] ||
+    '사용자'
+  const email = user?.email ?? ''
+  const avatarInitial = displayName.charAt(0)
+
+  const handleSignOut = async () => {
+    setMenuOpen(false)
+    await signOut()
+    router.push('/')
+    router.refresh()
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-100 bg-white/90 backdrop-blur">
@@ -39,10 +57,10 @@ export default function DashboardHeader() {
               className="flex h-8 w-8 items-center justify-center rounded-full font-serif text-sm font-semibold text-white"
               style={{ background: 'var(--color-accent, #c9807f)' }}
             >
-              {currentUser.avatarInitial}
+              {avatarInitial}
             </div>
             <span className="hidden text-sm text-neutral-700 sm:inline">
-              {currentUser.name}
+              {displayName}
             </span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -62,11 +80,13 @@ export default function DashboardHeader() {
             <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-xl">
               <div className="border-b border-neutral-100 px-4 py-3">
                 <p className="text-sm font-semibold text-neutral-900">
-                  {currentUser.name}
+                  {displayName}
                 </p>
-                <p className="mt-0.5 truncate text-xs text-neutral-500">
-                  {currentUser.email}
-                </p>
+                {email && (
+                  <p className="mt-0.5 truncate text-xs text-neutral-500">
+                    {email}
+                  </p>
+                )}
               </div>
               <nav className="py-1">
                 <Link
@@ -97,7 +117,7 @@ export default function DashboardHeader() {
               <div className="border-t border-neutral-100 py-1">
                 <button
                   type="button"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={handleSignOut}
                   className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-neutral-400">

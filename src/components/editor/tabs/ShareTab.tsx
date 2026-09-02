@@ -31,9 +31,9 @@ function OGPreviewCard() {
         ) : (
           <div className="text-center text-white/70">
             <p className="font-serif text-2xl tracking-wider">
-              {data.couple.groomName.slice(-2)}
+              {data.couple.groom.firstName}
               <span className="mx-2 text-white/50">&amp;</span>
-              {data.couple.brideeName.slice(-2)}
+              {data.couple.bride.firstName}
             </p>
             <p className="mt-2 text-[10px] tracking-[0.3em] uppercase">
               OG Image

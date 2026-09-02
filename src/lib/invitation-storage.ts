@@ -13,18 +13,63 @@ function isBrowser() {
   return typeof window !== 'undefined'
 }
 
-export function saveInvitation(data: InvitationData, palette: PaletteKey): void {
-  if (!isBrowser()) return
+export type SaveResult =
+  | { ok: true }
+  | { ok: false; reason: 'quota' | 'unknown'; strippedImages: boolean }
+
+function tryPersist(id: string, payload: StoredInvitation): boolean {
   try {
-    const payload: StoredInvitation = {
-      data,
-      palette,
-      savedAt: new Date().toISOString(),
-    }
-    localStorage.setItem(STORAGE_PREFIX + data.id, JSON.stringify(payload))
-  } catch (err) {
-    console.error('Failed to save invitation:', err)
+    localStorage.setItem(STORAGE_PREFIX + id, JSON.stringify(payload))
+    return true
+  } catch {
+    return false
   }
+}
+
+export function saveInvitation(
+  data: InvitationData,
+  palette: PaletteKey
+): SaveResult {
+  if (!isBrowser()) return { ok: false, reason: 'unknown', strippedImages: false }
+
+  const savedAt = new Date().toISOString()
+
+  // 1차: 원본 그대로 저장 시도
+  if (tryPersist(data.id, { data, palette, savedAt })) {
+    return { ok: true }
+  }
+
+  // 2차: 갤러리 사진만 비우고 재시도
+  const withoutGallery = {
+    ...data,
+    gallery: [],
+  }
+  if (tryPersist(data.id, { data: withoutGallery, palette, savedAt })) {
+    console.warn('Storage quota reached — gallery images dropped')
+    return { ok: false, reason: 'quota', strippedImages: true }
+  }
+
+  // 3차: 모든 이미지 필드 비우고 재시도
+  const stripped: InvitationData = {
+    ...data,
+    mainPhotoUrl: null,
+    ogImageUrl: null,
+    gallery: [],
+  }
+  if (tryPersist(data.id, { data: stripped, palette, savedAt })) {
+    console.warn('Storage quota reached — all images dropped')
+    return { ok: false, reason: 'quota', strippedImages: true }
+  }
+
+  return { ok: false, reason: 'unknown', strippedImages: false }
+}
+
+// 저장된 데이터가 최신 스키마인지 확인 (couple.groom.firstName 존재 여부)
+function isValidSchema(stored: StoredInvitation): boolean {
+  const couple = stored?.data?.couple as unknown as Record<string, unknown>
+  if (!couple) return false
+  const groom = couple.groom as Record<string, unknown> | undefined
+  return typeof groom?.firstName === 'string'
 }
 
 export function loadInvitationById(id: string): StoredInvitation | null {
@@ -32,7 +77,13 @@ export function loadInvitationById(id: string): StoredInvitation | null {
   try {
     const raw = localStorage.getItem(STORAGE_PREFIX + id)
     if (!raw) return null
-    return JSON.parse(raw) as StoredInvitation
+    const parsed = JSON.parse(raw) as StoredInvitation
+    if (!isValidSchema(parsed)) {
+      // 옛 스키마 데이터 → 폐기
+      localStorage.removeItem(STORAGE_PREFIX + id)
+      return null
+    }
+    return parsed
   } catch {
     return null
   }
@@ -47,6 +98,7 @@ export function loadInvitationBySlug(slug: string): StoredInvitation | null {
       const raw = localStorage.getItem(key)
       if (!raw) continue
       const parsed = JSON.parse(raw) as StoredInvitation
+      if (!isValidSchema(parsed)) continue
       if (parsed.data.slug === slug) return parsed
     }
     return null

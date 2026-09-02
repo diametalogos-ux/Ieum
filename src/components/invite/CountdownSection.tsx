@@ -38,8 +38,8 @@ export default function CountdownSection({ data }: Props) {
     return () => clearInterval(id)
   }, [target])
 
-  const groomShort = data.couple.groomName.slice(-2)
-  const brideShort = data.couple.brideeName.slice(-2)
+  const groomShort = data.couple.groom.firstName
+  const brideShort = data.couple.bride.firstName
 
   return (
     <section

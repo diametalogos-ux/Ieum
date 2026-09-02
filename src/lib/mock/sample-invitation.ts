@@ -23,14 +23,40 @@ export const sampleInvitation: InvitationData = {
   ogImageUrl: null,
 
   couple: {
-    groomName: '김민준',
-    groomContact: '010-1234-5678',
-    groomFatherName: '김상철',
-    groomMotherName: '이영희',
-    brideeName: '이서연',
-    brideContact: '010-8765-4321',
-    brideFatherName: '이대호',
-    brideMotherName: '박미경',
+    groom: {
+      lastName: '김',
+      firstName: '민준',
+      contact: '010-1234-5678',
+    },
+    groomFather: {
+      lastName: '김',
+      firstName: '상철',
+      deceased: false,
+      visible: true,
+    },
+    groomMother: {
+      lastName: '이',
+      firstName: '영희',
+      deceased: false,
+      visible: true,
+    },
+    bride: {
+      lastName: '이',
+      firstName: '서연',
+      contact: '010-8765-4321',
+    },
+    brideFather: {
+      lastName: '이',
+      firstName: '대호',
+      deceased: false,
+      visible: true,
+    },
+    brideMother: {
+      lastName: '박',
+      firstName: '미경',
+      deceased: false,
+      visible: true,
+    },
   },
 
   ceremony: {

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import type { DashboardInvitation } from '@/lib/mock/dashboard-invitations'
 import { loadInvitationById } from '@/lib/invitation-storage'
+import type { PaletteKey } from '@/components/editor/EditorContext'
+import CardThumbnail from './CardThumbnail'
 
 type Props = {
   item: DashboardInvitation
@@ -39,28 +41,69 @@ export default function InvitationCard({ item, onDelete }: Props) {
     groomName: string
     brideName: string
     ceremonyDate: string
+    ceremonyTime: string
+    mainText: string
+    venueName: string
+    venueHall: string
     updatedAt: string
+    palette: PaletteKey
   } | null>(null)
 
   useEffect(() => {
-    const stored = loadInvitationById(item.id)
-    if (!stored) return
-    const groom = stored.data.couple.groomName?.slice(-2) || item.groomName
-    const bride = stored.data.couple.brideeName?.slice(-2) || item.brideName
-    setLive({
-      mainPhotoUrl: stored.data.mainPhotoUrl,
-      groomName: groom,
-      brideName: bride,
-      ceremonyDate: stored.data.ceremony.date || item.ceremonyDate,
-      updatedAt: stored.savedAt,
-    })
+    const refresh = () => {
+      const stored = loadInvitationById(item.id)
+      if (!stored) {
+        setLive(null)
+        return
+      }
+      const groom = stored.data.couple.groom.firstName || item.groomName
+      const bride = stored.data.couple.bride.firstName || item.brideName
+      setLive({
+        mainPhotoUrl: stored.data.mainPhotoUrl,
+        groomName: groom,
+        brideName: bride,
+        ceremonyDate: stored.data.ceremony.date || item.ceremonyDate,
+        ceremonyTime: stored.data.ceremony.time,
+        mainText: stored.data.mainText,
+        venueName: stored.data.ceremony.venueName,
+        venueHall: stored.data.ceremony.venueHall,
+        updatedAt: stored.savedAt,
+        palette: stored.palette,
+      })
+    }
+
+    refresh()
+
+    // 다른 탭에서 저장된 경우
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === `ieum:invitation:${item.id}`) refresh()
+    }
+    // 탭 focus / 페이지 표시 시 재로드 (에디터에서 돌아온 경우)
+    const onFocus = () => refresh()
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') refresh()
+    }
+
+    window.addEventListener('storage', onStorage)
+    window.addEventListener('focus', onFocus)
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener('focus', onFocus)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
   }, [item.id, item.groomName, item.brideName, item.ceremonyDate])
 
   const groomName = live?.groomName ?? item.groomName
   const brideName = live?.brideName ?? item.brideName
   const ceremonyDate = live?.ceremonyDate ?? item.ceremonyDate
+  const ceremonyTime = live?.ceremonyTime ?? '14:00'
+  const mainText = live?.mainText ?? '우리 결혼합니다'
+  const venueName = live?.venueName ?? ''
+  const venueHall = live?.venueHall ?? ''
   const mainPhotoUrl = live?.mainPhotoUrl ?? null
   const updatedAt = live?.updatedAt ?? item.updatedAt
+  const palette = live?.palette ?? item.paletteKey
 
   const previewHref = `/invite/${item.slug}?edit=1`
   const shareUrl =
@@ -108,73 +151,18 @@ export default function InvitationCard({ item, onDelete }: Props) {
       onKeyDown={handleCardKey}
       className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-100 bg-white transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
     >
-      <div
-        className="relative aspect-[3/4] w-full overflow-hidden"
-        style={{ background: item.thumbnailGradient }}
-      >
-        {mainPhotoUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={mainPhotoUrl}
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        )}
-
-        {/* 사진 있을 때: 하단 그라디언트로 텍스트 가독성 확보 */}
-        {mainPhotoUrl && (
-          <div
-            aria-hidden
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 30%, transparent 55%, rgba(0,0,0,0.55) 100%)',
-            }}
-          />
-        )}
-
-        <div className="absolute inset-0 flex flex-col items-center justify-between px-6 py-8">
-          <div className="text-center">
-            <p className="font-serif text-[9px] tracking-[0.4em] text-white/80 uppercase">
-              Wedding
-            </p>
-          </div>
-
-          <div className="text-center">
-            {!mainPhotoUrl && (
-              <>
-                <p className="font-serif text-3xl font-medium text-white/85">
-                  {groomName}
-                  <span className="mx-2 text-white/60">&amp;</span>
-                  {brideName}
-                </p>
-                <div className="mx-auto mt-3 h-px w-8 bg-white/50" />
-                <p className="mt-3 text-[11px] tracking-[0.3em] text-white/75">
-                  {ceremonyDate ? ceremonyDate.replace(/-/g, ' . ') : ''}
-                </p>
-              </>
-            )}
-          </div>
-
-          <div className="text-center">
-            {mainPhotoUrl ? (
-              <div>
-                <p className="font-serif text-xl font-medium text-white drop-shadow-md">
-                  {groomName}
-                  <span className="mx-2 text-white/80">&amp;</span>
-                  {brideName}
-                </p>
-                <p className="mt-1 text-[10px] tracking-[0.3em] text-white/90 drop-shadow">
-                  {ceremonyDate ? ceremonyDate.replace(/-/g, ' . ') : ''}
-                </p>
-              </div>
-            ) : (
-              <span className="rounded-full bg-white/25 px-3 py-1 text-[9px] tracking-[0.2em] text-white/80 uppercase backdrop-blur">
-                {item.themeName}
-              </span>
-            )}
-          </div>
-        </div>
+      <div className="relative aspect-[3/4] w-full overflow-hidden">
+        <CardThumbnail
+          palette={palette}
+          mainPhotoUrl={mainPhotoUrl}
+          groomName={groomName}
+          brideName={brideName}
+          ceremonyDate={ceremonyDate}
+          ceremonyTime={ceremonyTime}
+          mainText={mainText}
+          venueName={venueName}
+          venueHall={venueHall}
+        />
 
         {/* 상태 배지 */}
         <div className="absolute top-3 left-3">

@@ -1,22 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import DashboardHeader from '@/components/dashboard/DashboardHeader'
 import InvitationCard from '@/components/dashboard/InvitationCard'
 import CreateNewCard from '@/components/dashboard/CreateNewCard'
 import EmptyState from '@/components/dashboard/EmptyState'
+import { useAuth } from '@/components/providers/AuthProvider'
 import {
   dashboardInvitations,
-  currentUser,
   MAX_INVITATIONS,
 } from '@/lib/mock/dashboard-invitations'
 
 export default function DashboardPage() {
+  const router = useRouter()
+  const { user, loading } = useAuth()
   const [invitations, setInvitations] = useState(dashboardInvitations)
   const canCreateMore = invitations.length < MAX_INVITATIONS
 
+  // 미로그인 시 로그인 페이지로
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login')
+    }
+  }, [loading, user, router])
+
+  const displayName =
+    (user?.user_metadata?.name as string) ||
+    (user?.user_metadata?.full_name as string) ||
+    user?.email?.split('@')[0] ||
+    ''
+
   const handleDelete = (id: string) => {
     setInvitations((prev) => prev.filter((i) => i.id !== id))
+  }
+
+  if (loading || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-neutral-50">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-700" />
+      </div>
+    )
   }
 
   return (
@@ -30,7 +54,7 @@ export default function DashboardPage() {
               Dashboard
             </p>
             <h1 className="font-serif mt-3 text-3xl font-semibold tracking-tight text-neutral-900 md:text-4xl">
-              안녕하세요, {currentUser.name}님
+              안녕하세요, {displayName}님
             </h1>
             <p className="mt-2 text-sm text-neutral-500">
               내 청첩장을 관리하고 새로운 이야기를 담아보세요

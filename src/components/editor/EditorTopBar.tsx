@@ -16,13 +16,22 @@ export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
   const { data, palette, isDirty, markSaved } = useEditor()
   const [saving, setSaving] = useState(false)
   const [savedAt, setSavedAt] = useState<Date | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const runSave = useCallback(() => {
     setSaving(true)
+    setSaveError(null)
     // 실제 저장: localStorage (Supabase 붙이면 여기 API 호출로 교체)
     setTimeout(() => {
-      saveInvitation(data, palette)
+      const result = saveInvitation(data, palette)
+      if (result.ok) {
+        setSaveError(null)
+      } else if (result.reason === 'quota' && result.strippedImages) {
+        setSaveError('저장 공간이 부족해 일부 이미지가 임시 저장에서 제외됐어요. 이미지는 임시 저장소 한계 때문이며, 정식 서비스에서는 문제없이 저장돼요.')
+      } else {
+        setSaveError('저장에 실패했어요. 다시 시도해주세요.')
+      }
       markSaved()
       setSavedAt(new Date())
       setSaving(false)
@@ -45,8 +54,8 @@ export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
     runSave()
   }
 
-  const title = data.couple.groomName && data.couple.brideeName
-    ? `${data.couple.groomName.slice(-2)} · ${data.couple.brideeName.slice(-2)}`
+  const title = data.couple.groom.firstName && data.couple.bride.firstName
+    ? `${data.couple.groom.firstName} · ${data.couple.bride.firstName}`
     : '새 청첩장'
 
   return (
@@ -73,6 +82,13 @@ export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
                 <>
                   <span className="h-2.5 w-2.5 animate-spin rounded-full border border-neutral-300 border-t-neutral-700" />
                   <span className="text-neutral-500">자동 저장 중...</span>
+                </>
+              ) : saveError ? (
+                <>
+                  <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
+                  <span className="max-w-[240px] truncate text-orange-600" title={saveError}>
+                    이미지 저장 공간 부족
+                  </span>
                 </>
               ) : isDirty ? (
                 <>

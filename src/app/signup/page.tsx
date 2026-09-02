@@ -5,13 +5,15 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter()
   const [supabase] = useState(() => createClient())
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [needConfirm, setNeedConfirm] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,23 +21,72 @@ export default function LoginPage() {
     setError(null)
     setLoading(true)
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email: email.trim(),
       password,
+      options: {
+        data: { name: name.trim() },
+      },
     })
 
-    if (signInError) {
-      setError(
-        signInError.message === 'Invalid login credentials'
-          ? '이메일 또는 비밀번호가 올바르지 않아요'
-          : signInError.message
-      )
+    if (signUpError) {
+      const msg = signUpError.message.toLowerCase()
+      let friendly = signUpError.message
+      if (msg.includes('already') || msg.includes('registered')) {
+        friendly = '이미 가입된 이메일이에요. 로그인해주세요.'
+      } else if (msg.includes('password')) {
+        friendly = '비밀번호는 6자 이상이어야 해요.'
+      } else if (msg.includes('email')) {
+        friendly = '이메일 형식을 확인해주세요.'
+      }
+      setError(friendly)
+      setLoading(false)
+      return
+    }
+
+    // Confirm email이 켜져 있으면 session이 없고, 꺼져 있으면 바로 로그인됨
+    if (!data.session) {
+      setNeedConfirm(true)
       setLoading(false)
       return
     }
 
     router.push('/dashboard')
     router.refresh()
+  }
+
+  if (needConfirm) {
+    return (
+      <div className="relative flex min-h-screen w-full items-center justify-center bg-white px-6 py-12">
+        <div className="w-full max-w-sm rounded-3xl border border-neutral-100 bg-white/70 p-10 shadow-xl shadow-neutral-200/30 backdrop-blur">
+          <div className="text-center">
+            <div
+              className="mx-auto flex h-14 w-14 items-center justify-center rounded-full"
+              style={{ background: '#f7ecec' }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#c9807f" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            </div>
+            <h1 className="font-serif mt-5 text-lg font-medium text-neutral-800">
+              메일함을 확인해 주세요
+            </h1>
+            <p className="mt-3 text-xs leading-relaxed text-neutral-500">
+              <strong className="text-neutral-800">{email}</strong> 로 인증 메일을 보냈어요.
+              <br />
+              메일 안 링크를 눌러 인증을 완료하면 바로 로그인할 수 있어요.
+            </p>
+            <Link
+              href="/login"
+              className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-6 py-3 text-xs font-semibold text-white transition-colors hover:bg-neutral-800"
+            >
+              로그인 화면으로
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -69,19 +120,29 @@ export default function LoginPage() {
             >
               이음
             </Link>
-            <p className="mt-3 text-[11px] font-medium tracking-[0.3em] text-neutral-400 uppercase">
-              Ieum · Wedding Invitation
-            </p>
-
-            <h1 className="font-serif mt-8 text-xl font-medium leading-relaxed text-neutral-800">
-              다시 만나 반가워요
+            <h1 className="font-serif mt-6 text-xl font-medium text-neutral-800">
+              두 사람의 이야기를 시작해요
             </h1>
-            <p className="mt-3 text-xs leading-relaxed text-neutral-500">
-              편집 중인 청첩장을 이어서 완성해보세요
+            <p className="mt-2 text-xs text-neutral-500">
+              간단한 정보만 입력하면 바로 만들 수 있어요
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-3">
+            <div>
+              <label className="block text-[11px] font-medium text-neutral-600">
+                이름
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                maxLength={20}
+                placeholder="홍길동"
+                className="mt-1.5 block w-full rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:border-neutral-400 focus:outline-none"
+              />
+            </div>
             <div>
               <label className="block text-[11px] font-medium text-neutral-600">
                 이메일
@@ -104,7 +165,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
+                autoComplete="new-password"
                 required
                 minLength={6}
                 placeholder="6자 이상"
@@ -126,37 +187,19 @@ export default function LoginPage() {
               {loading ? (
                 <>
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                  로그인 중...
+                  가입 중...
                 </>
               ) : (
-                '로그인'
+                '계정 만들기'
               )}
             </button>
           </form>
 
-          <div className="my-6 flex items-center gap-3 text-[10px] text-neutral-400">
-            <span className="h-px flex-1 bg-neutral-200" />
-            <span>또는</span>
-            <span className="h-px flex-1 bg-neutral-200" />
-          </div>
-
-          <Link
-            href="/signup"
-            className="flex w-full items-center justify-center rounded-full border border-neutral-200 bg-white py-3 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-50"
-          >
-            새 계정 만들기
-          </Link>
-
-          <p className="mt-6 text-center text-[10px] leading-relaxed text-neutral-400">
-            로그인 시{' '}
-            <Link href="/terms" className="underline underline-offset-2 hover:text-neutral-700">
-              이용약관
+          <p className="mt-6 text-center text-[11px] text-neutral-500">
+            이미 계정이 있으신가요?{' '}
+            <Link href="/login" className="font-medium text-neutral-800 underline underline-offset-2">
+              로그인
             </Link>
-            {' 및 '}
-            <Link href="/privacy" className="underline underline-offset-2 hover:text-neutral-700">
-              개인정보처리방침
-            </Link>
-            에 동의하게 됩니다
           </p>
         </div>
 

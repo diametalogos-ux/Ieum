@@ -1,8 +1,24 @@
-import type { InvitationData } from '@/types/invitation'
+import type { InvitationData, ParentInfo } from '@/types/invitation'
+import { parentDisplayName } from '@/types/invitation'
 
 type Props = { data: InvitationData }
 
+function parentsLine(father: ParentInfo, mother: ParentInfo) {
+  const parts: string[] = []
+  if (father.visible && (father.firstName || father.lastName)) {
+    parts.push(parentDisplayName(father))
+  }
+  if (mother.visible && (mother.firstName || mother.lastName)) {
+    parts.push(parentDisplayName(mother))
+  }
+  return parts.join(' · ')
+}
+
 export default function GreetingSection({ data }: Props) {
+  const { couple } = data
+  const groomParents = parentsLine(couple.groomFather, couple.groomMother)
+  const brideParents = parentsLine(couple.brideFather, couple.brideMother)
+
   return (
     <section className="bg-white px-8 py-20">
       <div className="text-center">
@@ -31,25 +47,25 @@ export default function GreetingSection({ data }: Props) {
       <div className="mt-12 flex flex-col items-center gap-3">
         <div className="font-serif flex items-center gap-4 text-sm text-neutral-600">
           <div className="text-right">
-            <p className="text-[11px] text-neutral-400">
-              {data.couple.groomFatherName} · {data.couple.groomMotherName}
-            </p>
+            {groomParents && (
+              <p className="text-[11px] text-neutral-400">{groomParents}</p>
+            )}
             <p className="mt-1">
               의 아들{' '}
               <span className="font-semibold text-neutral-800">
-                {data.couple.groomName.slice(-2)}
+                {couple.groom.firstName}
               </span>
             </p>
           </div>
           <div className="h-8 w-px bg-neutral-200" />
           <div className="text-left">
-            <p className="text-[11px] text-neutral-400">
-              {data.couple.brideFatherName} · {data.couple.brideMotherName}
-            </p>
+            {brideParents && (
+              <p className="text-[11px] text-neutral-400">{brideParents}</p>
+            )}
             <p className="mt-1">
               의 딸{' '}
               <span className="font-semibold text-neutral-800">
-                {data.couple.brideeName.slice(-2)}
+                {couple.bride.firstName}
               </span>
             </p>
           </div>

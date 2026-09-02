@@ -24,14 +24,12 @@ export const emptyInvitation: InvitationData = {
   ogImageUrl: null,
 
   couple: {
-    groomName: '',
-    groomContact: '',
-    groomFatherName: '',
-    groomMotherName: '',
-    brideeName: '',
-    brideContact: '',
-    brideFatherName: '',
-    brideMotherName: '',
+    groom: { lastName: '', firstName: '', contact: '' },
+    groomFather: { lastName: '', firstName: '', deceased: false, visible: true },
+    groomMother: { lastName: '', firstName: '', deceased: false, visible: true },
+    bride: { lastName: '', firstName: '', contact: '' },
+    brideFather: { lastName: '', firstName: '', deceased: false, visible: true },
+    brideMother: { lastName: '', firstName: '', deceased: false, visible: true },
   },
 
   ceremony: {

@@ -6,15 +6,40 @@ export type IntroEffectType = 'none' | 'fade' | 'slide' | 'zoom'
 export type GalleryLayoutType = 'slide' | 'grid'
 export type FontType = 'nanum' | 'malgun' | 'gothic' | 'serif'
 
+export interface ParentInfo {
+  lastName: string      // 성
+  firstName: string     // 이름
+  deceased: boolean     // 고인 여부 (故 표시)
+  visible: boolean      // 청첩장에 표시 여부
+}
+
+export interface PersonInfo {
+  lastName: string      // 성 (예: '김')
+  firstName: string     // 이름 (예: '민준')
+  contact: string
+}
+
 export interface CoupleInfo {
-  groomName: string
-  groomContact: string
-  groomFatherName: string
-  groomMotherName: string
-  brideeName: string
-  brideContact: string
-  brideFatherName: string
-  brideMotherName: string
+  groom: PersonInfo
+  groomFather: ParentInfo
+  groomMother: ParentInfo
+  bride: PersonInfo
+  brideFather: ParentInfo
+  brideMother: ParentInfo
+}
+
+/** 이름 표시 헬퍼 */
+export function fullName(p: { lastName: string; firstName: string }) {
+  return `${p.lastName}${p.firstName}`
+}
+
+export function firstNameOnly(p: { firstName: string }) {
+  return p.firstName
+}
+
+export function parentDisplayName(p: ParentInfo) {
+  const name = `${p.lastName}${p.firstName}`
+  return p.deceased ? `故 ${name}` : name
 }
 
 export interface CeremonyInfo {

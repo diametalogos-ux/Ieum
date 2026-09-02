@@ -1,6 +1,7 @@
 export const IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp'
 export const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
-export const MAX_DIMENSION = 1080
+export const MAX_DIMENSION = 720
+export const DEFAULT_QUALITY = 0.7
 
 export type ImageValidationResult =
   | { ok: true }
@@ -34,7 +35,7 @@ export async function processImage(
   file: File,
   options: { maxDimension?: number; quality?: number } = {}
 ): Promise<string> {
-  const { maxDimension = MAX_DIMENSION, quality = 0.85 } = options
+  const { maxDimension = MAX_DIMENSION, quality = DEFAULT_QUALITY } = options
 
   const url = URL.createObjectURL(file)
   try {

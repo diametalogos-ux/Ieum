@@ -9,9 +9,9 @@ type Props = { params: Promise<{ slug: string }> }
 async function getInvitation(slug: string) {
   // Mock: 어떤 slug든 샘플 데이터로 반환 (실제로는 DB 조회)
   // Supabase 붙일 때 여기를 실제 조회로 교체
-  if (slug === 'sample') return sampleInvitation
   const dashboardMatch = dashboardInvitations.find((i) => i.slug === slug)
   if (dashboardMatch) {
+    // 대시보드 카드의 id로 통일 → 저장 key와 대시보드 카드 조회 key가 일치
     return {
       ...sampleInvitation,
       slug,
@@ -19,6 +19,7 @@ async function getInvitation(slug: string) {
       id: dashboardMatch.id,
     }
   }
+  if (slug === 'sample') return sampleInvitation
   return null
 }
 

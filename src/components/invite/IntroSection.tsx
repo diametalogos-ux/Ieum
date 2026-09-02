@@ -81,11 +81,11 @@ export default function IntroSection({ data }: Props) {
 
       <div className="text-center">
         <h1 className="font-serif text-3xl font-medium leading-relaxed tracking-wide text-neutral-800">
-          {data.couple.groomName.slice(-2)}
+          {data.couple.groom.firstName}
           <span className="mx-3" style={{ color: 'var(--p-strong)' }}>
             &amp;
           </span>
-          {data.couple.brideeName.slice(-2)}
+          {data.couple.bride.firstName}
         </h1>
 
         <p className="font-serif mt-5 whitespace-pre-line text-sm leading-relaxed text-neutral-600">
