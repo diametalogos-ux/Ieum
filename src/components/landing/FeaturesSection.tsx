@@ -45,12 +45,12 @@ export default function FeaturesSection() {
             Features
           </p>
           <h2 className="font-serif mt-4 text-3xl font-semibold leading-tight tracking-tight text-neutral-900 md:text-4xl">
-            청첩에서는
+            필요한 모든 것이
             <br />
-            모든 것이 무료예요
+            이 안에 담겨 있어요
           </h2>
           <p className="mt-5 text-base text-neutral-500">
-            숨겨진 비용 없이, 필요한 모든 기능을 제한 없이 사용하세요
+            제한 없이 마음껏 사용하고, 원하는 만큼 자유롭게 편집하세요
           </p>
         </div>
 

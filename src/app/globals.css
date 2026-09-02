@@ -9,6 +9,38 @@
   --color-accent-soft: #f7ecec;
 }
 
+/* 청첩장 팔레트 — 에디터에서 선택 가능 */
+[data-palette="pink"] {
+  --p-strong: #c9748a;
+  --p-mid: #e5a3b3;
+  --p-soft: #f7ecec;
+  --p-bg: #fdf6f7;
+}
+[data-palette="beige"] {
+  --p-strong: #b8926a;
+  --p-mid: #d4b896;
+  --p-soft: #f5ecdf;
+  --p-bg: #fbf6ef;
+}
+[data-palette="green"] {
+  --p-strong: #6b9b6b;
+  --p-mid: #a5c4a3;
+  --p-soft: #e6f0e3;
+  --p-bg: #f2f7f0;
+}
+[data-palette="gray"] {
+  --p-strong: #6b7280;
+  --p-mid: #a1a5ac;
+  --p-soft: #ececef;
+  --p-bg: #f6f6f7;
+}
+[data-palette="purple"] {
+  --p-strong: #8a6fc0;
+  --p-mid: #b6a3d8;
+  --p-soft: #ede5f5;
+  --p-bg: #f6f1fb;
+}
+
 * {
   box-sizing: border-box;
 }

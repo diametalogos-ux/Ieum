@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: '청첩 — 무료 모바일 청첩장',
+  title: '이음 (Ieum) — 무료 모바일 청첩장',
   description: '제작부터 공유, 수정, 평생 소장까지 완전 무료. 워터마크 없는 감성 모바일 청첩장.',
   openGraph: {
-    title: '청첩 — 무료 모바일 청첩장',
+    title: '이음 (Ieum) — 무료 모바일 청첩장',
     description: '제작부터 공유, 수정, 평생 소장까지 완전 무료.',
     type: 'website',
   },

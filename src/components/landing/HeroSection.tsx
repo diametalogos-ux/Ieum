@@ -2,8 +2,8 @@ import Link from 'next/link'
 
 const stats = [
   { num: '3,200+', label: '커플이 선택' },
+  { num: '5분', label: '평균 제작 시간' },
   { num: '100%', label: '완전 무료' },
-  { num: '10+', label: '감성 테마' },
 ]
 
 function CardMockup() {
@@ -69,23 +69,23 @@ export default function HeroSection() {
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-6 md:grid-cols-2 md:gap-16 md:px-8">
         <div className="text-center md:text-left">
           <span className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white/80 px-3 py-1 text-[11px] font-medium tracking-[0.2em] text-neutral-500 uppercase">
-            Free · No Watermark · Forever
+            For Your Special Day
           </span>
 
           <h1 className="font-serif mt-6 text-[40px] font-semibold leading-[1.15] tracking-tight text-neutral-900 md:text-[56px]">
-            우리의 시작을
+            두 사람을 잇는
             <br />
             <span className="text-neutral-400">가장 </span>
-            아름답게
+            아름다운 시작
           </h1>
 
           <p className="mt-6 text-base leading-relaxed text-neutral-600 md:text-lg">
-            제작부터 공유, 수정, 평생 소장까지
+            설레는 하루의 시작을
             <br className="hidden sm:inline" />{' '}
             <strong className="font-semibold text-neutral-900">
-              추가 비용 없이 완전 무료
-            </strong>
-            로 제공합니다
+              가장 정성스럽게
+            </strong>{' '}
+            전하세요
           </p>
 
           <div className="mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row md:justify-start">
@@ -93,7 +93,7 @@ export default function HeroSection() {
               href="/login"
               className="inline-flex items-center justify-center rounded-full bg-neutral-900 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-neutral-900/10 transition-all hover:-translate-y-0.5 hover:bg-neutral-800"
             >
-              청첩장 무료 제작하기
+              청첩장 만들기
             </Link>
             <Link
               href="/invite/sample"

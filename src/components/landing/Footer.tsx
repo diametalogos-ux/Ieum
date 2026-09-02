@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-6 px-6 py-10 md:flex-row md:justify-between md:px-8">
         <div className="text-center md:text-left">
           <p className="font-serif text-lg font-semibold text-neutral-900">
-            청첩
+            이음
           </p>
           <p className="mt-1 text-xs text-neutral-500">
             무료 모바일 청첩장 서비스
@@ -30,7 +30,7 @@ export default function Footer() {
           ))}
         </nav>
 
-        <p className="text-xs text-neutral-400">© 2026 청첩</p>
+        <p className="text-xs text-neutral-400">© 2026 이음 (Ieum)</p>
       </div>
     </footer>
   )
