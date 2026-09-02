@@ -1,27 +1,48 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useEditor } from './EditorContext'
+import { saveInvitation } from '@/lib/invitation-storage'
 
 type Props = {
   onTogglePreview?: () => void
   previewOpen?: boolean
 }
 
+const AUTOSAVE_DEBOUNCE_MS = 2000
+
 export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
-  const { data, isDirty, markSaved } = useEditor()
+  const { data, palette, isDirty, markSaved } = useEditor()
   const [saving, setSaving] = useState(false)
   const [savedAt, setSavedAt] = useState<Date | null>(null)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const handleSave = () => {
-    if (saving) return
+  const runSave = useCallback(() => {
     setSaving(true)
+    // 실제 저장: localStorage (Supabase 붙이면 여기 API 호출로 교체)
     setTimeout(() => {
+      saveInvitation(data, palette)
       markSaved()
       setSavedAt(new Date())
       setSaving(false)
-    }, 500)
+    }, 300)
+  }, [data, palette, markSaved])
+
+  // 자동 저장: 편집 후 debounce 뒤에 저장 실행
+  useEffect(() => {
+    if (!isDirty) return
+    if (timerRef.current) clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(runSave, AUTOSAVE_DEBOUNCE_MS)
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [isDirty, data, runSave])
+
+  const handleSave = () => {
+    if (saving) return
+    if (timerRef.current) clearTimeout(timerRef.current)
+    runSave()
   }
 
   const title = data.couple.groomName && data.couple.brideeName
@@ -47,12 +68,27 @@ export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
             <p className="font-serif truncate text-sm font-semibold text-neutral-900 md:text-base">
               {title}
             </p>
-            <p className="text-[10px] text-neutral-400">
-              {isDirty ? (
-                <span className="text-amber-600">저장되지 않은 변경사항</span>
+            <p className="flex items-center gap-1 text-[10px] text-neutral-400">
+              {saving ? (
+                <>
+                  <span className="h-2.5 w-2.5 animate-spin rounded-full border border-neutral-300 border-t-neutral-700" />
+                  <span className="text-neutral-500">자동 저장 중...</span>
+                </>
+              ) : isDirty ? (
+                <>
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                  <span className="text-amber-600">변경사항 있음</span>
+                </>
               ) : savedAt ? (
                 <>
-                  {savedAt.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 저장됨
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  <span>
+                    {savedAt.toLocaleTimeString('ko-KR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}{' '}
+                    자동 저장됨
+                  </span>
                 </>
               ) : (
                 '편집 시작'

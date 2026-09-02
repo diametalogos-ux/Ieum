@@ -10,6 +10,9 @@ import GallerySection from '@/components/invite/GallerySection'
 import LocationSection from '@/components/invite/LocationSection'
 import NoticeSection from '@/components/invite/NoticeSection'
 import AccountSection from '@/components/invite/AccountSection'
+import GuestbookSection from '@/components/invite/GuestbookSection'
+import RsvpSection from '@/components/invite/RsvpSection'
+import ShareSection from '@/components/invite/ShareSection'
 
 export default function EditorPreview() {
   const { data, palette } = useEditor()
@@ -28,6 +31,8 @@ export default function EditorPreview() {
             {/* 스크롤 가능한 미리보기 영역 */}
             <div
               data-palette={palette}
+              data-font={data.fontType}
+              data-font-size={data.fontSize}
               className="h-[calc(100vh-14rem)] max-h-[720px] min-h-[520px] overflow-y-auto bg-white"
             >
               <IntroSection data={data} />
@@ -39,6 +44,9 @@ export default function EditorPreview() {
               {data.features.transport && <LocationSection data={data} />}
               {data.features.notice && <NoticeSection data={data} />}
               {data.features.account && <AccountSection data={data} />}
+              {data.features.guestbook && <GuestbookSection data={data} />}
+              {data.features.rsvp && <RsvpSection data={data} />}
+              <ShareSection data={data} />
             </div>
           </div>
         </div>

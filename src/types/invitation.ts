@@ -35,6 +35,7 @@ export interface GalleryItem {
 }
 
 export interface TransportItem {
+  id: string
   type: 'car' | 'subway' | 'bus' | 'train' | 'etc'
   description: string
 }

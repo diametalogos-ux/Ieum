@@ -4,6 +4,7 @@ import { useEditor } from '../EditorContext'
 import EditorSection from '../ui/EditorSection'
 import PaletteSelector from '../ui/PaletteSelector'
 import { TextField, TextArea, Toggle, OptionGroup } from '../ui/EditorField'
+import ImageUpload from '../ui/ImageUpload'
 import type { FontType, IntroEffectType, ParticleType } from '@/types/invitation'
 
 const FONT_OPTIONS: { value: FontType; label: string }[] = [
@@ -34,23 +35,6 @@ const PARTICLE_OPTIONS: { value: ParticleType; label: string }[] = [
   { value: 'star',     label: '별' },
 ]
 
-function PhotoPlaceholder({ label }: { label: string }) {
-  return (
-    <div>
-      <p className="text-[11px] font-medium text-neutral-700">{label}</p>
-      <div className="mt-1.5 flex aspect-[3/4] w-32 flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-200 bg-neutral-50 transition-colors hover:border-neutral-300 hover:bg-neutral-100/50">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-neutral-400">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-          <circle cx="8.5" cy="8.5" r="1.5" />
-          <polyline points="21 15 16 10 5 21" />
-        </svg>
-        <p className="mt-2 text-[10px] text-neutral-500">사진 추가</p>
-      </div>
-      <p className="mt-1.5 text-[10px] text-neutral-400">JPG, PNG, WebP · 최대 20MB</p>
-    </div>
-  )
-}
-
 export default function BasicInfoTab() {
   const { data, palette, setPalette, update, updateCouple, updateCeremony } = useEditor()
 
@@ -77,7 +61,13 @@ export default function BasicInfoTab() {
 
       {/* 2. 메인 화면 */}
       <EditorSection title="메인 화면" description="첫 화면에 보여줄 내용">
-        <PhotoPlaceholder label="메인 사진" />
+        <ImageUpload
+          label="메인 사진"
+          value={data.mainPhotoUrl}
+          onChange={(url) => update('mainPhotoUrl', url)}
+          aspect="portrait"
+          width="140px"
+        />
 
         <TextArea
           label="메인 문구"

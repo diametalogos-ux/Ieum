@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import type { DashboardInvitation } from '@/lib/mock/dashboard-invitations'
+import { loadInvitationById } from '@/lib/invitation-storage'
 
 type Props = {
   item: DashboardInvitation
@@ -28,12 +30,61 @@ function formatUpdated(iso: string) {
 }
 
 export default function InvitationCard({ item, onDelete }: Props) {
+  const router = useRouter()
   const [copyState, setCopyState] = useState<'idle' | 'copied'>('idle')
-  const shareUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/invite/${item.slug}`
-    : `/invite/${item.slug}`
 
-  const handleShare = async () => {
+  // localStorage에 저장된 최신 편집 내용 반영
+  const [live, setLive] = useState<{
+    mainPhotoUrl: string | null
+    groomName: string
+    brideName: string
+    ceremonyDate: string
+    updatedAt: string
+  } | null>(null)
+
+  useEffect(() => {
+    const stored = loadInvitationById(item.id)
+    if (!stored) return
+    const groom = stored.data.couple.groomName?.slice(-2) || item.groomName
+    const bride = stored.data.couple.brideeName?.slice(-2) || item.brideName
+    setLive({
+      mainPhotoUrl: stored.data.mainPhotoUrl,
+      groomName: groom,
+      brideName: bride,
+      ceremonyDate: stored.data.ceremony.date || item.ceremonyDate,
+      updatedAt: stored.savedAt,
+    })
+  }, [item.id, item.groomName, item.brideName, item.ceremonyDate])
+
+  const groomName = live?.groomName ?? item.groomName
+  const brideName = live?.brideName ?? item.brideName
+  const ceremonyDate = live?.ceremonyDate ?? item.ceremonyDate
+  const mainPhotoUrl = live?.mainPhotoUrl ?? null
+  const updatedAt = live?.updatedAt ?? item.updatedAt
+
+  const previewHref = `/invite/${item.slug}?edit=1`
+  const shareUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}/invite/${item.slug}`
+      : `/invite/${item.slug}`
+
+  const handleCardClick = () => {
+    router.push(previewHref)
+  }
+
+  const handleCardKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleCardClick()
+    }
+  }
+
+  const stop = (e: React.MouseEvent) => {
+    e.stopPropagation()
+  }
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation()
     try {
       await navigator.clipboard.writeText(shareUrl)
       setCopyState('copied')
@@ -43,43 +94,89 @@ export default function InvitationCard({ item, onDelete }: Props) {
     }
   }
 
-  const handleDelete = () => {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
     if (!confirm(`"${item.title}" 청첩장을 삭제할까요?`)) return
     onDelete?.(item.id)
   }
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-100 bg-white transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/40">
+    <article
+      role="button"
+      tabIndex={0}
+      onClick={handleCardClick}
+      onKeyDown={handleCardKey}
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-100 bg-white transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
+    >
       <div
         className="relative aspect-[3/4] w-full overflow-hidden"
         style={{ background: item.thumbnailGradient }}
       >
+        {mainPhotoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={mainPhotoUrl}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
+
+        {/* 사진 있을 때: 하단 그라디언트로 텍스트 가독성 확보 */}
+        {mainPhotoUrl && (
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 30%, transparent 55%, rgba(0,0,0,0.55) 100%)',
+            }}
+          />
+        )}
+
         <div className="absolute inset-0 flex flex-col items-center justify-between px-6 py-8">
           <div className="text-center">
-            <p className="font-serif text-[9px] tracking-[0.4em] text-white/70 uppercase">
+            <p className="font-serif text-[9px] tracking-[0.4em] text-white/80 uppercase">
               Wedding
             </p>
           </div>
 
           <div className="text-center">
-            <p className="font-serif text-3xl font-medium text-white/85">
-              {item.groomName}
-              <span className="mx-2 text-white/60">&amp;</span>
-              {item.brideName}
-            </p>
-            <div className="mx-auto mt-3 h-px w-8 bg-white/50" />
-            <p className="mt-3 text-[11px] tracking-[0.3em] text-white/75">
-              {item.ceremonyDate.replace(/-/g, ' . ')}
-            </p>
+            {!mainPhotoUrl && (
+              <>
+                <p className="font-serif text-3xl font-medium text-white/85">
+                  {groomName}
+                  <span className="mx-2 text-white/60">&amp;</span>
+                  {brideName}
+                </p>
+                <div className="mx-auto mt-3 h-px w-8 bg-white/50" />
+                <p className="mt-3 text-[11px] tracking-[0.3em] text-white/75">
+                  {ceremonyDate ? ceremonyDate.replace(/-/g, ' . ') : ''}
+                </p>
+              </>
+            )}
           </div>
 
           <div className="text-center">
-            <span className="rounded-full bg-white/25 px-3 py-1 text-[9px] tracking-[0.2em] text-white/80 uppercase backdrop-blur">
-              {item.themeName}
-            </span>
+            {mainPhotoUrl ? (
+              <div>
+                <p className="font-serif text-xl font-medium text-white drop-shadow-md">
+                  {groomName}
+                  <span className="mx-2 text-white/80">&amp;</span>
+                  {brideName}
+                </p>
+                <p className="mt-1 text-[10px] tracking-[0.3em] text-white/90 drop-shadow">
+                  {ceremonyDate ? ceremonyDate.replace(/-/g, ' . ') : ''}
+                </p>
+              </div>
+            ) : (
+              <span className="rounded-full bg-white/25 px-3 py-1 text-[9px] tracking-[0.2em] text-white/80 uppercase backdrop-blur">
+                {item.themeName}
+              </span>
+            )}
           </div>
         </div>
 
+        {/* 상태 배지 */}
         <div className="absolute top-3 left-3">
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium backdrop-blur ${
@@ -92,22 +189,34 @@ export default function InvitationCard({ item, onDelete }: Props) {
             {item.status === 'published' ? '공개 중' : '작성 중'}
           </span>
         </div>
+
+        {/* Hover 시 나타나는 미리보기 힌트 */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+          <span className="flex items-center gap-1.5 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold text-neutral-900">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            미리보기
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col p-5">
         <h3 className="font-serif text-lg font-semibold text-neutral-900">
-          {item.title}
+          {groomName && brideName ? `${groomName} ♥ ${brideName}` : item.title}
         </h3>
         <p className="mt-1.5 text-xs text-neutral-500">
-          {formatDate(item.ceremonyDate)}
+          {ceremonyDate ? formatDate(ceremonyDate) : '예식일 미정'}
         </p>
         <p className="mt-1 text-[11px] text-neutral-400">
-          {formatUpdated(item.updatedAt)} 수정
+          {formatUpdated(updatedAt)} 수정
         </p>
 
         <div className="mt-5 flex gap-2 border-t border-neutral-100 pt-4">
           <Link
             href={`/editor/${item.id}`}
+            onClick={stop}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-neutral-800"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
@@ -115,18 +224,6 @@ export default function InvitationCard({ item, onDelete }: Props) {
               <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
             </svg>
             편집
-          </Link>
-          <Link
-            href={`/invite/${item.slug}`}
-            target="_blank"
-            className="flex items-center justify-center rounded-full border border-neutral-200 bg-white px-3 py-2 text-neutral-600 transition-colors hover:border-neutral-300 hover:bg-neutral-50"
-            aria-label="미리보기"
-            title="미리보기"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
           </Link>
           <button
             type="button"

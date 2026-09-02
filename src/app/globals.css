@@ -64,6 +64,36 @@ body {
   font-family: 'Noto Serif KR', 'Nanum Myeongjo', Georgia, serif;
 }
 
+/* 청첩장 글꼴 — 에디터에서 선택 가능 */
+[data-font="serif"] {
+  --p-font-body: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-heading: 'Noto Serif KR', 'Nanum Myeongjo', Georgia, serif;
+}
+[data-font="nanum"] {
+  --p-font-body: 'Nanum Myeongjo', 'Noto Serif KR', Georgia, serif;
+  --p-font-heading: 'Nanum Myeongjo', 'Noto Serif KR', Georgia, serif;
+}
+[data-font="malgun"] {
+  --p-font-body: 'Gowun Dodum', 'Noto Sans KR', -apple-system, sans-serif;
+  --p-font-heading: 'Gowun Batang', 'Noto Serif KR', serif;
+}
+[data-font="gothic"] {
+  --p-font-body: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  --p-font-heading: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+[data-font] {
+  font-family: var(--p-font-body);
+}
+[data-font] .font-serif {
+  font-family: var(--p-font-heading);
+}
+
+/* 청첩장 글꼴 크기 — 에디터에서 선택 가능 */
+[data-font-size="sm"] { font-size: 14px; }
+[data-font-size="md"] { font-size: 16px; }
+[data-font-size="lg"] { font-size: 18px; }
+
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -81,3 +111,101 @@ body {
 .animate-float {
   animation: float-y 5s ease-in-out infinite;
 }
+
+/* 파티클: 벚꽃 - 팔랑팔랑 흩날림 (긴 궤적으로 자연스럽게) */
+@keyframes particle-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  8% { opacity: 1; }
+  25% {
+    transform: translate3d(20px, 25vh, 0) rotate(120deg);
+  }
+  50% {
+    transform: translate3d(-15px, 50vh, 0) rotate(220deg);
+  }
+  75% {
+    transform: translate3d(25px, 75vh, 0) rotate(340deg);
+  }
+  92% { opacity: 1; }
+  100% {
+    transform: translate3d(-20px, 110vh, 0) rotate(450deg);
+    opacity: 0;
+  }
+}
+
+/* 파티클: 눈 - 부드럽게, 미묘한 흔들림 */
+@keyframes particle-snow {
+  0% {
+    transform: translate3d(0, -10vh, 0);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  33% {
+    transform: translate3d(-12px, 30vh, 0);
+  }
+  66% {
+    transform: translate3d(12px, 65vh, 0);
+  }
+  90% { opacity: 1; }
+  100% {
+    transform: translate3d(-8px, 110vh, 0);
+    opacity: 0;
+  }
+}
+
+/* 파티클: 별 - 은은한 반짝임 (제자리) */
+@keyframes particle-star {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  20% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  80% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+}
+
+/* 파티클: 컨페티 - 뿌려지듯 낙하 + 강한 회전 */
+@keyframes particle-confetti {
+  0% {
+    transform: translate3d(0, -15vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  8% { opacity: 1; }
+  100% {
+    transform: translate3d(80px, 110vh, 0) rotate(1080deg);
+    opacity: 0;
+  }
+}
+
+/* 인트로 애니메이션: fade */
+@keyframes intro-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 인트로 애니메이션: slide (위로 슬라이드 인) */
+@keyframes intro-slide {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 인트로 애니메이션: zoom */
+@keyframes intro-zoom {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.intro-fade { animation: intro-fade 1.2s ease-out both; }
+.intro-slide { animation: intro-slide 1s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.intro-zoom { animation: intro-zoom 1s ease-out both; }

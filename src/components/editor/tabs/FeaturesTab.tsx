@@ -4,6 +4,11 @@ import { useEditor } from '../EditorContext'
 import EditorSection from '../ui/EditorSection'
 import FeatureCard from '../ui/FeatureCard'
 import { TextArea } from '../ui/EditorField'
+import GalleryEditor from '../detail/GalleryEditor'
+import TransportEditor from '../detail/TransportEditor'
+import NoticeEditor from '../detail/NoticeEditor'
+import AccountEditor from '../detail/AccountEditor'
+import BgmEditor from '../detail/BgmEditor'
 import type { InvitationData } from '@/types/invitation'
 import type { ReactNode } from 'react'
 
@@ -220,31 +225,11 @@ export default function FeaturesTab() {
                     placeholder="서로 다른 길을 걸어온 저희 두 사람이..."
                   />
                 )}
-                {f.key === 'gallery' && (
-                  <p className="text-[11px] text-neutral-500">
-                    갤러리 사진과 레이아웃은 다음 단계에서 편집할 수 있어요
-                  </p>
-                )}
-                {f.key === 'transport' && (
-                  <p className="text-[11px] text-neutral-500">
-                    교통편 목록은 다음 단계에서 편집할 수 있어요
-                  </p>
-                )}
-                {f.key === 'notice' && (
-                  <p className="text-[11px] text-neutral-500">
-                    공지사항 목록은 다음 단계에서 편집할 수 있어요
-                  </p>
-                )}
-                {f.key === 'account' && (
-                  <p className="text-[11px] text-neutral-500">
-                    계좌 목록은 다음 단계에서 편집할 수 있어요
-                  </p>
-                )}
-                {f.key === 'bgm' && (
-                  <p className="text-[11px] text-neutral-500">
-                    배경 음악 업로드는 다음 단계에서 지원돼요
-                  </p>
-                )}
+                {f.key === 'gallery' && <GalleryEditor />}
+                {f.key === 'transport' && <TransportEditor />}
+                {f.key === 'notice' && <NoticeEditor />}
+                {f.key === 'account' && <AccountEditor />}
+                {f.key === 'bgm' && <BgmEditor />}
                 {(f.key === 'dday' ||
                   f.key === 'countdown' ||
                   f.key === 'guestbook' ||

@@ -74,9 +74,9 @@ export const sampleInvitation: InvitationData = {
     { id: 'g9', url: '', order: 9 },
   ],
   transport: [
-    { type: 'subway', description: '2호선 강남역 3번 출구에서 도보 5분' },
-    { type: 'bus', description: '간선버스 146, 341, 360 강남역 하차' },
-    { type: 'car', description: '지하 주차장 2시간 무료 (예식장 이용 시)' },
+    { id: 't1', type: 'subway', description: '2호선 강남역 3번 출구에서 도보 5분' },
+    { id: 't2', type: 'bus', description: '간선버스 146, 341, 360 강남역 하차' },
+    { id: 't3', type: 'car', description: '지하 주차장 2시간 무료 (예식장 이용 시)' },
   ],
   notices: [
     { id: 'n1', content: '주차 공간이 협소하니 대중교통 이용을 부탁드립니다.' },

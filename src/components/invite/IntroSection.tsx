@@ -1,4 +1,5 @@
 import type { InvitationData } from '@/types/invitation'
+import ParticleOverlay from './ParticleOverlay'
 
 type Props = { data: InvitationData }
 
@@ -9,20 +10,29 @@ function formatDateKo(dateStr: string) {
   return { y, m, d, day }
 }
 
+const INTRO_ANIM_CLASS: Record<string, string> = {
+  none: '',
+  fade: 'intro-fade',
+  slide: 'intro-slide',
+  zoom: 'intro-zoom',
+}
+
 export default function IntroSection({ data }: Props) {
   const { y, m, d, day } = formatDateKo(data.ceremony.date)
   const [hh] = data.ceremony.time.split(':').map(Number)
   const ampm = hh < 12 ? '오전' : '오후'
   const hour12 = hh > 12 ? hh - 12 : hh
+  const introAnim = INTRO_ANIM_CLASS[data.introEffect] ?? ''
 
   return (
     <section
-      className="relative flex min-h-[100svh] flex-col items-center justify-between overflow-hidden px-8 pt-16 pb-12"
+      className={`relative flex min-h-[100svh] flex-col items-center justify-between overflow-hidden px-8 pt-16 pb-12 ${introAnim}`}
       style={{
         background:
           'linear-gradient(to bottom, var(--p-bg) 0%, #ffffff 60%, var(--p-bg) 100%)',
       }}
     >
+      <ParticleOverlay type={data.particle} />
       <div className="text-center">
         <p
           className="font-serif text-[11px] tracking-[0.5em] uppercase"

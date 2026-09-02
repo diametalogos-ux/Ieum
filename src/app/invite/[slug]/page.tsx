@@ -1,20 +1,24 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { sampleInvitation } from '@/lib/mock/sample-invitation'
-import IntroSection from '@/components/invite/IntroSection'
-import GreetingSection from '@/components/invite/GreetingSection'
-import CoupleSection from '@/components/invite/CoupleSection'
-import CalendarSection from '@/components/invite/CalendarSection'
-import CountdownSection from '@/components/invite/CountdownSection'
-import GallerySection from '@/components/invite/GallerySection'
-import LocationSection from '@/components/invite/LocationSection'
-import NoticeSection from '@/components/invite/NoticeSection'
-import AccountSection from '@/components/invite/AccountSection'
+import { dashboardInvitations } from '@/lib/mock/dashboard-invitations'
+import InviteContent from '@/components/invite/InviteContent'
 
 type Props = { params: Promise<{ slug: string }> }
 
 async function getInvitation(slug: string) {
+  // Mock: 어떤 slug든 샘플 데이터로 반환 (실제로는 DB 조회)
+  // Supabase 붙일 때 여기를 실제 조회로 교체
   if (slug === 'sample') return sampleInvitation
+  const dashboardMatch = dashboardInvitations.find((i) => i.slug === slug)
+  if (dashboardMatch) {
+    return {
+      ...sampleInvitation,
+      slug,
+      title: dashboardMatch.title,
+      id: dashboardMatch.id,
+    }
+  }
   return null
 }
 
@@ -39,23 +43,5 @@ export default async function InvitePage({ params }: Props) {
   const data = await getInvitation(slug)
   if (!data) notFound()
 
-  return (
-    <div className="min-h-screen w-full bg-neutral-100">
-      <div
-        data-palette="pink"
-        className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden bg-white"
-        style={{ boxShadow: '0 0 60px rgba(0,0,0,0.08)' }}
-      >
-        <IntroSection data={data} />
-        {data.features.greeting && <GreetingSection data={data} />}
-        <CoupleSection data={data} />
-        <CalendarSection data={data} />
-        {data.features.countdown && <CountdownSection data={data} />}
-        {data.features.gallery && <GallerySection data={data} />}
-        {data.features.transport && <LocationSection data={data} />}
-        {data.features.notice && <NoticeSection data={data} />}
-        {data.features.account && <AccountSection data={data} />}
-      </div>
-    </div>
-  )
+  return <InviteContent fallbackData={data} fallbackPalette="pink" />
 }

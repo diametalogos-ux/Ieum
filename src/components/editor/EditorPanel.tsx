@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import BasicInfoTab from './tabs/BasicInfoTab'
 import FeaturesTab from './tabs/FeaturesTab'
+import ShareTab from './tabs/ShareTab'
 
 export type TabKey = 'basic' | 'features' | 'share'
 
@@ -119,6 +120,8 @@ export default function EditorPanel() {
           <BasicInfoTab />
         ) : activeTab === 'features' ? (
           <FeaturesTab />
+        ) : activeTab === 'share' ? (
+          <ShareTab />
         ) : (
           <TabPlaceholder label={currentLabel} />
         )}
