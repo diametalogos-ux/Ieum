@@ -1,91 +1,94 @@
-'use client'
-
-import { useEffect, useRef, useState } from 'react'
-
 const coreFeatures = [
-  { icon: '✏️', title: '무제한 수정',  desc: '언제든 자유롭게 수정하고\n실시간으로 반영됩니다', bg: '#f8f4ff' },
-  { icon: '🚫', title: '워터마크 없음', desc: '광고 없이 깔끔하게\n공유할 수 있어요',      bg: '#fff8f0' },
-  { icon: '💌', title: '3개까지 제작',  desc: '여러 버전의 청첩장을\n자유롭게 만들어요',   bg: '#f0fbf4' },
-  { icon: '♾️', title: '평생 소장',     desc: '결혼 후에도 영원히\n간직할 수 있어요',     bg: '#fff0f5' },
+  {
+    icon: '✎',
+    title: '무제한 수정',
+    desc: '언제든 자유롭게 수정하고 실시간으로 반영됩니다',
+  },
+  {
+    icon: '✦',
+    title: '워터마크 없음',
+    desc: '광고 없이 깔끔하게 공유할 수 있어요',
+  },
+  {
+    icon: '❋',
+    title: '3개까지 제작',
+    desc: '여러 버전의 청첩장을 자유롭게 만들어요',
+  },
+  {
+    icon: '∞',
+    title: '평생 소장',
+    desc: '결혼 후에도 영원히 간직할 수 있어요',
+  },
 ]
 
 const addons = [
-  { icon: '💬', label: '인사말' },
-  { icon: '📅', label: '디데이' },
-  { icon: '⏱️', label: '카운트다운' },
-  { icon: '🖼️', label: '갤러리' },
-  { icon: '🚌', label: '교통 안내' },
-  { icon: '📢', label: '공지사항' },
-  { icon: '💳', label: '계좌 안내' },
-  { icon: '📝', label: '방명록' },
-  { icon: '✅', label: '참석 여부' },
-  { icon: '📷', label: '포토드롭' },
-  { icon: '🎵', label: '배경음악' },
-  { icon: '💐', label: '화환 주문' },
+  '인사말',
+  '디데이',
+  '카운트다운',
+  '갤러리',
+  '교통 안내',
+  '공지사항',
+  '계좌 안내',
+  '방명록',
+  '참석 여부',
+  '포토드롭',
+  '배경음악',
+  '화환 주문',
 ]
 
-function useInView() {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true) }, { threshold: 0.1 })
-    if (ref.current) obs.observe(ref.current)
-    return () => obs.disconnect()
-  }, [])
-  return { ref, visible }
-}
-
 export default function FeaturesSection() {
-  const { ref, visible } = useInView()
-
   return (
-    <section id="features" className="py-28 px-6" style={{ background: '#fafafa' }}>
-      <div className="max-w-6xl mx-auto">
-
-        {/* 헤더 */}
-        <div className="text-center mb-16">
-          <p className="text-xs font-sans text-neutral-400 tracking-[0.2em] uppercase mb-5">Features</p>
-          <h2 className="font-bold text-neutral-900 leading-tight mb-5" style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontFamily: "'Noto Serif KR', serif" }}>
-            청첩에서는<br />모든 것이 무료예요
+    <section id="features" className="bg-neutral-50 py-24 md:py-32">
+      <div className="mx-auto w-full max-w-6xl px-6 md:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-[11px] font-medium tracking-[0.25em] text-neutral-400 uppercase">
+            Features
+          </p>
+          <h2 className="font-serif mt-4 text-3xl font-semibold leading-tight tracking-tight text-neutral-900 md:text-4xl">
+            청첩에서는
+            <br />
+            모든 것이 무료예요
           </h2>
-          <p className="text-neutral-500 font-sans font-light text-base max-w-md mx-auto leading-relaxed">
+          <p className="mt-5 text-base text-neutral-500">
             숨겨진 비용 없이, 필요한 모든 기능을 제한 없이 사용하세요
           </p>
         </div>
 
-        {/* 핵심 4가지 */}
-        <div ref={ref} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-          {coreFeatures.map((f, i) => (
-            <div key={i}
-              className="rounded-2xl p-7 text-center transition-all duration-700"
-              style={{
-                background: f.bg,
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0)' : 'translateY(24px)',
-                transitionDelay: `${i * 80}ms`,
-              }}
+        <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {coreFeatures.map((f) => (
+            <div
+              key={f.title}
+              className="group rounded-2xl border border-neutral-100 bg-white p-8 transition-all hover:-translate-y-1 hover:border-neutral-200 hover:shadow-lg hover:shadow-neutral-200/40"
             >
-              <div className="text-3xl mb-4">{f.icon}</div>
-              <h3 className="font-bold text-neutral-900 text-sm md:text-base mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>{f.title}</h3>
-              <p className="text-xs md:text-sm text-neutral-500 font-sans leading-relaxed whitespace-pre-line">{f.desc}</p>
+              <div className="font-serif flex h-12 w-12 items-center justify-center rounded-full bg-rose-50 text-2xl text-rose-400">
+                {f.icon}
+              </div>
+              <h3 className="font-serif mt-6 text-lg font-semibold text-neutral-900">
+                {f.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-neutral-500">
+                {f.desc}
+              </p>
             </div>
           ))}
         </div>
 
-        {/* 부가기능 */}
-        <div className="bg-white rounded-3xl p-8 md:p-12" style={{ border: '1px solid #f0f0f0' }}>
-          <div className="text-center mb-8">
-            <h3 className="font-bold text-neutral-900 text-xl md:text-2xl mb-2" style={{ fontFamily: "'Noto Serif KR', serif" }}>
+        <div className="mt-8 rounded-3xl border border-neutral-100 bg-white px-6 py-12 md:px-12">
+          <div className="mx-auto max-w-xl text-center">
+            <h3 className="font-serif text-xl font-semibold text-neutral-900 md:text-2xl">
               풍부한 부가기능까지
             </h3>
-            <p className="text-sm text-neutral-400 font-sans">필요한 것만 골라 청첩장을 완성하세요</p>
+            <p className="mt-2 text-sm text-neutral-500">
+              필요한 것만 골라 청첩장을 완성하세요
+            </p>
           </div>
-          <div className="flex flex-wrap gap-2.5 justify-center">
+          <div className="mt-8 flex flex-wrap justify-center gap-2">
             {addons.map((a) => (
-              <span key={a.label}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-sans font-medium text-neutral-600 bg-neutral-50 border border-neutral-100 hover:border-neutral-300 transition-colors">
-                <span className="text-base">{a.icon}</span>
-                {a.label}
+              <span
+                key={a}
+                className="rounded-full border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm font-medium text-neutral-600 transition-colors hover:border-neutral-300 hover:bg-white"
+              >
+                {a}
               </span>
             ))}
           </div>
