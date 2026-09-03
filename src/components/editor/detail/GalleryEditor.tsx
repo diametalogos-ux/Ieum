@@ -14,7 +14,7 @@ const LAYOUT_OPTIONS: { value: GalleryLayoutType; label: string }[] = [
 const MAX_PHOTOS = 30
 
 export default function GalleryEditor() {
-  const { data, update, addItem, updateItem, removeItem, moveItem } = useEditor()
+  const { data, update, addItem, updateItem, removeItem, moveItem, requestImmediateSave } = useEditor()
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -33,6 +33,7 @@ export default function GalleryEditor() {
     if (filesArr.length === 0) return
 
     setUploading(true)
+    let added = 0
     try {
       for (const file of filesArr) {
         const check = validateImage(file)
@@ -46,12 +47,14 @@ export default function GalleryEditor() {
           url: dataUrl,
           order: data.gallery.length + 1,
         })
+        added += 1
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : '업로드에 실패했어요')
     } finally {
       setUploading(false)
       if (inputRef.current) inputRef.current.value = ''
+      if (added > 0) requestImmediateSave()
     }
   }
 
@@ -64,6 +67,7 @@ export default function GalleryEditor() {
     try {
       const dataUrl = await processImage(file)
       updateItem('gallery', id, { url: dataUrl })
+      requestImmediateSave()
     } catch (err) {
       setError(err instanceof Error ? err.message : '업로드에 실패했어요')
     }

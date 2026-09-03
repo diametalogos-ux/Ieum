@@ -229,7 +229,7 @@ function ShareTools() {
 }
 
 export default function ShareTab() {
-  const { data, update } = useEditor()
+  const { data, update, requestImmediateSave } = useEditor()
 
   return (
     <div>
@@ -259,7 +259,10 @@ export default function ShareTab() {
         <ImageUpload
           label="공유 이미지"
           value={data.ogImageUrl}
-          onChange={(url) => update('ogImageUrl', url)}
+          onChange={(url) => {
+            update('ogImageUrl', url)
+            requestImmediateSave()
+          }}
           aspect="og"
           hint="권장 1200 × 630px · JPG, PNG, WebP"
           placeholderText="공유 이미지 업로드"

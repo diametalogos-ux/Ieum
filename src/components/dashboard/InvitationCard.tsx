@@ -2,14 +2,12 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import type { DashboardInvitation } from '@/lib/mock/dashboard-invitations'
-import { loadInvitationById } from '@/lib/invitation-storage'
-import type { PaletteKey } from '@/components/editor/EditorContext'
+import { useState } from 'react'
+import type { InvitationSummary } from '@/lib/invitations/types'
 import CardThumbnail from './CardThumbnail'
 
 type Props = {
-  item: DashboardInvitation
+  item: InvitationSummary
   onDelete?: (id: string) => void
 }
 
@@ -35,75 +33,16 @@ export default function InvitationCard({ item, onDelete }: Props) {
   const router = useRouter()
   const [copyState, setCopyState] = useState<'idle' | 'copied'>('idle')
 
-  // localStorage에 저장된 최신 편집 내용 반영
-  const [live, setLive] = useState<{
-    mainPhotoUrl: string | null
-    groomName: string
-    brideName: string
-    ceremonyDate: string
-    ceremonyTime: string
-    mainText: string
-    venueName: string
-    venueHall: string
-    updatedAt: string
-    palette: PaletteKey
-  } | null>(null)
-
-  useEffect(() => {
-    const refresh = () => {
-      const stored = loadInvitationById(item.id)
-      if (!stored) {
-        setLive(null)
-        return
-      }
-      const groom = stored.data.couple.groom.firstName || item.groomName
-      const bride = stored.data.couple.bride.firstName || item.brideName
-      setLive({
-        mainPhotoUrl: stored.data.mainPhotoUrl,
-        groomName: groom,
-        brideName: bride,
-        ceremonyDate: stored.data.ceremony.date || item.ceremonyDate,
-        ceremonyTime: stored.data.ceremony.time,
-        mainText: stored.data.mainText,
-        venueName: stored.data.ceremony.venueName,
-        venueHall: stored.data.ceremony.venueHall,
-        updatedAt: stored.savedAt,
-        palette: stored.palette,
-      })
-    }
-
-    refresh()
-
-    // 다른 탭에서 저장된 경우
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === `ieum:invitation:${item.id}`) refresh()
-    }
-    // 탭 focus / 페이지 표시 시 재로드 (에디터에서 돌아온 경우)
-    const onFocus = () => refresh()
-    const onVisibility = () => {
-      if (document.visibilityState === 'visible') refresh()
-    }
-
-    window.addEventListener('storage', onStorage)
-    window.addEventListener('focus', onFocus)
-    document.addEventListener('visibilitychange', onVisibility)
-    return () => {
-      window.removeEventListener('storage', onStorage)
-      window.removeEventListener('focus', onFocus)
-      document.removeEventListener('visibilitychange', onVisibility)
-    }
-  }, [item.id, item.groomName, item.brideName, item.ceremonyDate])
-
-  const groomName = live?.groomName ?? item.groomName
-  const brideName = live?.brideName ?? item.brideName
-  const ceremonyDate = live?.ceremonyDate ?? item.ceremonyDate
-  const ceremonyTime = live?.ceremonyTime ?? '14:00'
-  const mainText = live?.mainText ?? '우리 결혼합니다'
-  const venueName = live?.venueName ?? ''
-  const venueHall = live?.venueHall ?? ''
-  const mainPhotoUrl = live?.mainPhotoUrl ?? null
-  const updatedAt = live?.updatedAt ?? item.updatedAt
-  const palette = live?.palette ?? item.paletteKey
+  const groomName = item.groomName
+  const brideName = item.brideName
+  const ceremonyDate = item.ceremonyDate
+  const ceremonyTime = item.ceremonyTime || '14:00'
+  const mainText = item.mainText || '우리 결혼합니다'
+  const venueName = item.venueName
+  const venueHall = item.venueHall
+  const mainPhotoUrl = item.mainPhotoUrl
+  const updatedAt = item.updatedAt
+  const palette = item.palette
 
   const previewHref = `/invite/${item.slug}?edit=1`
   const shareUrl =

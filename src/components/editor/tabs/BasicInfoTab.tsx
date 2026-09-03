@@ -142,7 +142,7 @@ function ParentFields({
 }
 
 export default function BasicInfoTab() {
-  const { data, palette, setPalette, update, updateCouple, updateCeremony } = useEditor()
+  const { data, palette, setPalette, update, updateCouple, updateCeremony, requestImmediateSave } = useEditor()
 
   const patchPerson = (key: PersonKey, patch: Partial<PersonInfo>) => {
     updateCouple({ [key]: { ...data.couple[key], ...patch } })
@@ -215,7 +215,10 @@ export default function BasicInfoTab() {
         <ImageUpload
           label="메인 사진"
           value={data.mainPhotoUrl}
-          onChange={(url) => update('mainPhotoUrl', url)}
+          onChange={(url) => {
+            update('mainPhotoUrl', url)
+            requestImmediateSave()
+          }}
           aspect="portrait"
           width="140px"
         />

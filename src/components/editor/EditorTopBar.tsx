@@ -3,39 +3,37 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useEditor } from './EditorContext'
-import { saveInvitation } from '@/lib/invitation-storage'
+import { updateInvitation } from '@/lib/invitations/client'
 
 type Props = {
   onTogglePreview?: () => void
   previewOpen?: boolean
 }
 
-const AUTOSAVE_DEBOUNCE_MS = 2000
+const AUTOSAVE_DEBOUNCE_MS = 10000
 
 export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
-  const { data, palette, isDirty, markSaved } = useEditor()
+  const { data, palette, isDirty, saveTick, markSaved } = useEditor()
   const [saving, setSaving] = useState(false)
   const [savedAt, setSavedAt] = useState<Date | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // 최신 값 스냅샷 — 이벤트 핸들러(visibilitychange 등)에서 stale closure 회피
+  const latestRef = useRef({ data, palette, isDirty })
+  latestRef.current = { data, palette, isDirty }
 
-  const runSave = useCallback(() => {
+  const runSave = useCallback(async () => {
     setSaving(true)
     setSaveError(null)
-    // 실제 저장: localStorage (Supabase 붙이면 여기 API 호출로 교체)
-    setTimeout(() => {
-      const result = saveInvitation(data, palette)
-      if (result.ok) {
-        setSaveError(null)
-      } else if (result.reason === 'quota' && result.strippedImages) {
-        setSaveError('저장 공간이 부족해 일부 이미지가 임시 저장에서 제외됐어요. 이미지는 임시 저장소 한계 때문이며, 정식 서비스에서는 문제없이 저장돼요.')
-      } else {
-        setSaveError('저장에 실패했어요. 다시 시도해주세요.')
-      }
+    const result = await updateInvitation(data.id, data, palette)
+    if (result.ok) {
+      setSaveError(null)
       markSaved()
       setSavedAt(new Date())
-      setSaving(false)
-    }, 300)
+    } else {
+      setSaveError(`저장 실패: ${result.error}`)
+    }
+    setSaving(false)
   }, [data, palette, markSaved])
 
   // 자동 저장: 편집 후 debounce 뒤에 저장 실행
@@ -47,6 +45,32 @@ export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [isDirty, data, runSave])
+
+  // 즉시 저장 트리거 (이미지 업로드 등 큰 변경 직후)
+  useEffect(() => {
+    if (saveTick === 0) return
+    if (timerRef.current) clearTimeout(timerRef.current)
+    void runSave()
+  }, [saveTick, runSave])
+
+  // 탭 숨김 / 페이지 이탈 시 저장 (편집 중이었으면)
+  useEffect(() => {
+    const flush = () => {
+      if (!latestRef.current.isDirty) return
+      const { data: d, palette: p } = latestRef.current
+      // fire-and-forget — visibilitychange/pagehide 는 응답 기다릴 여유 없음
+      void updateInvitation(d.id, d, p)
+    }
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') flush()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    window.addEventListener('pagehide', flush)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility)
+      window.removeEventListener('pagehide', flush)
+    }
+  }, [])
 
   const handleSave = () => {
     if (saving) return
@@ -87,7 +111,7 @@ export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
                 <>
                   <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
                   <span className="max-w-[240px] truncate text-orange-600" title={saveError}>
-                    이미지 저장 공간 부족
+                    저장 실패
                   </span>
                 </>
               ) : isDirty ? (

@@ -36,7 +36,7 @@ export default function OwnerTopBar({ invitationId, slug }: Props) {
 
   return (
     <div
-      className="fixed inset-x-0 top-0 z-50 bg-neutral-900/95 text-white backdrop-blur"
+      className="sticky top-0 z-50 w-full bg-neutral-900/95 text-white backdrop-blur"
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       <div className="mx-auto flex h-14 max-w-[430px] items-center justify-between px-4">

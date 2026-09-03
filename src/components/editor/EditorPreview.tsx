@@ -1,6 +1,8 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useEditor } from './EditorContext'
+import { withDisplayDefaults } from '@/lib/invitations/display-defaults'
 import IntroSection from '@/components/invite/IntroSection'
 import GreetingSection from '@/components/invite/GreetingSection'
 import CoupleSection from '@/components/invite/CoupleSection'
@@ -12,10 +14,12 @@ import NoticeSection from '@/components/invite/NoticeSection'
 import AccountSection from '@/components/invite/AccountSection'
 import GuestbookSection from '@/components/invite/GuestbookSection'
 import RsvpSection from '@/components/invite/RsvpSection'
+import FlowerOrderSection from '@/components/invite/FlowerOrderSection'
 import ShareSection from '@/components/invite/ShareSection'
 
 export default function EditorPreview() {
   const { data, palette } = useEditor()
+  const view = useMemo(() => withDisplayDefaults(data), [data])
 
   return (
     <div className="flex h-full items-center justify-center bg-neutral-100 p-6 md:p-10">
@@ -31,29 +35,30 @@ export default function EditorPreview() {
             {/* 스크롤 가능한 미리보기 영역 */}
             <div
               data-palette={palette}
-              data-font={data.fontType}
-              data-font-size={data.fontSize}
+              data-font={view.fontType}
+              data-font-size={view.fontSize}
               className="h-[calc(100vh-14rem)] max-h-[720px] min-h-[520px] overflow-y-auto bg-white"
             >
-              <IntroSection data={data} />
-              {data.features.greeting && <GreetingSection data={data} />}
-              <CoupleSection data={data} />
-              <CalendarSection data={data} />
-              {data.features.countdown && <CountdownSection data={data} />}
-              {data.features.gallery && <GallerySection data={data} />}
-              {data.features.transport && <LocationSection data={data} />}
-              {data.features.notice && <NoticeSection data={data} />}
-              {data.features.account && <AccountSection data={data} />}
-              {data.features.guestbook && <GuestbookSection data={data} />}
-              {data.features.rsvp && <RsvpSection data={data} />}
-              <ShareSection data={data} />
+              <IntroSection data={view} />
+              {view.features.greeting && <GreetingSection data={view} />}
+              <CoupleSection data={view} />
+              <CalendarSection data={view} />
+              {view.features.countdown && <CountdownSection data={view} />}
+              {view.features.gallery && <GallerySection data={view} />}
+              {view.features.transport && <LocationSection data={view} />}
+              {view.features.notice && <NoticeSection data={view} />}
+              {view.features.account && <AccountSection data={view} />}
+              {view.features.guestbook && <GuestbookSection data={view} />}
+              {view.features.rsvp && <RsvpSection data={view} />}
+              {view.features.flowerOrder && <FlowerOrderSection data={view} />}
+              <ShareSection data={view} />
             </div>
           </div>
         </div>
 
         {/* 하단 인디케이터 */}
         <p className="mt-4 text-center text-[11px] tracking-wider text-neutral-400">
-          실시간 미리보기
+          실시간 미리보기 · 빈 항목은 예시로 표시돼요
         </p>
       </div>
     </div>

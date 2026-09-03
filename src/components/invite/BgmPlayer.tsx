@@ -3,9 +3,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { BGM_LIST, findBgm } from '@/lib/bgm-list'
 
-type Props = { bgmId: string | null }
+type Props = { bgmId: string | null; previewMode?: boolean }
 
-export default function BgmPlayer({ bgmId }: Props) {
+// OwnerTopBar 높이(대략): h-14(56) + 하단 라벨 py-1.5+text(≈26) + safe-area-top
+const OWNER_BAR_HEIGHT = 90
+
+export default function BgmPlayer({ bgmId, previewMode = false }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [playing, setPlaying] = useState(true) // 기본: 재생 상태
   const [showLabel, setShowLabel] = useState(false)
@@ -101,7 +104,14 @@ export default function BgmPlayer({ bgmId }: Props) {
         onPlay={() => setPlaying(true)}
       />
 
-      <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2">
+      <div
+        className="fixed right-4 z-40 flex items-center gap-2"
+        style={{
+          top: `calc(env(safe-area-inset-top) + ${
+            previewMode ? OWNER_BAR_HEIGHT + 16 : 16
+          }px)`,
+        }}
+      >
         {showLabel && (
           <div className="rounded-full bg-neutral-900/85 px-3 py-1.5 text-[11px] font-medium text-white shadow-lg backdrop-blur">
             {playing ? `♪ ${track.label}` : '일시정지'}

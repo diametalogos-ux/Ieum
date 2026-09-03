@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardHeader from '@/components/dashboard/DashboardHeader'
 import InvitationCard from '@/components/dashboard/InvitationCard'
@@ -8,22 +8,38 @@ import CreateNewCard from '@/components/dashboard/CreateNewCard'
 import EmptyState from '@/components/dashboard/EmptyState'
 import { useAuth } from '@/components/providers/AuthProvider'
 import {
-  dashboardInvitations,
-  MAX_INVITATIONS,
-} from '@/lib/mock/dashboard-invitations'
+  deleteInvitation,
+  listMyInvitations,
+} from '@/lib/invitations/client'
+import type { InvitationSummary } from '@/lib/invitations/types'
+
+const MAX_INVITATIONS = 3
 
 export default function DashboardPage() {
   const router = useRouter()
   const { user, loading } = useAuth()
-  const [invitations, setInvitations] = useState(dashboardInvitations)
+  const [invitations, setInvitations] = useState<InvitationSummary[]>([])
+  const [listLoading, setListLoading] = useState(true)
+
   const canCreateMore = invitations.length < MAX_INVITATIONS
 
-  // 미로그인 시 로그인 페이지로
   useEffect(() => {
     if (!loading && !user) {
       router.replace('/login')
     }
   }, [loading, user, router])
+
+  const refresh = useCallback(async () => {
+    setListLoading(true)
+    const rows = await listMyInvitations()
+    setInvitations(rows)
+    setListLoading(false)
+  }, [])
+
+  useEffect(() => {
+    if (loading || !user) return
+    refresh()
+  }, [loading, user, refresh])
 
   const displayName =
     (user?.user_metadata?.name as string) ||
@@ -31,11 +47,16 @@ export default function DashboardPage() {
     user?.email?.split('@')[0] ||
     ''
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    const result = await deleteInvitation(id)
+    if (!result.ok) {
+      alert(`삭제 실패: ${result.error}`)
+      return
+    }
     setInvitations((prev) => prev.filter((i) => i.id !== id))
   }
 
-  if (loading || !user) {
+  if (loading || !user || listLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-50">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-700" />

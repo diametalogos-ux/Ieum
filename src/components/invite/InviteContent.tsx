@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import type { InvitationData } from '@/types/invitation'
 import type { PaletteKey } from '@/components/editor/EditorContext'
-import { loadInvitationBySlug } from '@/lib/invitation-storage'
+import { withDisplayDefaults } from '@/lib/invitations/display-defaults'
 
 import IntroSection from './IntroSection'
 import GreetingSection from './GreetingSection'
@@ -17,54 +17,52 @@ import AccountSection from './AccountSection'
 import GuestbookSection from './GuestbookSection'
 import RsvpSection from './RsvpSection'
 import ShareSection from './ShareSection'
+import FlowerOrderSection from './FlowerOrderSection'
 import BgmPlayer from './BgmPlayer'
 import OwnerTopBar from './OwnerTopBar'
 
 type Props = {
-  fallbackData: InvitationData
-  fallbackPalette?: PaletteKey
+  data: InvitationData
+  palette?: PaletteKey
+  previewMode?: boolean
 }
 
 export default function InviteContent({
-  fallbackData,
-  fallbackPalette = 'pink',
+  data,
+  palette = 'pink',
+  previewMode = false,
 }: Props) {
-  const [data, setData] = useState<InvitationData>(fallbackData)
-  const [palette, setPalette] = useState<PaletteKey>(fallbackPalette)
-
-  useEffect(() => {
-    // 클라이언트 마운트 후 localStorage 조회 - 사용자가 편집한 최신 데이터 반영
-    const stored = loadInvitationBySlug(fallbackData.slug)
-    if (stored) {
-      setData(stored.data)
-      setPalette(stored.palette)
-    }
-  }, [fallbackData.slug])
+  // 시각적 렌더링은 빈 필드를 예시로 채워서 청첩장이 비어보이지 않게.
+  // 화환 주문 등 기능성 섹션은 원본 데이터를 사용해 실제 값으로 동작.
+  const view = useMemo(() => withDisplayDefaults(data), [data])
 
   return (
     <div className="min-h-screen w-full bg-neutral-100">
       <OwnerTopBar invitationId={data.id} slug={data.slug} />
       <div
         data-palette={palette}
-        data-font={data.fontType}
-        data-font-size={data.fontSize}
+        data-font={view.fontType}
+        data-font-size={view.fontSize}
         className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden bg-white"
         style={{ boxShadow: '0 0 60px rgba(0,0,0,0.08)' }}
       >
-        <IntroSection data={data} />
-        {data.features.greeting && <GreetingSection data={data} />}
-        <CoupleSection data={data} />
-        <CalendarSection data={data} />
-        {data.features.countdown && <CountdownSection data={data} />}
-        {data.features.gallery && <GallerySection data={data} />}
-        {data.features.transport && <LocationSection data={data} />}
-        {data.features.notice && <NoticeSection data={data} />}
-        {data.features.account && <AccountSection data={data} />}
-        {data.features.guestbook && <GuestbookSection data={data} />}
-        {data.features.rsvp && <RsvpSection data={data} />}
-        <ShareSection data={data} />
+        <IntroSection data={view} />
+        {view.features.greeting && <GreetingSection data={view} />}
+        <CoupleSection data={view} />
+        <CalendarSection data={view} />
+        {view.features.countdown && <CountdownSection data={view} />}
+        {view.features.gallery && <GallerySection data={view} />}
+        {view.features.transport && <LocationSection data={view} />}
+        {view.features.notice && <NoticeSection data={view} />}
+        {view.features.account && <AccountSection data={view} />}
+        {view.features.guestbook && <GuestbookSection data={view} />}
+        {view.features.rsvp && <RsvpSection data={view} />}
+        {view.features.flowerOrder && <FlowerOrderSection data={data} />}
+        <ShareSection data={view} />
 
-        {data.features.bgm && <BgmPlayer bgmId={data.bgmUrl} />}
+        {view.features.bgm && (
+          <BgmPlayer bgmId={view.bgmUrl} previewMode={previewMode} />
+        )}
       </div>
     </div>
   )

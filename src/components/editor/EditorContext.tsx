@@ -18,12 +18,14 @@ type EditorContextValue = {
   data: InvitationData
   palette: PaletteKey
   isDirty: boolean
+  saveTick: number
   setPalette: (p: PaletteKey) => void
   update: <K extends keyof InvitationData>(key: K, value: InvitationData[K]) => void
   updateCouple: (patch: Partial<InvitationData['couple']>) => void
   updateCeremony: (patch: Partial<InvitationData['ceremony']>) => void
   toggleFeature: (key: keyof InvitationData['features'], value?: boolean) => void
   markSaved: () => void
+  requestImmediateSave: () => void
   addItem: <K extends ListKey>(list: K, item: InvitationData[K][number]) => void
   updateItem: <K extends ListKey>(
     list: K,
@@ -50,6 +52,7 @@ export function EditorProvider({
   const [data, setData] = useState<InvitationData>(initialData)
   const [palette, setPalette] = useState<PaletteKey>(initialPalette)
   const [isDirty, setIsDirty] = useState(false)
+  const [saveTick, setSaveTick] = useState(0)
 
   const update = useCallback(
     <K extends keyof InvitationData>(key: K, value: InvitationData[K]) => {
@@ -89,6 +92,10 @@ export function EditorProvider({
   }, [])
 
   const markSaved = useCallback(() => setIsDirty(false), [])
+
+  const requestImmediateSave = useCallback(() => {
+    setSaveTick((n) => n + 1)
+  }, [])
 
   const addItem = useCallback(
     <K extends ListKey>(list: K, item: InvitationData[K][number]) => {
@@ -147,12 +154,14 @@ export function EditorProvider({
       data,
       palette,
       isDirty,
+      saveTick,
       setPalette: handleSetPalette,
       update,
       updateCouple,
       updateCeremony,
       toggleFeature,
       markSaved,
+      requestImmediateSave,
       addItem,
       updateItem,
       removeItem,
@@ -162,12 +171,14 @@ export function EditorProvider({
       data,
       palette,
       isDirty,
+      saveTick,
       handleSetPalette,
       update,
       updateCouple,
       updateCeremony,
       toggleFeature,
       markSaved,
+      requestImmediateSave,
       addItem,
       updateItem,
       removeItem,

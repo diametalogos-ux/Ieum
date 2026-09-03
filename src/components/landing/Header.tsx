@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { useAuth } from '@/components/providers/AuthProvider'
 
 const navItems = [
   { label: '기능', href: '#features' },
@@ -10,9 +12,22 @@ const navItems = [
 ]
 
 export default function Header() {
+  const router = useRouter()
+  const { user, loading, signOut } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [signingOut, setSigningOut] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const handleSignOut = async () => {
+    if (signingOut) return
+    setSigningOut(true)
+    await signOut()
+    setMenuOpen(false)
+    router.push('/')
+    router.refresh()
+    setSigningOut(false)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -76,18 +91,41 @@ export default function Header() {
 
         {/* 데스크탑 CTA */}
         <div className="hidden items-center gap-2 md:flex">
-          <Link
-            href="/login"
-            className="rounded-full px-4 py-2 text-sm text-neutral-600 transition-colors hover:text-neutral-900"
-          >
-            로그인
-          </Link>
-          <Link
-            href="/login"
-            className="rounded-full bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
-          >
-            무료 시작
-          </Link>
+          {loading ? (
+            <div className="h-9 w-40" />
+          ) : user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="rounded-full px-4 py-2 text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+              >
+                대시보드
+              </Link>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                disabled={signingOut}
+                className="rounded-full bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700 disabled:opacity-60"
+              >
+                {signingOut ? '로그아웃 중...' : '로그아웃'}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="rounded-full px-4 py-2 text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-full bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+              >
+                무료 시작
+              </Link>
+            </>
+          )}
         </div>
 
         {/* 모바일 우측: 텍스트 링크 2개 + 햄버거 */}
@@ -98,12 +136,23 @@ export default function Header() {
           >
             샘플
           </Link>
-          <Link
-            href="/login"
-            className="px-2.5 py-2 text-[13px] font-medium text-neutral-800 transition-colors hover:text-neutral-950"
-          >
-            로그인
-          </Link>
+          {loading ? (
+            <span className="px-2.5 py-2 text-[13px] text-transparent">로그인</span>
+          ) : user ? (
+            <Link
+              href="/dashboard"
+              className="px-2.5 py-2 text-[13px] font-medium text-neutral-800 transition-colors hover:text-neutral-950"
+            >
+              대시보드
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="px-2.5 py-2 text-[13px] font-medium text-neutral-800 transition-colors hover:text-neutral-950"
+            >
+              로그인
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
@@ -140,13 +189,24 @@ export default function Header() {
                 ))}
               </nav>
               <div className="border-t border-neutral-100 p-2">
-                <Link
-                  href="/login"
-                  onClick={() => setMenuOpen(false)}
-                  className="block rounded-xl bg-neutral-900 px-4 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-neutral-800"
-                >
-                  무료 시작
-                </Link>
+                {user ? (
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    disabled={signingOut}
+                    className="block w-full rounded-xl bg-neutral-900 px-4 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:opacity-60"
+                  >
+                    {signingOut ? '로그아웃 중...' : '로그아웃'}
+                  </button>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="block rounded-xl bg-neutral-900 px-4 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-neutral-800"
+                  >
+                    무료 시작
+                  </Link>
+                )}
               </div>
             </div>
           )}
