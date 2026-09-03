@@ -132,6 +132,7 @@ export default function PublishButton() {
                         { key: 'time', label: '예식 시간' },
                         { key: 'venueName', label: '예식장 이름' },
                         { key: 'venueAddress', label: '예식장 주소' },
+                        { key: 'venueHall', label: '상세 주소 (홀·층)' },
                       ] as const
                     ).map((f) => {
                       const missing = readiness.missing.some(

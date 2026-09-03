@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
-import { getInvitationBySlugAdmin } from '@/lib/invitations/server'
+import {
+  getInvitationBySlug,
+  getInvitationBySlugAdmin,
+} from '@/lib/invitations/server'
 import { buildDeliveryPayload } from '@/lib/wreath'
 import { sampleInvitation } from '@/lib/mock/sample-invitation'
+import type { StoredInvitation } from '@/lib/invitations/types'
 
 /**
  * 꽃비(flowerbiz)가 화환 주문 폼 렌더 시 POST 로 호출하는 콜백.
@@ -20,11 +24,22 @@ async function handle(request: Request) {
   }
 
   // 데모용 sample 슬러그는 mock 반환.
-  // 그 외는 admin 클라이언트로 조회 — 꽃비 서버는 인증 없이 호출하므로 RLS 우회 필요.
-  const stored =
-    slug === 'sample'
-      ? { data: sampleInvitation }
-      : await getInvitationBySlugAdmin(slug)
+  if (slug === 'sample') {
+    return respond(request, url, slug, { data: sampleInvitation })
+  }
+
+  // 1차: admin(service role) 로 조회. draft/published 무관하게 접근 가능.
+  let stored: StoredInvitation | Pick<StoredInvitation, 'data'> | null = null
+  try {
+    stored = await getInvitationBySlugAdmin(slug)
+  } catch (err) {
+    console.warn(
+      '[wreath/delivery-info] admin client unavailable, falling back to anon server client. Cause:',
+      err instanceof Error ? err.message : err
+    )
+    // 2차 fallback: 일반 서버 클라이언트. published 상태만 조회됨 (RLS)
+    stored = await getInvitationBySlug(slug)
+  }
 
   if (!stored) {
     return NextResponse.json(
@@ -33,6 +48,15 @@ async function handle(request: Request) {
     )
   }
 
+  return respond(request, url, slug, stored)
+}
+
+function respond(
+  request: Request,
+  url: URL,
+  slug: string,
+  stored: Pick<StoredInvitation, 'data'>
+) {
   // 실제 브라우저가 접속한 host 를 기준으로 invite URL 생성 (0.0.0.0 이슈 회피)
   const forwardedHost = request.headers.get('x-forwarded-host')
   const forwardedProto = request.headers.get('x-forwarded-proto')

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { InvitationData, TransportItem } from '@/types/invitation'
+import KakaoMap from './KakaoMap'
 
 type Props = { data: InvitationData }
 
@@ -82,11 +83,15 @@ export default function LocationSection({ data }: Props) {
     }
   }
 
-  const q = encodeURIComponent(`${data.ceremony.venueName} ${address}`)
+  // 주소만으로 검색해야 지도 앱이 해당 주소의 상세 페이지로 바로 진입함
+  const q = encodeURIComponent(address)
   const mapLinks = [
-    { label: '네이버지도', href: `https://map.naver.com/v5/search/${q}` },
+    {
+      label: '네이버지도',
+      // 모바일에선 앱 설치 시 앱 오픈, 미설치 시 웹으로 폴백
+      href: `https://m.map.naver.com/appLink.naver?query=${q}&menu=location&appTargetPage=search&appSchemeName=nmap&app=Y&appmarket=N#applink`,
+    },
     { label: '카카오맵', href: `https://map.kakao.com/link/search/${q}` },
-    { label: 'T맵', href: `tmap://search?name=${q}` },
   ]
 
   return (
@@ -107,27 +112,8 @@ export default function LocationSection({ data }: Props) {
       </div>
 
       <div className="mt-10 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-neutral-100">
-        <div
-          className="relative flex aspect-[4/3] items-center justify-center"
-          style={{
-            background:
-              'linear-gradient(135deg, var(--p-soft) 0%, var(--p-mid) 100%)',
-          }}
-        >
-          <div className="text-center">
-            <div
-              className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/40 backdrop-blur"
-              style={{ color: 'var(--p-strong)' }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-            </div>
-            <p className="mt-3 text-[11px] tracking-[0.3em] uppercase text-white/80">
-              Map Preview
-            </p>
-          </div>
+        <div className="relative aspect-[4/3]">
+          <KakaoMap address={address} className="absolute inset-0" />
         </div>
 
         <div className="px-6 py-6">

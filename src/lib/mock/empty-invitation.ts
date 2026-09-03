@@ -25,11 +25,11 @@ export const emptyInvitation: InvitationData = {
 
   couple: {
     groom: { lastName: '', firstName: '', contact: '' },
-    groomFather: { lastName: '', firstName: '', deceased: false, visible: true },
-    groomMother: { lastName: '', firstName: '', deceased: false, visible: true },
+    groomFather: { lastName: '', firstName: '', contact: '', deceased: false, visible: true },
+    groomMother: { lastName: '', firstName: '', contact: '', deceased: false, visible: true },
     bride: { lastName: '', firstName: '', contact: '' },
-    brideFather: { lastName: '', firstName: '', deceased: false, visible: true },
-    brideMother: { lastName: '', firstName: '', deceased: false, visible: true },
+    brideFather: { lastName: '', firstName: '', contact: '', deceased: false, visible: true },
+    brideMother: { lastName: '', firstName: '', contact: '', deceased: false, visible: true },
   },
 
   ceremony: {
@@ -37,10 +37,8 @@ export const emptyInvitation: InvitationData = {
     time: '14:00',
     venueName: '',
     venueAddress: '',
+    venueZipcode: '',
     venueHall: '',
-    showDate: true,
-    showTime: true,
-    showVenue: true,
   },
 
   features: {

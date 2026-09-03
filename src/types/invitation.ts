@@ -9,6 +9,7 @@ export type FontType = 'nanum' | 'malgun' | 'gothic' | 'serif'
 export interface ParentInfo {
   lastName: string      // 성
   firstName: string     // 이름
+  contact: string       // 연락처 (화환 수령용, 청첩장엔 미노출)
   deceased: boolean     // 고인 여부 (故 표시)
   visible: boolean      // 청첩장에 표시 여부
 }
@@ -47,10 +48,8 @@ export interface CeremonyInfo {
   time: string
   venueName: string
   venueAddress: string
+  venueZipcode: string  // 우편번호 (다음 우편번호 서비스로 조회)
   venueHall: string
-  showDate: boolean
-  showTime: boolean
-  showVenue: boolean
 }
 
 export interface GalleryItem {

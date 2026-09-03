@@ -11,51 +11,82 @@ const DELIVERY_MINUTES_BEFORE = 30
 export type WreathReceiver = {
   name: string
   relationship: string
-  tel?: string
+  tel: string
 }
 
-/** 커플 정보에서 꽃비 receiver[] 배열 생성 — visible=true, deceased=false, 이름 존재 조건 */
+/** 연락처 미입력 시 폴백. 경쟁사(areum) 관찰: 010-0000-0000 사용 */
+const PLACEHOLDER_TEL = '010-0000-0000'
+
+/** 전화번호를 010-XXXX-XXXX 형식으로 정규화. 형식 이상하면 원문 그대로 반환. */
+function normalizeTel(raw: string): string {
+  const digits = raw.replace(/\D/g, '')
+  if (digits.length === 11 && digits.startsWith('010')) {
+    return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`
+  }
+  if (digits.length === 10) {
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`
+  }
+  return raw
+}
+
+/**
+ * 커플 정보에서 꽃비 receiver[] 배열 생성.
+ * 6명(신랑/신부 + 양가 부모) 중:
+ * - 이름이 있는 사람만 포함
+ * - 부모의 경우 visible=true & deceased=false
+ * - 연락처 미입력 시 placeholder(010-0000-0000) 사용 (꽃비가 tel 필수 요구)
+ */
 export function buildReceivers(data: InvitationData): WreathReceiver[] {
   const c = data.couple
   const list: WreathReceiver[] = []
 
-  if (c.groom.firstName) {
+  const push = (
+    relationship: string,
+    lastName: string,
+    firstName: string,
+    contact: string
+  ) => {
+    if (!firstName) return
     list.push({
-      relationship: '신랑',
-      name: `${c.groom.lastName}${c.groom.firstName}`,
-      tel: c.groom.contact || undefined,
+      relationship,
+      name: `${lastName}${firstName}`,
+      tel: contact ? normalizeTel(contact) : PLACEHOLDER_TEL,
     })
   }
-  if (c.groomFather.visible && !c.groomFather.deceased && c.groomFather.firstName) {
-    list.push({
-      relationship: '신랑 아버지',
-      name: `${c.groomFather.lastName}${c.groomFather.firstName}`,
-    })
+
+  push('신랑', c.groom.lastName, c.groom.firstName, c.groom.contact)
+  if (c.groomFather.visible && !c.groomFather.deceased) {
+    push(
+      '신랑 아버님',
+      c.groomFather.lastName,
+      c.groomFather.firstName,
+      c.groomFather.contact
+    )
   }
-  if (c.groomMother.visible && !c.groomMother.deceased && c.groomMother.firstName) {
-    list.push({
-      relationship: '신랑 어머니',
-      name: `${c.groomMother.lastName}${c.groomMother.firstName}`,
-    })
+  if (c.groomMother.visible && !c.groomMother.deceased) {
+    push(
+      '신랑 어머님',
+      c.groomMother.lastName,
+      c.groomMother.firstName,
+      c.groomMother.contact
+    )
   }
-  if (c.bride.firstName) {
-    list.push({
-      relationship: '신부',
-      name: `${c.bride.lastName}${c.bride.firstName}`,
-      tel: c.bride.contact || undefined,
-    })
+  push('신부', c.bride.lastName, c.bride.firstName, c.bride.contact)
+  if (c.brideFather.visible && !c.brideFather.deceased) {
+    push(
+      '신부 아버님',
+      c.brideFather.lastName,
+      c.brideFather.firstName,
+      c.brideFather.contact
+    )
   }
-  if (c.brideFather.visible && !c.brideFather.deceased && c.brideFather.firstName) {
-    list.push({
-      relationship: '신부 아버지',
-      name: `${c.brideFather.lastName}${c.brideFather.firstName}`,
-    })
-  }
-  if (c.brideMother.visible && !c.brideMother.deceased && c.brideMother.firstName) {
-    list.push({
-      relationship: '신부 어머니',
-      name: `${c.brideMother.lastName}${c.brideMother.firstName}`,
-    })
+  if (c.brideMother.visible && !c.brideMother.deceased) {
+    push(
+      '신부 어머님',
+      c.brideMother.lastName,
+      c.brideMother.firstName,
+      c.brideMother.contact
+    )
   }
 
   return list
@@ -77,17 +108,23 @@ export function computeDeliveryDatetime(
   )} ${pad(dt.getHours())}:${pad(dt.getMinutes())}:00`
 }
 
-/** 꽃비 delivery_url 콜백에 반환할 JSON payload */
+/**
+ * 꽃비 delivery_url 콜백에 반환할 JSON payload.
+ * 필드 순서와 success:true 필드는 경쟁사(areum) 응답 형식을 참고 —
+ * 꽃비가 success 필드로 콜백 성공 여부를 판단하는 것으로 보임.
+ */
 export function buildDeliveryPayload(
   data: InvitationData,
   inviteUrl: string
 ) {
   const c = data.ceremony
   return {
-    receiver: buildReceivers(data),
+    success: true,
+    zipcode: c.venueZipcode || '',
     address: c.venueAddress || '',
     address_detail: [c.venueName, c.venueHall].filter(Boolean).join(' '),
     delivery_datetime: computeDeliveryDatetime(c) ?? '',
+    receiver: buildReceivers(data),
     url: inviteUrl,
     // ribbon_name / ribbon_message 는 하객이 꽃비 폼에서 입력
   }

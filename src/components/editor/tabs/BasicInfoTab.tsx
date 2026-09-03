@@ -5,6 +5,7 @@ import EditorSection from '../ui/EditorSection'
 import PaletteSelector from '../ui/PaletteSelector'
 import { TextField, TextArea, Toggle, OptionGroup } from '../ui/EditorField'
 import ImageUpload from '../ui/ImageUpload'
+import AddressSearchButton from '../ui/AddressSearchButton'
 import type {
   FontType,
   IntroEffectType,
@@ -126,6 +127,16 @@ function ParentFields({
           value={parent.firstName}
           onChange={(e) => onChange({ firstName: e.target.value })}
           maxLength={10}
+        />
+      </div>
+      <div className="mt-2">
+        <TextField
+          label="연락처 (선택)"
+          hint="화환 수령용 · 청첩장엔 노출되지 않아요"
+          value={parent.contact ?? ''}
+          onChange={(e) => onChange({ contact: e.target.value })}
+          placeholder="010-0000-0000"
+          maxLength={13}
         />
       </div>
       <label className="mt-2 flex cursor-pointer items-center gap-2 text-[11px] text-neutral-600">
@@ -278,36 +289,93 @@ export default function BasicInfoTab() {
           onChange={(e) => updateCeremony({ venueName: e.target.value })}
           placeholder="그랜드 웨딩홀"
         />
-        <TextField
-          label="홀 이름"
-          value={data.ceremony.venueHall}
-          onChange={(e) => updateCeremony({ venueHall: e.target.value })}
-          placeholder="2층 로즈홀"
-        />
-        <TextField
-          label="주소"
-          value={data.ceremony.venueAddress}
-          onChange={(e) => updateCeremony({ venueAddress: e.target.value })}
-          placeholder="서울시 강남구 ..."
-        />
+        <div>
+          <p className="mb-1.5 text-[11px] font-medium text-neutral-700">
+            주소
+          </p>
+          {data.ceremony.venueAddress ? (
+            <div className="rounded-lg border border-neutral-200 bg-neutral-50/60 p-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-neutral-900">
+                    {data.ceremony.venueAddress}
+                  </p>
+                  {data.ceremony.venueZipcode && (
+                    <p className="mt-0.5 text-[10px] text-neutral-400">
+                      우편번호 {data.ceremony.venueZipcode}
+                    </p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateCeremony({
+                      venueAddress: '',
+                      venueZipcode: '',
+                      venueHall: '',
+                    })
+                  }
+                  aria-label="주소 초기화"
+                  className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-700"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
 
-        <div className="mt-2 space-y-1 rounded-lg bg-neutral-50/70 px-3 py-2">
-          <p className="mb-2 text-[11px] font-medium text-neutral-600">표시 여부</p>
-          <Toggle
-            label="예식일 표시"
-            checked={data.ceremony.showDate}
-            onChange={(v) => updateCeremony({ showDate: v })}
-          />
-          <Toggle
-            label="예식 시간 표시"
-            checked={data.ceremony.showTime}
-            onChange={(v) => updateCeremony({ showTime: v })}
-          />
-          <Toggle
-            label="예식장 표시"
-            checked={data.ceremony.showVenue}
-            onChange={(v) => updateCeremony({ showVenue: v })}
-          />
+              <div className="mt-3">
+                <label className="mb-1 block text-[11px] font-medium text-neutral-600">
+                  상세 주소
+                  <span className="ml-1 text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={data.ceremony.venueHall}
+                  onChange={(e) =>
+                    updateCeremony({ venueHall: e.target.value })
+                  }
+                  placeholder="예: 2층 로즈홀 · 501호 · 지하1층"
+                  className="block w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-400 focus:border-neutral-400 focus:outline-none"
+                />
+                <p className="mt-1 text-[10px] text-neutral-400">
+                  화환 배송·하객 안내를 위해 홀 이름 또는 층·호를 꼭 입력해주세요
+                </p>
+              </div>
+
+              <div className="mt-3">
+                <AddressSearchButton
+                  onSelect={({ zipcode, address, buildingName }) => {
+                    updateCeremony({
+                      venueAddress: address,
+                      venueZipcode: zipcode,
+                      ...(buildingName && !data.ceremony.venueName
+                        ? { venueName: buildingName }
+                        : {}),
+                    })
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-start gap-1.5 rounded-lg border border-dashed border-neutral-300 bg-white px-3 py-4">
+              <p className="text-[11px] text-neutral-400">
+                주소 검색으로 정확한 주소·우편번호를 채워주세요
+              </p>
+              <AddressSearchButton
+                onSelect={({ zipcode, address, buildingName }) => {
+                  updateCeremony({
+                    venueAddress: address,
+                    venueZipcode: zipcode,
+                    ...(buildingName && !data.ceremony.venueName
+                      ? { venueName: buildingName }
+                      : {}),
+                  })
+                }}
+              />
+            </div>
+          )}
         </div>
       </EditorSection>
     </div>

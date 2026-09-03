@@ -31,12 +31,14 @@ export const sampleInvitation: InvitationData = {
     groomFather: {
       lastName: '김',
       firstName: '상철',
+      contact: '010-2222-3333',
       deceased: false,
       visible: true,
     },
     groomMother: {
       lastName: '이',
       firstName: '영희',
+      contact: '010-3333-4444',
       deceased: false,
       visible: true,
     },
@@ -48,12 +50,14 @@ export const sampleInvitation: InvitationData = {
     brideFather: {
       lastName: '이',
       firstName: '대호',
+      contact: '010-4444-5555',
       deceased: false,
       visible: true,
     },
     brideMother: {
       lastName: '박',
       firstName: '미경',
+      contact: '010-5555-6666',
       deceased: false,
       visible: true,
     },
@@ -64,10 +68,8 @@ export const sampleInvitation: InvitationData = {
     time: '14:00',
     venueName: '그랜드 웨딩홀',
     venueAddress: '서울시 강남구 테헤란로 123',
+    venueZipcode: '06133',
     venueHall: '2층 로즈홀',
-    showDate: true,
-    showTime: true,
-    showVenue: true,
   },
 
   features: {

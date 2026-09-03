@@ -44,33 +44,7 @@ export default function GreetingSection({ data }: Props) {
         {data.greetingText}
       </p>
 
-      <div className="mt-12 flex flex-col items-center gap-3">
-        <div className="font-serif flex items-center gap-4 text-sm text-neutral-600">
-          <div className="text-right">
-            {groomParents && (
-              <p className="text-[11px] text-neutral-400">{groomParents}</p>
-            )}
-            <p className="mt-1">
-              의 아들{' '}
-              <span className="font-semibold text-neutral-800">
-                {couple.groom.firstName}
-              </span>
-            </p>
-          </div>
-          <div className="h-8 w-px bg-neutral-200" />
-          <div className="text-left">
-            {brideParents && (
-              <p className="text-[11px] text-neutral-400">{brideParents}</p>
-            )}
-            <p className="mt-1">
-              의 딸{' '}
-              <span className="font-semibold text-neutral-800">
-                {couple.bride.firstName}
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
+
     </section>
   )
 }

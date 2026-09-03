@@ -29,14 +29,17 @@ function calcTimeLeft(target: Date): TimeLeft {
 export default function CountdownSection({ data }: Props) {
   const [y, m, d] = data.ceremony.date.split('-').map(Number)
   const [hh, mm] = data.ceremony.time.split(':').map(Number)
-  const target = new Date(y, m - 1, d, hh, mm, 0)
 
-  const [time, setTime] = useState<TimeLeft>(() => calcTimeLeft(target))
+  // 서버·클라이언트 시간 차로 인한 hydration mismatch 방지 —
+  // 초기 렌더는 null (플레이스홀더), 클라이언트 마운트 후에만 실제 계산
+  const [time, setTime] = useState<TimeLeft | null>(null)
 
   useEffect(() => {
+    const target = new Date(y, m - 1, d, hh, mm, 0)
+    setTime(calcTimeLeft(target))
     const id = setInterval(() => setTime(calcTimeLeft(target)), 1000)
     return () => clearInterval(id)
-  }, [target])
+  }, [y, m, d, hh, mm])
 
   const groomShort = data.couple.groom.firstName
   const brideShort = data.couple.bride.firstName
@@ -58,7 +61,7 @@ export default function CountdownSection({ data }: Props) {
         </h2>
       </div>
 
-      {time.isPast ? (
+      {time?.isPast ? (
         <div className="mt-10 text-center">
           <p className="font-serif text-4xl font-medium" style={{ color: 'var(--p-strong)' }}>
             결혼식이 시작되었어요
@@ -71,10 +74,10 @@ export default function CountdownSection({ data }: Props) {
         <>
           <div className="mt-10 grid grid-cols-4 gap-2">
             {[
-              { label: 'Days', value: time.days },
-              { label: 'Hour', value: time.hours },
-              { label: 'Min', value: time.minutes },
-              { label: 'Sec', value: time.seconds },
+              { label: 'Days', value: time?.days },
+              { label: 'Hour', value: time?.hours },
+              { label: 'Min', value: time?.minutes },
+              { label: 'Sec', value: time?.seconds },
             ].map((t) => (
               <div
                 key={t.label}
@@ -84,7 +87,7 @@ export default function CountdownSection({ data }: Props) {
                   className="font-serif text-2xl font-semibold tabular-nums"
                   style={{ color: 'var(--p-strong)' }}
                 >
-                  {String(t.value).padStart(2, '0')}
+                  {t.value === undefined ? '--' : String(t.value).padStart(2, '0')}
                 </p>
                 <p className="mt-1 text-[10px] tracking-[0.2em] uppercase text-neutral-500">
                   {t.label}
@@ -99,7 +102,7 @@ export default function CountdownSection({ data }: Props) {
             결혼식이
             <br />
             <span className="font-semibold" style={{ color: 'var(--p-strong)' }}>
-              {time.days}일
+              {time ? `${time.days}일` : '···'}
             </span>{' '}
             남았습니다
           </p>

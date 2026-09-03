@@ -23,11 +23,11 @@ export function withDisplayDefaults(data: InvitationData): InvitationData {
     ogDescription: data.ogDescription || '초대합니다',
     couple: {
       groom: fillPerson(c.groom, { lastName: '김', firstName: '민준', contact: '010-1234-5678' }),
-      groomFather: fillParent(c.groomFather, { lastName: '김', firstName: '상철' }),
-      groomMother: fillParent(c.groomMother, { lastName: '이', firstName: '영희' }),
+      groomFather: fillParent(c.groomFather, { lastName: '김', firstName: '상철', contact: '010-2222-3333' }),
+      groomMother: fillParent(c.groomMother, { lastName: '이', firstName: '영희', contact: '010-3333-4444' }),
       bride: fillPerson(c.bride, { lastName: '이', firstName: '서연', contact: '010-8765-4321' }),
-      brideFather: fillParent(c.brideFather, { lastName: '이', firstName: '대호' }),
-      brideMother: fillParent(c.brideMother, { lastName: '박', firstName: '미경' }),
+      brideFather: fillParent(c.brideFather, { lastName: '이', firstName: '대호', contact: '010-4444-5555' }),
+      brideMother: fillParent(c.brideMother, { lastName: '박', firstName: '미경', contact: '010-5555-6666' }),
     },
     ceremony: {
       ...data.ceremony,
@@ -35,6 +35,7 @@ export function withDisplayDefaults(data: InvitationData): InvitationData {
       time: data.ceremony.time || '14:00',
       venueName: data.ceremony.venueName || '그랜드 웨딩홀',
       venueAddress: data.ceremony.venueAddress || '서울시 강남구 테헤란로 123',
+      venueZipcode: data.ceremony.venueZipcode || '06133',
       venueHall: data.ceremony.venueHall || '2층 로즈홀',
     },
   }
@@ -53,11 +54,12 @@ function fillPerson(
 
 function fillParent(
   p: ParentInfo,
-  fb: { lastName: string; firstName: string }
+  fb: { lastName: string; firstName: string; contact: string }
 ): ParentInfo {
   return {
     ...p,
     lastName: p.lastName || fb.lastName,
     firstName: p.firstName || fb.firstName,
+    contact: p.contact || fb.contact,
   }
 }
