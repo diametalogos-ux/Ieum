@@ -4,6 +4,7 @@ import { useEffect, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { EditorProvider } from '@/components/editor/EditorContext'
 import type { PaletteKey } from '@/components/editor/EditorContext'
+import type { InvitationStatus } from '@/lib/invitations/types'
 import EditorTopBar from '@/components/editor/EditorTopBar'
 import EditorPanel from '@/components/editor/EditorPanel'
 import EditorPreview from '@/components/editor/EditorPreview'
@@ -20,11 +21,15 @@ export default function EditorPage({ params }: Props) {
   const { id } = use(params)
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
-  const [previewOpen, setPreviewOpen] = useState(false)
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'notfound' }
-    | { status: 'ready'; data: InvitationData; palette: PaletteKey }
+    | {
+        status: 'ready'
+        data: InvitationData
+        palette: PaletteKey
+        publishStatus: InvitationStatus
+      }
   >({ status: 'loading' })
 
   useEffect(() => {
@@ -58,6 +63,7 @@ export default function EditorPage({ params }: Props) {
         status: 'ready',
         data: stored.data,
         palette: stored.palette,
+        publishStatus: stored.status,
       })
     })()
   }, [id, user, authLoading, router])
@@ -87,23 +93,20 @@ export default function EditorPage({ params }: Props) {
   }
 
   return (
-    <EditorProvider initialData={state.data} initialPalette={state.palette}>
+    <EditorProvider
+      initialData={state.data}
+      initialPalette={state.palette}
+      initialStatus={state.publishStatus}
+    >
       <div className="flex h-[100dvh] flex-col bg-white">
-        <EditorTopBar
-          onTogglePreview={() => setPreviewOpen((v) => !v)}
-          previewOpen={previewOpen}
-        />
+        <EditorTopBar />
 
         <div className="flex flex-1 overflow-hidden">
-          <div
-            className={`w-full flex-shrink-0 border-r border-neutral-100 md:w-[420px] ${
-              previewOpen ? 'hidden md:block' : 'block'
-            }`}
-          >
+          <div className="w-full flex-shrink-0 border-r border-neutral-100 md:w-[420px]">
             <EditorPanel />
           </div>
 
-          <div className={`flex-1 ${previewOpen ? 'block' : 'hidden md:block'}`}>
+          <div className="hidden flex-1 md:block">
             <EditorPreview />
           </div>
         </div>

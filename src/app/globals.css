@@ -209,3 +209,17 @@ body {
 .intro-fade { animation: intro-fade 1.2s ease-out both; }
 .intro-slide { animation: intro-slide 1s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .intro-zoom { animation: intro-zoom 1s ease-out both; }
+
+/*
+ * iOS Safari zoom-on-focus 방지.
+ * 터치 디바이스에서만 input/select/textarea 폰트를 16px 로 강제 → 자동 확대 안 됨.
+ * 데스크탑은 원본 디자인 폰트 유지.
+ */
+@media (hover: none) and (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+

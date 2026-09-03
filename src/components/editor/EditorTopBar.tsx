@@ -4,15 +4,11 @@ import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useEditor } from './EditorContext'
 import { updateInvitation } from '@/lib/invitations/client'
-
-type Props = {
-  onTogglePreview?: () => void
-  previewOpen?: boolean
-}
+import PublishButton from './PublishButton'
 
 const AUTOSAVE_DEBOUNCE_MS = 10000
 
-export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
+export default function EditorTopBar() {
   const { data, palette, isDirty, saveTick, markSaved } = useEditor()
   const [saving, setSaving] = useState(false)
   const [savedAt, setSavedAt] = useState<Date | null>(null)
@@ -138,24 +134,19 @@ export default function EditorTopBar({ onTogglePreview, previewOpen }: Props) {
         </div>
 
         <div className="flex flex-shrink-0 items-center gap-1.5">
-          {onTogglePreview && (
-            <button
-              type="button"
-              onClick={onTogglePreview}
-              className={`flex h-9 items-center gap-1.5 rounded-full border px-3 text-xs font-medium transition-colors md:hidden ${
-                previewOpen
-                  ? 'border-neutral-900 bg-neutral-900 text-white'
-                  : 'border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50'
-              }`}
-              aria-pressed={previewOpen}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              미리보기
-            </button>
-          )}
+          {/* 모바일: 미리보기 = 실제 청첩장 페이지로 이동 (데스크탑은 우측에 이미 프레임 있음) */}
+          <Link
+            href={`/invite/${data.slug}?edit=1`}
+            className="flex h-9 items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-50 md:hidden"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            미리보기
+          </Link>
+
+          <PublishButton />
 
           <Link
             href={`/invite/${data.slug}`}

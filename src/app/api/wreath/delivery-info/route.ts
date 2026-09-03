@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getInvitationBySlug } from '@/lib/invitations/server'
+import { getInvitationBySlugAdmin } from '@/lib/invitations/server'
 import { buildDeliveryPayload } from '@/lib/wreath'
 import { sampleInvitation } from '@/lib/mock/sample-invitation'
 
@@ -19,11 +19,12 @@ async function handle(request: Request) {
     )
   }
 
-  // 데모용 sample 슬러그는 mock 반환
+  // 데모용 sample 슬러그는 mock 반환.
+  // 그 외는 admin 클라이언트로 조회 — 꽃비 서버는 인증 없이 호출하므로 RLS 우회 필요.
   const stored =
     slug === 'sample'
       ? { data: sampleInvitation }
-      : await getInvitationBySlug(slug)
+      : await getInvitationBySlugAdmin(slug)
 
   if (!stored) {
     return NextResponse.json(

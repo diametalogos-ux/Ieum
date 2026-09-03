@@ -9,6 +9,7 @@ import {
 } from 'react'
 import type { ReactNode } from 'react'
 import type { InvitationData } from '@/types/invitation'
+import type { InvitationStatus } from '@/lib/invitations/types'
 
 export type PaletteKey = 'pink' | 'beige' | 'green' | 'gray' | 'purple'
 
@@ -17,9 +18,11 @@ type ListKey = 'gallery' | 'transport' | 'notices' | 'accounts'
 type EditorContextValue = {
   data: InvitationData
   palette: PaletteKey
+  status: InvitationStatus
   isDirty: boolean
   saveTick: number
   setPalette: (p: PaletteKey) => void
+  setStatus: (s: InvitationStatus) => void
   update: <K extends keyof InvitationData>(key: K, value: InvitationData[K]) => void
   updateCouple: (patch: Partial<InvitationData['couple']>) => void
   updateCeremony: (patch: Partial<InvitationData['ceremony']>) => void
@@ -41,16 +44,19 @@ const EditorContext = createContext<EditorContextValue | null>(null)
 type ProviderProps = {
   initialData: InvitationData
   initialPalette?: PaletteKey
+  initialStatus?: InvitationStatus
   children: ReactNode
 }
 
 export function EditorProvider({
   initialData,
   initialPalette = 'pink',
+  initialStatus = 'draft',
   children,
 }: ProviderProps) {
   const [data, setData] = useState<InvitationData>(initialData)
   const [palette, setPalette] = useState<PaletteKey>(initialPalette)
+  const [status, setStatus] = useState<InvitationStatus>(initialStatus)
   const [isDirty, setIsDirty] = useState(false)
   const [saveTick, setSaveTick] = useState(0)
 
@@ -153,9 +159,11 @@ export function EditorProvider({
     () => ({
       data,
       palette,
+      status,
       isDirty,
       saveTick,
       setPalette: handleSetPalette,
+      setStatus,
       update,
       updateCouple,
       updateCeremony,
@@ -170,6 +178,7 @@ export function EditorProvider({
     [
       data,
       palette,
+      status,
       isDirty,
       saveTick,
       handleSetPalette,
