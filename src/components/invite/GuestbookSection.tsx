@@ -1,8 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import type { InvitationData, GuestbookItem } from '@/types/invitation'
+import { useEffect, useState } from 'react'
+import type { InvitationData } from '@/types/invitation'
 import { sampleGuestbook } from '@/lib/mock/sample-invitation'
+import {
+  listGuestbookByInvitation,
+  submitGuestbook,
+  type GuestbookEntry,
+} from '@/lib/guestbook/client'
 
 type Props = { data: InvitationData }
 
@@ -23,33 +28,56 @@ function formatDate(iso: string) {
   return `${d.getMonth() + 1}. ${d.getDate()}`
 }
 
-export default function GuestbookSection({ data: _data }: Props) {
-  const [entries, setEntries] = useState<GuestbookItem[]>(sampleGuestbook)
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+export default function GuestbookSection({ data }: Props) {
+  const isDemo = !UUID_RE.test(data.id)
+  const [entries, setEntries] = useState<GuestbookEntry[]>(() =>
+    isDemo
+      ? sampleGuestbook.map((s) => ({
+          id: s.id,
+          invitationId: data.id,
+          name: s.name,
+          message: s.message,
+          createdAt: s.createdAt,
+        }))
+      : []
+  )
   const [name, setName] = useState('')
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [justSubmitted, setJustSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const canSubmit = name.trim().length > 0 && message.trim().length > 0 && !submitting
+  useEffect(() => {
+    if (isDemo) return
+    void listGuestbookByInvitation(data.id).then(setEntries)
+  }, [data.id, isDemo])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const canSubmit =
+    name.trim().length > 0 && message.trim().length > 0 && !submitting
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!canSubmit) return
     setSubmitting(true)
-    setTimeout(() => {
-      const newEntry: GuestbookItem = {
-        id: `gb-${Date.now()}`,
-        name: name.trim(),
-        message: message.trim(),
-        createdAt: new Date().toISOString(),
-      }
-      setEntries((prev) => [newEntry, ...prev])
-      setName('')
-      setMessage('')
-      setSubmitting(false)
-      setJustSubmitted(true)
-      setTimeout(() => setJustSubmitted(false), 2000)
-    }, 400)
+    setError(null)
+    const result = await submitGuestbook({
+      invitationId: data.id,
+      name: name.trim(),
+      message: message.trim(),
+    })
+    setSubmitting(false)
+    if (!result.ok) {
+      setError(result.error)
+      return
+    }
+    setEntries((prev) => [result.entry, ...prev])
+    setName('')
+    setMessage('')
+    setJustSubmitted(true)
+    setTimeout(() => setJustSubmitted(false), 2000)
   }
 
   return (
@@ -137,6 +165,11 @@ export default function GuestbookSection({ data: _data }: Props) {
               </span>
             )}
           </div>
+          {error && (
+            <p className="rounded-lg bg-red-50 px-3 py-2 text-[11px] text-red-600">
+              {error}
+            </p>
+          )}
         </div>
         <button
           type="submit"

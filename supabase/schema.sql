@@ -58,6 +58,20 @@ CREATE TABLE IF NOT EXISTS public.rsvp (
 
 CREATE INDEX IF NOT EXISTS rsvp_invitation_id_idx ON public.rsvp(invitation_id);
 
+-- 1-4-1. rsvp 스키마 확장 (기존 테이블에도 안전하게 추가)
+ALTER TABLE public.rsvp ADD COLUMN IF NOT EXISTS side TEXT NOT NULL DEFAULT 'groom';
+ALTER TABLE public.rsvp ADD COLUMN IF NOT EXISTS contact TEXT;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'rsvp_side_check'
+  ) THEN
+    ALTER TABLE public.rsvp
+      ADD CONSTRAINT rsvp_side_check CHECK (side IN ('groom', 'bride'));
+  END IF;
+END $$;
+
 
 -- ============================================
 -- 2. RLS 활성화

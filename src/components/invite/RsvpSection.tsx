@@ -2,39 +2,63 @@
 
 import { useState } from 'react'
 import type { InvitationData } from '@/types/invitation'
+import { submitRsvp, type RsvpSide } from '@/lib/rsvp/client'
 
 type Props = { data: InvitationData }
 type Attendance = 'attend' | 'absent'
 type Meal = 'yes' | 'no'
 
-export default function RsvpSection({ data: _data }: Props) {
+export default function RsvpSection({ data }: Props) {
+  const [side, setSide] = useState<RsvpSide | null>(null)
   const [attendance, setAttendance] = useState<Attendance | null>(null)
   const [name, setName] = useState('')
+  const [contact, setContact] = useState('')
   const [headcount, setHeadcount] = useState(1)
   const [meal, setMeal] = useState<Meal>('yes')
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const canSubmit = attendance !== null && name.trim().length > 0 && !submitting
+  const canSubmit =
+    side !== null &&
+    attendance !== null &&
+    name.trim().length > 0 &&
+    !submitting
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!canSubmit) return
+    if (!canSubmit || attendance === null || side === null) return
     setSubmitting(true)
-    setTimeout(() => {
-      setSubmitted(true)
-      setSubmitting(false)
-    }, 400)
+    setError(null)
+    const result = await submitRsvp({
+      invitationId: data.id,
+      side,
+      name: name.trim(),
+      contact: contact.trim(),
+      attendance,
+      headcount: attendance === 'attend' ? headcount : 1,
+      meal: attendance === 'attend' ? meal : null,
+      message: message.trim(),
+    })
+    setSubmitting(false)
+    if (!result.ok) {
+      setError(result.error)
+      return
+    }
+    setSubmitted(true)
   }
 
   const handleReset = () => {
+    setSide(null)
     setAttendance(null)
     setName('')
+    setContact('')
     setHeadcount(1)
     setMeal('yes')
     setMessage('')
     setSubmitted(false)
+    setError(null)
   }
 
   if (submitted) {
@@ -107,6 +131,37 @@ export default function RsvpSection({ data: _data }: Props) {
       </div>
 
       <form onSubmit={handleSubmit} className="mt-10 space-y-5">
+        {/* 구분: 신랑측/신부측 */}
+        <div>
+          <p className="text-[11px] font-medium text-neutral-700">구분</p>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {[
+              { value: 'groom' as RsvpSide, label: '신랑측', tone: 'sky' as const },
+              { value: 'bride' as RsvpSide, label: '신부측', tone: 'rose' as const },
+            ].map((opt) => {
+              const active = side === opt.value
+              const activeStyle =
+                opt.tone === 'sky'
+                  ? 'border-sky-500 bg-sky-500 text-white'
+                  : 'border-rose-500 bg-rose-500 text-white'
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setSide(opt.value)}
+                  className={`rounded-lg border py-3 text-sm font-medium transition-colors ${
+                    active
+                      ? activeStyle
+                      : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
         {/* 참석/미참석 */}
         <div>
           <p className="text-[11px] font-medium text-neutral-700">참석 여부</p>
@@ -144,6 +199,21 @@ export default function RsvpSection({ data: _data }: Props) {
             onChange={(e) => setName(e.target.value)}
             placeholder="홍길동"
             maxLength={20}
+            className="mt-2 block w-full rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-800 placeholder-neutral-400 focus:border-neutral-400 focus:outline-none"
+          />
+        </div>
+
+        {/* 연락처 (선택) */}
+        <div>
+          <p className="text-[11px] font-medium text-neutral-700">
+            연락처 <span className="text-neutral-400">(선택)</span>
+          </p>
+          <input
+            type="tel"
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
+            placeholder="010-0000-0000"
+            maxLength={13}
             className="mt-2 block w-full rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-800 placeholder-neutral-400 focus:border-neutral-400 focus:outline-none"
           />
         </div>
@@ -225,6 +295,12 @@ export default function RsvpSection({ data: _data }: Props) {
             className="mt-2 block w-full resize-none rounded-lg border border-neutral-200 bg-white px-3 py-2.5 text-sm text-neutral-800 placeholder-neutral-400 focus:border-neutral-400 focus:outline-none"
           />
         </div>
+
+        {error && (
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-[11px] text-red-600">
+            {error}
+          </p>
+        )}
 
         <button
           type="submit"
