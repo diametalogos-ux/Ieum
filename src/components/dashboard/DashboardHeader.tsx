@@ -44,7 +44,7 @@ export default function DashboardHeader() {
           href="/dashboard"
           className="font-serif text-xl font-semibold tracking-tight text-neutral-900"
         >
-          이음
+          이음💜
         </Link>
 
         <div className="relative" ref={menuRef}>
