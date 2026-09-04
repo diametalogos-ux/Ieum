@@ -1,9 +1,9 @@
 import Link from 'next/link'
 
 const stats = [
-  { num: '3,200+', label: '커플이 선택' },
-  { num: '5분', label: '평균 제작 시간' },
   { num: '100%', label: '완전 무료' },
+  { num: '5분', label: '이면 완성' },
+  { num: '평생', label: '무제한 소장' },
 ]
 
 function CardMockup() {

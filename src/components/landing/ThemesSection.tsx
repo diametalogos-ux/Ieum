@@ -1,14 +1,20 @@
+import Link from 'next/link'
+
 const themes = [
-  { name: 'Romantic', bg: 'linear-gradient(140deg,#fff0f4 0%,#fddde6 100%)', accent: '#d9748b' },
-  { name: 'Modern',   bg: 'linear-gradient(140deg,#f5f5f5 0%,#e8e8e8 100%)', accent: '#525252' },
-  { name: 'Garden',   bg: 'linear-gradient(140deg,#f0f9f0 0%,#dcefd8 100%)', accent: '#6b9b6b' },
-  { name: 'Vintage',  bg: 'linear-gradient(140deg,#fdf8ee 0%,#f0e4c8 100%)', accent: '#b39960' },
-  { name: 'Minimal',  bg: 'linear-gradient(140deg,#fafafa 0%,#efefef 100%)', accent: '#404040' },
-  { name: 'Luxury',   bg: 'linear-gradient(140deg,#fefae8 0%,#f0e0b0 100%)', accent: '#a88b3a' },
-  { name: 'Bohemian', bg: 'linear-gradient(140deg,#fdf0e8 0%,#edd8c4 100%)', accent: '#b08268' },
-  { name: 'Classic',  bg: 'linear-gradient(140deg,#eef3fc 0%,#d4e4f8 100%)', accent: '#5b7ab3' },
-  { name: 'Floral',   bg: 'linear-gradient(140deg,#fdf0f8 0%,#f4d4ec 100%)', accent: '#c07ab0' },
-  { name: 'Elegant',  bg: 'linear-gradient(140deg,#f5f0fc 0%,#e4d4f8 100%)', accent: '#8a6fc0' },
+  {
+    category: 'Photo',
+    name: 'Blush',
+    bg: 'linear-gradient(140deg,#fff0f4 0%,#fddde6 100%)',
+    accent: '#d9748b',
+    available: true,
+  },
+  {
+    category: 'Typography',
+    name: 'Ink',
+    bg: 'linear-gradient(140deg,#f5f5f5 0%,#e8e8e8 100%)',
+    accent: '#525252',
+    available: false,
+  },
 ]
 
 export default function ThemesSection() {
@@ -25,24 +31,31 @@ export default function ThemesSection() {
             테마를 골라보세요
           </h2>
           <p className="mt-5 text-base text-neutral-500">
-            10가지 감성 테마, 모두 무료로 제공해요
+            지금은 <strong className="font-semibold text-neutral-700">Photo · Blush</strong> 가 준비되어 있어요
+            <br />
+            더 다양한 레이아웃과 무드가 계속 추가될 예정이에요
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
           {themes.map((t) => (
-            <button
+            <div
               key={t.name}
-              type="button"
-              className="group overflow-hidden rounded-2xl bg-white text-left ring-1 ring-neutral-100 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/40"
+              className={`group relative overflow-hidden rounded-2xl bg-white text-left ring-1 ring-neutral-100 transition-all ${
+                t.available
+                  ? 'hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/40'
+                  : ''
+              }`}
             >
               <div
-                className="relative flex h-40 items-center justify-center overflow-hidden"
+                className={`relative flex h-56 items-center justify-center overflow-hidden ${
+                  t.available ? '' : 'opacity-60 grayscale'
+                }`}
                 style={{ background: t.bg }}
               >
                 <div className="flex w-full flex-col items-center gap-2 px-6">
                   <div
-                    className="font-serif text-lg font-semibold tracking-wide"
+                    className="font-serif text-xl font-semibold tracking-wide"
                     style={{ color: t.accent }}
                   >
                     M &amp; S
@@ -52,19 +65,46 @@ export default function ThemesSection() {
                     2026 · 05 · 18
                   </div>
                 </div>
+
+                <div className="absolute top-3 left-3">
+                  {t.available ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/95 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur">
+                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                      사용 가능
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-neutral-800/70 px-2.5 py-1 text-[10px] font-medium tracking-wider text-white backdrop-blur">
+                      COMING SOON
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="border-t border-neutral-100 bg-white px-4 py-3">
-                <span className="text-xs font-semibold tracking-widest text-neutral-600 uppercase">
+                <p className="text-[9px] font-medium tracking-[0.2em] text-neutral-400 uppercase">
+                  {t.category}
+                </p>
+                <p className="font-serif mt-0.5 text-sm font-semibold text-neutral-900">
                   {t.name}
-                </span>
+                </p>
               </div>
-            </button>
+            </div>
           ))}
         </div>
 
-        <p className="mt-10 text-center text-xs text-neutral-400">
-          더 다양한 테마가 계속 추가될 예정이에요
-        </p>
+        <div className="mt-10 flex flex-col items-center gap-2">
+          <Link
+            href="/themes"
+            className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-5 py-2.5 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-50"
+          >
+            전체 테마 보기
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </Link>
+          <p className="text-xs text-neutral-400">
+            더 다양한 테마가 계속 추가될 예정이에요
+          </p>
+        </div>
       </div>
     </section>
   )

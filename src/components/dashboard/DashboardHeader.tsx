@@ -41,7 +41,7 @@ export default function DashboardHeader() {
     <header className="sticky top-0 z-40 border-b border-neutral-100 bg-white/90 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6 md:px-8">
         <Link
-          href="/dashboard"
+          href="/"
           className="font-serif text-xl font-semibold tracking-tight text-neutral-900"
         >
           이음

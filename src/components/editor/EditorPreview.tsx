@@ -48,9 +48,9 @@ export default function EditorPreview() {
               {view.features.transport && <LocationSection data={view} />}
               {view.features.notice && <NoticeSection data={view} />}
               {view.features.account && <AccountSection data={view} />}
+              {view.features.flowerOrder && <FlowerOrderSection data={view} />}
               {view.features.guestbook && <GuestbookSection data={view} />}
               {view.features.rsvp && <RsvpSection data={view} />}
-              {view.features.flowerOrder && <FlowerOrderSection data={view} />}
               <ShareSection data={view} />
             </div>
           </div>

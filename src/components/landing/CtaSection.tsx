@@ -46,9 +46,9 @@ export default function CtaSection() {
         </div>
 
         <p className="mt-10 text-xs text-neutral-500">
-          이미{' '}
-          <strong className="font-semibold text-neutral-300">3,200+</strong>쌍의
-          커플이 이음을 선택했어요
+          결혼 준비의 시작을{' '}
+          <strong className="font-semibold text-neutral-300">가장 정성스럽게</strong>{' '}
+          함께할게요
         </p>
       </div>
     </section>

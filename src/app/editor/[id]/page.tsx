@@ -42,7 +42,12 @@ export default function EditorPage({ params }: Props) {
     // /editor/new 로 들어오면 새로 만들고 실제 id로 replace
     if (id === 'new') {
       ;(async () => {
-        const result = await createInvitation()
+        const themeKey =
+          typeof window !== 'undefined'
+            ? new URLSearchParams(window.location.search).get('theme') ??
+              undefined
+            : undefined
+        const result = await createInvitation({ themeKey })
         if (!result.ok) {
           alert(result.error)
           router.replace('/dashboard')

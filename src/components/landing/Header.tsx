@@ -7,8 +7,6 @@ import { useAuth } from '@/components/providers/AuthProvider'
 
 const navItems = [
   { label: '기능', href: '#features' },
-  { label: '테마', href: '#themes' },
-  { label: '후기', href: '#reviews' },
 ]
 
 export default function Header() {
@@ -82,10 +80,10 @@ export default function Header() {
             </Link>
           ))}
           <Link
-            href="/invite/sample"
+            href="/themes"
             className="text-sm text-neutral-600 transition-colors hover:text-neutral-900"
           >
-            샘플
+            테마
           </Link>
         </nav>
 
@@ -131,10 +129,10 @@ export default function Header() {
         {/* 모바일 우측: 텍스트 링크 2개 + 햄버거 */}
         <div className="relative flex items-center gap-1 md:hidden" ref={dropdownRef}>
           <Link
-            href="/invite/sample"
+            href="/themes"
             className="px-2.5 py-2 text-[13px] text-neutral-600 transition-colors hover:text-neutral-900"
           >
-            샘플
+            테마
           </Link>
           {loading ? (
             <span className="px-2.5 py-2 text-[13px] text-transparent">로그인</span>

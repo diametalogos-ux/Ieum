@@ -26,6 +26,15 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!loading && !user) {
       router.replace('/login')
+      return
+    }
+    // OAuth 로그인 후 sessionStorage에 저장된 next 경로가 있으면 그리로 이동
+    if (!loading && user && typeof window !== 'undefined') {
+      const next = sessionStorage.getItem('post_login_next')
+      if (next && next.startsWith('/') && !next.startsWith('//')) {
+        sessionStorage.removeItem('post_login_next')
+        router.replace(next)
+      }
     }
   }, [loading, user, router])
 

@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 import { emptyInvitation } from '@/lib/mock/empty-invitation'
+import { getThemePreset } from '@/lib/themes/presets'
 import type { InvitationData } from '@/types/invitation'
 import type { PaletteKey } from '@/components/editor/EditorContext'
 import {
@@ -49,8 +50,14 @@ export async function getInvitationById(
   return rowToStored(data as InvitationRow)
 }
 
-/** 빈 청첩장 생성 → { id, slug } 반환 */
-export async function createInvitation(): Promise<
+export type CreateInvitationOptions = {
+  themeKey?: string
+}
+
+/** 빈 청첩장 생성 → { id, slug } 반환. themeKey 주면 해당 테마 프리셋 적용 */
+export async function createInvitation(
+  options?: CreateInvitationOptions
+): Promise<
   { ok: true; id: string; slug: string } | { ok: false; error: string }
 > {
   const supabase = createClient()
@@ -60,11 +67,15 @@ export async function createInvitation(): Promise<
   } = await supabase.auth.getUser()
   if (userErr || !user) return { ok: false, error: '로그인이 필요합니다.' }
 
+  const preset = getThemePreset(options?.themeKey)
+  const palette: PaletteKey = preset?.palette ?? 'pink'
+
   // 슬러그 충돌 대비 최대 3번 재시도
   for (let attempt = 0; attempt < 3; attempt++) {
     const slug = generateSlug()
     const draftContent: InvitationData = {
       ...emptyInvitation,
+      ...(preset?.data ?? {}),
       userId: user.id,
       slug,
       createdAt: new Date().toISOString(),
@@ -78,7 +89,7 @@ export async function createInvitation(): Promise<
         slug,
         title: '새 청첩장',
         status: 'draft',
-        palette: 'pink',
+        palette,
         content: draftContent,
       })
       .select('id, slug')

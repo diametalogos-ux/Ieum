@@ -3,6 +3,7 @@
 import { use, useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import * as XLSX from 'xlsx'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { getInvitationById } from '@/lib/invitations/client'
 import type { StoredInvitation } from '@/lib/invitations/types'
@@ -99,9 +100,9 @@ export default function InvitationManagePage({ params }: Props) {
     setGuestbook((prev) => prev.filter((g) => g.id !== gbId))
   }
 
-  const handleDownloadCsv = () => {
-    const filename = `참석여부_${invitation?.data.title ?? id}_${todayStr()}.csv`
-    downloadCsv(filename, buildRsvpCsv(filteredRsvps))
+  const handleDownloadExcel = () => {
+    const filename = `참석여부_${invitation?.data.title ?? id}_${todayStr()}.xlsx`
+    downloadRsvpXlsx(filename, filteredRsvps)
   }
 
   if (loading || authLoading) {
@@ -263,7 +264,7 @@ export default function InvitationManagePage({ params }: Props) {
                 </div>
                 <button
                   type="button"
-                  onClick={handleDownloadCsv}
+                  onClick={handleDownloadExcel}
                   disabled={filteredRsvps.length === 0}
                   className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-[11px] font-medium text-neutral-700 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
                 >
@@ -403,7 +404,7 @@ function computeStats(rsvps: RsvpEntry[]): AllStats {
 }
 
 /* ============================================
-   CSV
+   Excel(.xlsx)
    ============================================ */
 
 function todayStr() {
@@ -412,15 +413,8 @@ function todayStr() {
   return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`
 }
 
-function csvCell(v: string | number | null | undefined): string {
-  const s = v === null || v === undefined ? '' : String(v)
-  if (/[,"\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`
-  return s
-}
-
-function buildRsvpCsv(entries: RsvpEntry[]): string {
-  const BOM = '﻿' // Excel Korean 지원
-  const header = [
+function downloadRsvpXlsx(filename: string, entries: RsvpEntry[]) {
+  const headers = [
     '구분',
     '성함',
     '연락처',
@@ -429,40 +423,40 @@ function buildRsvpCsv(entries: RsvpEntry[]): string {
     '식사 여부',
     '메시지',
     '작성일',
-  ].join(',')
-  const rows = entries.map((r) =>
-    [
-      r.side === 'groom' ? '신랑측' : '신부측',
-      r.name,
-      r.contact ?? '',
-      r.attendance === 'attend' ? '참석' : '미참석',
-      r.attendance === 'attend' ? r.headcount : '',
-      r.attendance === 'attend'
-        ? r.meal === 'yes'
-          ? '식사함'
-          : r.meal === 'no'
-          ? '식사안함'
-          : ''
-        : '',
-      r.message ?? '',
-      new Date(r.createdAt).toLocaleString('ko-KR'),
-    ]
-      .map(csvCell)
-      .join(',')
-  )
-  return BOM + [header, ...rows].join('\r\n')
-}
+  ]
+  const rows = entries.map((r) => [
+    r.side === 'groom' ? '신랑측' : '신부측',
+    r.name,
+    r.contact ?? '',
+    r.attendance === 'attend' ? '참석' : '미참석',
+    r.attendance === 'attend' ? r.headcount : '',
+    r.attendance === 'attend'
+      ? r.meal === 'yes'
+        ? '식사함'
+        : r.meal === 'no'
+        ? '식사안함'
+        : ''
+      : '',
+    r.message ?? '',
+    new Date(r.createdAt).toLocaleString('ko-KR'),
+  ])
 
-function downloadCsv(filename: string, csv: string) {
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  // 열 너비 자동 조정 (대략적)
+  ws['!cols'] = [
+    { wch: 8 },  // 구분
+    { wch: 12 }, // 성함
+    { wch: 15 }, // 연락처
+    { wch: 10 }, // 참석 여부
+    { wch: 8 },  // 인원
+    { wch: 10 }, // 식사
+    { wch: 40 }, // 메시지
+    { wch: 20 }, // 작성일
+  ]
+
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, '참석여부')
+  XLSX.writeFile(wb, filename)
 }
 
 /* ============================================

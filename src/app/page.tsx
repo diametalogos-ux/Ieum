@@ -4,7 +4,6 @@ import HowItWorksSection from '@/components/landing/HowItWorksSection'
 import FeaturesSection from '@/components/landing/FeaturesSection'
 import ThemesSection from '@/components/landing/ThemesSection'
 import SamplePreviewSection from '@/components/landing/SamplePreviewSection'
-import ReviewsSection from '@/components/landing/ReviewsSection'
 import CtaSection from '@/components/landing/CtaSection'
 import Footer from '@/components/landing/Footer'
 
@@ -17,7 +16,6 @@ export default function HomePage() {
       <FeaturesSection />
       <ThemesSection />
       <SamplePreviewSection />
-      <ReviewsSection />
       <CtaSection />
       <Footer />
     </main>

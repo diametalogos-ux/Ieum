@@ -30,6 +30,7 @@ function normalizeTel(raw: string): string {
 }
 
 /**
+
  * 커플 정보에서 꽃비 receiver[] 배열 생성.
  * 6명(신랑/신부 + 양가 부모) 중:
  * - 이름이 있는 사람만 포함
@@ -132,8 +133,12 @@ export function buildDeliveryPayload(
 
 /**
  * 화환 주문을 위한 꽃비 상점 URL 생성.
- * 하객이 이 URL로 이동하면 꽃비 서버가 우리 delivery_url 에 POST해서 배송지·수령인을 채워옴.
+ * 꽃비 홈 페이지(`/gb/home`)의 카테고리 버튼은 agency 파라미터를 유지하지 않으므로
+ * **축하화환 카테고리(id=9) 로 직접 진입** + `hide_product_category=true` 로 상단 분류 숨김.
+ * 이래야 하객이 클릭 도중 컨텍스트를 잃지 않고, delivery_url 파라미터가 주문 폼까지 그대로 흐름.
  */
+const CATEGORY_ID_CONGRATS = 9 // 축하화환 (API 문서 기준 categories.id)
+
 export function buildShopUrl(inviteSlug: string, siteOrigin: string): string {
   const deliveryUrl = `${siteOrigin}/api/wreath/delivery-info?invite=${encodeURIComponent(
     inviteSlug
@@ -141,8 +146,9 @@ export function buildShopUrl(inviteSlug: string, siteOrigin: string): string {
   const params = new URLSearchParams({
     agencyid: FLOWERBIZ_AGENCY_ID,
     delivery_url: deliveryUrl,
+    hide_product_category: 'true',
   })
-  return `${FLOWERBIZ_SHOP_URL}/gb/home?${params.toString()}`
+  return `${FLOWERBIZ_SHOP_URL}/gb/products/product-category/${CATEGORY_ID_CONGRATS}?${params.toString()}`
 }
 
 /** 화환 주문에 필요한 최소 정보가 갖춰져 있는지 */

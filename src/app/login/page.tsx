@@ -2,16 +2,33 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/components/providers/AuthProvider'
+
+function readNextParam(): string {
+  if (typeof window === 'undefined') return '/dashboard'
+  const raw = new URLSearchParams(window.location.search).get('next')
+  // open-redirect 방지 — 절대 URL/외부 링크 차단, 내부 경로만 허용
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return '/dashboard'
+  return raw
+}
 
 export default function LoginPage() {
   const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
   const [supabase] = useState(() => createClient())
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // 이미 로그인된 유저는 next(또는 dashboard)로 자동 이동
+  useEffect(() => {
+    if (authLoading) return
+    if (!user) return
+    router.replace(readNextParam())
+  }, [authLoading, user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,7 +51,7 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/dashboard')
+    router.push(readNextParam())
     router.refresh()
   }
 
@@ -42,6 +59,12 @@ export default function LoginPage() {
     if (loading) return
     setError(null)
     setLoading(true)
+    // next 파라미터는 sessionStorage로 넘겨 OAuth 왕복에도 살아남게 함
+    // (redirectTo 에 ?next=... 붙이면 Supabase 정확 매칭 실패로 Site URL 폴백됨)
+    const next = readNextParam()
+    if (typeof window !== 'undefined' && next !== '/dashboard') {
+      sessionStorage.setItem('post_login_next', next)
+    }
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
