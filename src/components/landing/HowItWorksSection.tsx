@@ -2,7 +2,7 @@ const steps = [
   {
     num: '01',
     title: '테마 고르기',
-    desc: '10가지 감성 테마 중\n마음에 드는 스타일을 선택하세요',
+    desc: '두 사람에게 어울리는\n메인 테마를 선택하세요',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
         <rect x="3" y="3" width="7" height="7" rx="1.5" />
@@ -49,7 +49,7 @@ export default function HowItWorksSection() {
             5분이면 충분해요
           </h2>
           <p className="mt-5 text-base text-neutral-500">
-            어려운 준비 없이, 세 단계로 완성되는 우리의 이야기
+            어려운 준비 없이, <br/> 세 단계로 완성되는 우리의 이야기
           </p>
         </div>
 

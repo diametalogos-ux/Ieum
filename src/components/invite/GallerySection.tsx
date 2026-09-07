@@ -17,9 +17,12 @@ const PLACEHOLDER_GRADIENTS = [
   'linear-gradient(135deg, #f0d8d8 0%, #d4a8a8 100%)',
 ]
 
+const EMPTY_PLACEHOLDER_COUNT = 6
+
 export default function GallerySection({ data }: Props) {
   const [openIdx, setOpenIdx] = useState<number | null>(null)
-  const total = data.gallery.length
+  const isEmpty = data.gallery.length === 0
+  const total = isEmpty ? EMPTY_PLACEHOLDER_COUNT : data.gallery.length
 
   const close = useCallback(() => setOpenIdx(null), [])
   const next = useCallback(
@@ -68,31 +71,69 @@ export default function GallerySection({ data }: Props) {
       </div>
 
       <div className="mt-10 grid grid-cols-3 gap-1.5">
-        {data.gallery.map((item, idx) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setOpenIdx(idx)}
-            className="group relative aspect-square overflow-hidden rounded-sm bg-neutral-100 transition-opacity hover:opacity-90"
-            aria-label={`갤러리 ${idx + 1}번 사진 보기`}
-          >
-            {item.url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={item.url}
-                alt={`Gallery ${idx + 1}`}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div
-                className="flex h-full w-full items-center justify-center"
-                style={{ background: PLACEHOLDER_GRADIENTS[idx % PLACEHOLDER_GRADIENTS.length] }}
+        {isEmpty
+          ? Array.from({ length: EMPTY_PLACEHOLDER_COUNT }).map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setOpenIdx(idx)}
+                className="group relative aspect-square overflow-hidden rounded-sm transition-opacity hover:opacity-90"
+                aria-label={`예시 ${idx + 1}번 사진 크게 보기`}
+                style={{
+                  background:
+                    PLACEHOLDER_GRADIENTS[idx % PLACEHOLDER_GRADIENTS.length],
+                }}
               >
-                <span className="font-serif text-xs text-white/60">{idx + 1}</span>
-              </div>
-            )}
-          </button>
-        ))}
+                <div className="flex h-full w-full items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5 text-white/50"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                </div>
+              </button>
+            ))
+          : data.gallery.map((item, idx) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setOpenIdx(idx)}
+                className="group relative aspect-square overflow-hidden rounded-sm bg-neutral-100 transition-opacity hover:opacity-90"
+                aria-label={`갤러리 ${idx + 1}번 사진 보기`}
+              >
+                {item.url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.url}
+                    alt={`Gallery ${idx + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div
+                    className="flex h-full w-full items-center justify-center"
+                    style={{
+                      background:
+                        PLACEHOLDER_GRADIENTS[
+                          idx % PLACEHOLDER_GRADIENTS.length
+                        ],
+                    }}
+                  >
+                    <span className="font-serif text-xs text-white/60">
+                      {idx + 1}
+                    </span>
+                  </div>
+                )}
+              </button>
+            ))}
       </div>
 
       <p className="mt-6 text-center text-[11px] text-neutral-400">
@@ -107,7 +148,7 @@ export default function GallerySection({ data }: Props) {
           <button
             type="button"
             onClick={close}
-            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
+            className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur transition-colors hover:bg-white/30"
             aria-label="닫기"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -119,7 +160,7 @@ export default function GallerySection({ data }: Props) {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); prev() }}
-            className="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
+            className="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur transition-colors hover:bg-white/30"
             aria-label="이전 사진"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -130,7 +171,7 @@ export default function GallerySection({ data }: Props) {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); next() }}
-            className="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
+            className="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur transition-colors hover:bg-white/30"
             aria-label="다음 사진"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -139,7 +180,7 @@ export default function GallerySection({ data }: Props) {
           </button>
 
           <div className="relative aspect-[3/4] w-[85%] max-w-md" onClick={(e) => e.stopPropagation()}>
-            {data.gallery[openIdx].url ? (
+            {!isEmpty && data.gallery[openIdx]?.url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={data.gallery[openIdx].url}
@@ -148,12 +189,28 @@ export default function GallerySection({ data }: Props) {
               />
             ) : (
               <div
-                className="flex h-full w-full items-center justify-center rounded-sm"
+                className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-sm"
                 style={{
                   background: PLACEHOLDER_GRADIENTS[openIdx % PLACEHOLDER_GRADIENTS.length],
                 }}
               >
-                <span className="font-serif text-5xl text-white/60">{openIdx + 1}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-12 w-12 text-white/60"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
+                </svg>
+                <span className="font-serif text-4xl text-white/60">
+                  {openIdx + 1}
+                </span>
               </div>
             )}
           </div>

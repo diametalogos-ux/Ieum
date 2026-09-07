@@ -50,7 +50,7 @@ export default function FeaturesSection() {
             이 안에 담겨 있어요
           </h2>
           <p className="mt-5 text-base text-neutral-500">
-            제한 없이 마음껏 사용하고, 원하는 만큼 자유롭게 편집하세요
+            제한 없이 마음껏 사용하고, <br/>원하는 만큼 자유롭게 편집하세요
           </p>
         </div>
 
