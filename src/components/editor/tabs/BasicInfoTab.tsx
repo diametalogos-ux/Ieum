@@ -269,20 +269,18 @@ export default function BasicInfoTab() {
 
       {/* 6. 예식 정보 */}
       <EditorSection title="예식 정보" defaultOpen={false}>
-        <div className="grid grid-cols-2 gap-3">
-          <TextField
-            label="예식일"
-            type="date"
-            value={data.ceremony.date}
-            onChange={(e) => updateCeremony({ date: e.target.value })}
-          />
-          <TextField
-            label="예식 시간"
-            type="time"
-            value={data.ceremony.time}
-            onChange={(e) => updateCeremony({ time: e.target.value })}
-          />
-        </div>
+        <TextField
+          label="예식일"
+          type="date"
+          value={data.ceremony.date}
+          onChange={(e) => updateCeremony({ date: e.target.value })}
+        />
+        <TextField
+          label="예식 시간"
+          type="time"
+          value={data.ceremony.time}
+          onChange={(e) => updateCeremony({ time: e.target.value })}
+        />
         <TextField
           label="예식장 이름"
           value={data.ceremony.venueName}
