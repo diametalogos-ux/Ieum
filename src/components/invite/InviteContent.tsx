@@ -39,13 +39,13 @@ export default function InviteContent({
   const view = useMemo(() => withDisplayDefaults(data), [data])
 
   return (
-    <div className="min-h-screen w-full bg-neutral-100">
+    <div className="min-h-screen w-full overflow-x-hidden bg-neutral-100">
       <OwnerTopBar invitationId={data.id} slug={data.slug} />
       <div
         data-palette={palette}
         data-font={view.fontType}
         data-font-size={view.fontSize}
-        className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden bg-white"
+        className="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden overflow-y-visible bg-white"
         style={{ boxShadow: '0 0 60px rgba(0,0,0,0.08)' }}
       >
         <IntroSection data={view} />

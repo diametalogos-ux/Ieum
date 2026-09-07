@@ -28,7 +28,7 @@ export default function CalendarSection({ data }: Props) {
   const dayKo = WEEKDAYS[targetDate.getDay()]
 
   return (
-    <section className="bg-white px-8 py-20">
+    <section className="w-full overflow-hidden bg-white px-6 py-20 sm:px-8">
       <div className="text-center">
         <p
           className="text-[11px] tracking-[0.5em] uppercase"
