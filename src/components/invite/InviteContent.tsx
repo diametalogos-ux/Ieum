@@ -9,8 +9,10 @@ import IntroSection from './IntroSection'
 import GreetingSection from './GreetingSection'
 import CoupleSection from './CoupleSection'
 import CalendarSection from './CalendarSection'
+import DDaySection from './DDaySection'
 import CountdownSection from './CountdownSection'
 import GallerySection from './GallerySection'
+import PhotoDropSection from './PhotoDropSection'
 import LocationSection from './LocationSection'
 import NoticeSection from './NoticeSection'
 import AccountSection from './AccountSection'
@@ -50,8 +52,10 @@ export default function InviteContent({
         {view.features.greeting && <GreetingSection data={view} />}
         <CoupleSection data={view} />
         <CalendarSection data={view} />
+        {view.features.dday && <DDaySection data={view} />}
         {view.features.countdown && <CountdownSection data={view} />}
         {view.features.gallery && <GallerySection data={view} />}
+        {view.features.photodrop && <PhotoDropSection data={data} />}
         {view.features.transport && <LocationSection data={view} />}
         {view.features.notice && <NoticeSection data={view} />}
         {view.features.account && <AccountSection data={view} />}

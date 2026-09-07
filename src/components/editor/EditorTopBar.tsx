@@ -6,7 +6,7 @@ import { useEditor } from './EditorContext'
 import { updateInvitation } from '@/lib/invitations/client'
 import PublishButton from './PublishButton'
 
-const AUTOSAVE_DEBOUNCE_MS = 10000
+const AUTOSAVE_DEBOUNCE_MS = 30000
 
 export default function EditorTopBar() {
   const { data, palette, isDirty, saveTick, markSaved } = useEditor()

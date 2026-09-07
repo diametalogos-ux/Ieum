@@ -82,7 +82,7 @@ export const sampleInvitation: InvitationData = {
     account: true,
     guestbook: true,
     rsvp: true,
-    photodrop: false,
+    photodrop: true,
     bgm: false,
     flowerOrder: true,
   },

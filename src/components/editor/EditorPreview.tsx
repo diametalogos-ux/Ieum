@@ -7,8 +7,10 @@ import IntroSection from '@/components/invite/IntroSection'
 import GreetingSection from '@/components/invite/GreetingSection'
 import CoupleSection from '@/components/invite/CoupleSection'
 import CalendarSection from '@/components/invite/CalendarSection'
+import DDaySection from '@/components/invite/DDaySection'
 import CountdownSection from '@/components/invite/CountdownSection'
 import GallerySection from '@/components/invite/GallerySection'
+import PhotoDropSection from '@/components/invite/PhotoDropSection'
 import LocationSection from '@/components/invite/LocationSection'
 import NoticeSection from '@/components/invite/NoticeSection'
 import AccountSection from '@/components/invite/AccountSection'
@@ -43,8 +45,10 @@ export default function EditorPreview() {
               {view.features.greeting && <GreetingSection data={view} />}
               <CoupleSection data={view} />
               <CalendarSection data={view} />
+              {view.features.dday && <DDaySection data={view} />}
               {view.features.countdown && <CountdownSection data={view} />}
               {view.features.gallery && <GallerySection data={view} />}
+              {view.features.photodrop && <PhotoDropSection data={view} />}
               {view.features.transport && <LocationSection data={view} />}
               {view.features.notice && <NoticeSection data={view} />}
               {view.features.account && <AccountSection data={view} />}

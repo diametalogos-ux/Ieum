@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import Header from '@/components/landing/Header'
 import Footer from '@/components/landing/Footer'
 import ThemePickButton from '@/components/themes/ThemePickButton'
@@ -156,29 +155,19 @@ export default function ThemesPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="border-t border-neutral-100 bg-neutral-50 py-16">
+      {/* 마무리 감성 문구 */}
+      <section className="border-t border-neutral-100 py-24 md:py-32">
         <div className="mx-auto max-w-2xl px-6 text-center">
-          <h2 className="font-serif text-2xl font-semibold text-neutral-900 md:text-3xl">
-            지금 바로 만들어 보세요
-          </h2>
-          <p className="mt-3 text-sm text-neutral-500">
-            편집 중에 언제든 테마를 변경할 수 있어요
+          <p className="font-serif text-2xl leading-[1.7] tracking-tight text-neutral-800 md:text-3xl md:leading-[1.6]">
+            두 사람의 이야기를
+            <br />
+            가장 아름답게 담을 준비가
+            <br />
+            되어 있어요
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/login"
-              className="rounded-full bg-neutral-900 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-neutral-700"
-            >
-              무료로 시작하기
-            </Link>
-            <Link
-              href="/invite/sample"
-              className="rounded-full border border-neutral-200 bg-white px-7 py-3.5 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
-            >
-              샘플 청첩장 보기
-            </Link>
-          </div>
+          <p className="mt-10 text-[10px] font-medium tracking-[0.5em] text-neutral-400 uppercase">
+            — Ieum
+          </p>
         </div>
       </section>
 

@@ -72,6 +72,86 @@ BEGIN
   END IF;
 END $$;
 
+-- 1-5. photodrop (하객 사진 업로드)
+CREATE TABLE IF NOT EXISTS public.photodrop (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  invitation_id UUID REFERENCES public.invitations(id) ON DELETE CASCADE NOT NULL,
+  storage_path TEXT NOT NULL,
+  image_url TEXT NOT NULL,
+  uploader_name TEXT,
+  message TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS photodrop_invitation_id_idx
+  ON public.photodrop(invitation_id);
+
+ALTER TABLE public.photodrop ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "photodrop_select_public" ON public.photodrop;
+CREATE POLICY "photodrop_select_public" ON public.photodrop
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.invitations
+      WHERE invitations.id = photodrop.invitation_id
+      AND (invitations.status = 'published' OR invitations.user_id = auth.uid())
+    )
+  );
+
+DROP POLICY IF EXISTS "photodrop_insert_public" ON public.photodrop;
+CREATE POLICY "photodrop_insert_public" ON public.photodrop
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.invitations
+      WHERE invitations.id = photodrop.invitation_id
+      AND invitations.status = 'published'
+    )
+  );
+
+DROP POLICY IF EXISTS "photodrop_delete_owner" ON public.photodrop;
+CREATE POLICY "photodrop_delete_owner" ON public.photodrop
+  FOR DELETE USING (
+    EXISTS (
+      SELECT 1 FROM public.invitations
+      WHERE invitations.id = photodrop.invitation_id
+      AND invitations.user_id = auth.uid()
+    )
+  );
+
+-- Storage 버킷: photodrop-images (하객이 익명으로 업로드)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('photodrop-images', 'photodrop-images', true)
+ON CONFLICT (id) DO NOTHING;
+
+DROP POLICY IF EXISTS "photodrop_storage_insert" ON storage.objects;
+CREATE POLICY "photodrop_storage_insert"
+ON storage.objects FOR INSERT
+WITH CHECK (
+  bucket_id = 'photodrop-images'
+  AND EXISTS (
+    SELECT 1 FROM public.invitations
+    WHERE invitations.id::text = (storage.foldername(name))[1]
+    AND invitations.status = 'published'
+  )
+);
+
+DROP POLICY IF EXISTS "photodrop_storage_select" ON storage.objects;
+CREATE POLICY "photodrop_storage_select"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'photodrop-images');
+
+DROP POLICY IF EXISTS "photodrop_storage_delete_owner" ON storage.objects;
+CREATE POLICY "photodrop_storage_delete_owner"
+ON storage.objects FOR DELETE
+USING (
+  bucket_id = 'photodrop-images'
+  AND EXISTS (
+    SELECT 1 FROM public.invitations
+    WHERE invitations.id::text = (storage.foldername(name))[1]
+    AND invitations.user_id = auth.uid()
+  )
+);
+
 
 -- ============================================
 -- 2. RLS 활성화

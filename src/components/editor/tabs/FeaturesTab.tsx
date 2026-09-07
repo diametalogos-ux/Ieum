@@ -48,7 +48,7 @@ const GROUPS: {
       {
         key: 'dday',
         title: '디데이',
-        description: '결혼식까지 남은 날 표시',
+        description: '결혼식까지 남은 날 배너 표시',
         icon: icon(
           <>
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />

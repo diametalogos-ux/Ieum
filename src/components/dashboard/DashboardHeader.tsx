@@ -47,6 +47,15 @@ export default function DashboardHeader() {
           이음
         </Link>
 
+        <div className="flex items-center gap-1">
+          <Link
+            href="/themes"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-900"
+          >
+          
+            테마
+          </Link>
+
         <div className="relative" ref={menuRef}>
           <button
             type="button"
@@ -130,6 +139,7 @@ export default function DashboardHeader() {
               </div>
             </div>
           )}
+        </div>
         </div>
       </div>
     </header>
