@@ -17,98 +17,93 @@ const INTRO_ANIM_CLASS: Record<string, string> = {
   zoom: 'intro-zoom',
 }
 
+/** Blush 테마 기본 이미지 (사용자가 mainPhotoUrl 채우면 이걸 대체) */
+const BLUSH_DEFAULT_IMAGE = '/images/main1-ai.png'
+
 export default function IntroSection({ data }: Props) {
   const { y, m, d, day } = formatDateKo(data.ceremony.date)
   const [hh] = data.ceremony.time.split(':').map(Number)
   const ampm = hh < 12 ? '오전' : '오후'
   const hour12 = hh > 12 ? hh - 12 : hh
   const introAnim = INTRO_ANIM_CLASS[data.introEffect] ?? ''
+  const imageSrc = data.mainPhotoUrl || BLUSH_DEFAULT_IMAGE
 
   return (
     <section
-      className={`relative flex min-h-[100svh] flex-col items-center justify-between overflow-hidden px-8 pt-16 pb-12 ${introAnim}`}
-      style={{
-        background:
-          'linear-gradient(to bottom, var(--p-bg) 0%, #ffffff 60%, var(--p-bg) 100%)',
-      }}
+      className={`relative flex min-h-[100svh] w-full flex-col justify-between overflow-hidden ${introAnim}`}
     >
+      {/* 배경: 메인 이미지 풀 커버 */}
+      <div className="absolute inset-0 -z-10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={imageSrc}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+        {/* 텍스트 가독성용 위·아래 그라디언트 오버레이 */}
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%)',
+          }}
+        />
+      </div>
+
       <ParticleOverlay type={data.particle} />
-      <div className="text-center">
-        <p
-          className="font-serif text-[11px] tracking-[0.5em] uppercase"
-          style={{ color: 'var(--p-strong)', opacity: 0.8 }}
-        >
+
+      {/* 상단: Wedding Invitation + 날짜 라인 */}
+      <div
+        className="w-full px-8 pt-14 text-center text-white"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 56px)' }}
+      >
+        <p className="font-serif text-[11px] tracking-[0.5em] uppercase drop-shadow-sm">
           Wedding Invitation
         </p>
         <div className="mt-3 flex items-center justify-center gap-3">
-          <span className="h-px w-6" style={{ background: 'var(--p-mid)', opacity: 0.6 }} />
-          <span className="text-xs tracking-[0.3em] text-neutral-500">
+          <span className="h-px w-6 bg-white/70" />
+          <span className="text-xs tracking-[0.3em] drop-shadow-sm">
             {y}. {String(m).padStart(2, '0')}. {String(d).padStart(2, '0')}
           </span>
-          <span className="h-px w-6" style={{ background: 'var(--p-mid)', opacity: 0.6 }} />
+          <span className="h-px w-6 bg-white/70" />
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center py-10">
-        <div className="relative aspect-[3/4] w-full max-w-[280px]">
-          {data.mainPhotoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={data.mainPhotoUrl}
-              alt="Main"
-              className="h-full w-full rounded-[2px] object-cover shadow-2xl"
-            />
-          ) : (
-            <div
-              className="flex h-full w-full items-center justify-center rounded-[2px] shadow-2xl"
-              style={{
-                background:
-                  'linear-gradient(135deg, var(--p-soft) 0%, var(--p-mid) 100%)',
-              }}
-            >
-              <div className="text-center">
-                <p className="font-serif text-5xl tracking-wider text-white/50">
-                  M &amp; S
-                </p>
-                <p className="mt-2 text-[10px] tracking-[0.3em] uppercase text-white/60">
-                  Main Photo
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="text-center">
-        <h1 className="font-serif text-3xl font-medium leading-relaxed tracking-wide text-neutral-800">
+      {/* 하단: 이름·문구·일시·예식장 */}
+      <div className="w-full px-8 pb-14 pt-16 text-center text-white">
+        <h1 className="font-serif text-4xl font-medium leading-tight tracking-wide drop-shadow-md md:text-5xl">
           {data.couple.groom.firstName}
-          <span className="mx-3" style={{ color: 'var(--p-strong)' }}>
+          <span
+            className="mx-3 font-light"
+            style={{ color: 'rgba(255,255,255,0.85)' }}
+          >
             &amp;
           </span>
           {data.couple.bride.firstName}
         </h1>
 
-        <p className="font-serif mt-5 whitespace-pre-line text-sm leading-relaxed text-neutral-600">
+        <p className="font-serif mt-5 whitespace-pre-line text-sm leading-relaxed text-white/90 drop-shadow-sm">
           {data.mainText}
         </p>
 
-        <div className="mt-6 flex items-center justify-center gap-2 text-[13px] text-neutral-500">
+        <div className="mt-6 flex items-center justify-center gap-2 text-[13px] text-white/90 drop-shadow-sm">
           <span>
             {y}. {String(m).padStart(2, '0')}. {String(d).padStart(2, '0')}
           </span>
-          <span className="text-neutral-300">·</span>
+          <span className="text-white/50">·</span>
           <span>
             {day}요일 {ampm} {hour12}시
           </span>
         </div>
-        <p className="mt-1 text-[12px] text-neutral-400">
+        <p className="mt-1 text-[12px] text-white/70 drop-shadow-sm">
           {data.ceremony.venueName} {data.ceremony.venueHall}
         </p>
-      </div>
 
-      <div className="mt-8 flex flex-col items-center gap-2 text-neutral-400">
-        <span className="text-[10px] tracking-[0.3em] uppercase">Scroll</span>
-        <div className="h-8 w-px animate-pulse bg-neutral-300" />
+        <div className="mt-8 flex flex-col items-center gap-2 text-white/70">
+          <span className="text-[10px] tracking-[0.3em] uppercase">Scroll</span>
+          <div className="h-8 w-px animate-pulse bg-white/60" />
+        </div>
       </div>
     </section>
   )

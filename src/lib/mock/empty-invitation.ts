@@ -43,17 +43,17 @@ export const emptyInvitation: InvitationData = {
 
   features: {
     greeting: true,
-    dday: false,
+    dday: true,
     countdown: true,
     gallery: true,
     transport: true,
-    notice: false,
+    notice: true,
     account: true,
     guestbook: true,
     rsvp: true,
-    photodrop: false,
-    bgm: false,
-    flowerOrder: false,
+    photodrop: true,
+    bgm: true,
+    flowerOrder: true,
   },
 
   greetingText: '',

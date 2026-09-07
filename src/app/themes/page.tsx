@@ -15,6 +15,7 @@ type Theme = {
   desc: string
   bg: string
   accent: string
+  previewImage: string | null
   available: boolean
 }
 
@@ -26,6 +27,7 @@ const themes: Theme[] = [
     desc: '사진이 첫인상, 은은한 분홍 무드',
     bg: 'linear-gradient(140deg,#fff0f4 0%,#fddde6 100%)',
     accent: '#d9748b',
+    previewImage: '/images/main1-ai.png',
     available: true,
   },
   {
@@ -35,6 +37,7 @@ const themes: Theme[] = [
     desc: '텍스트가 주인공, 절제된 흑백 모노',
     bg: 'linear-gradient(140deg,#f5f5f5 0%,#e8e8e8 100%)',
     accent: '#525252',
+    previewImage: null,
     available: false,
   },
 ]
@@ -75,37 +78,101 @@ export default function ThemesPage() {
                     : ''
                 }`}
               >
-                {/* 미리보기 카드 */}
+                {/* 미리보기 카드 — 실제 IntroSection 미니어처 */}
                 <div
-                  className={`relative flex h-56 items-center justify-center overflow-hidden ${
+                  className={`relative flex aspect-[3/4] flex-col justify-between overflow-hidden ${
                     t.available ? '' : 'opacity-60 grayscale'
                   }`}
-                  style={{ background: t.bg }}
+                  style={t.previewImage ? undefined : { background: t.bg }}
                 >
-                  <div className="flex w-full flex-col items-center gap-2 px-6 text-center">
-                    <p
-                      className="text-[9px] font-medium tracking-[0.35em] uppercase"
-                      style={{ color: t.accent, opacity: 0.7 }}
-                    >
+                  {t.previewImage && (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={t.previewImage}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                      {/* 상하 가독성 오버레이 */}
+                      <div
+                        aria-hidden
+                        className="absolute inset-0"
+                        style={{
+                          background:
+                            'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%)',
+                        }}
+                      />
+                    </>
+                  )}
+
+                  {/* 상단: Wedding Invitation + 날짜 */}
+                  <div
+                    className={`relative w-full px-6 pt-6 text-center ${
+                      t.previewImage
+                        ? 'text-white drop-shadow-sm'
+                        : ''
+                    }`}
+                    style={t.previewImage ? undefined : { color: t.accent }}
+                  >
+                    <p className="text-[9px] font-medium tracking-[0.35em] uppercase">
                       Wedding Invitation
                     </p>
-                    <div
-                      className="font-serif text-2xl font-semibold tracking-wide"
-                      style={{ color: t.accent }}
-                    >
-                      민준 &amp; 서연
-                    </div>
-                    <div
-                      className="h-px w-8"
-                      style={{ background: t.accent, opacity: 0.4 }}
-                    />
-                    <div className="text-[10px] tracking-[0.25em] text-neutral-500">
-                      2026 · 05 · 18
+                    <div className="mt-2 flex items-center justify-center gap-2">
+                      <span
+                        className={`h-px w-3 ${t.previewImage ? 'bg-white/70' : ''}`}
+                        style={
+                          t.previewImage
+                            ? undefined
+                            : { background: t.accent, opacity: 0.4 }
+                        }
+                      />
+                      <span className="text-[10px] tracking-[0.25em]">
+                        2027 · 05 · 15
+                      </span>
+                      <span
+                        className={`h-px w-3 ${t.previewImage ? 'bg-white/70' : ''}`}
+                        style={
+                          t.previewImage
+                            ? undefined
+                            : { background: t.accent, opacity: 0.4 }
+                        }
+                      />
                     </div>
                   </div>
 
+                  {/* 하단: 이름 · 문구 */}
+                  <div
+                    className={`relative w-full px-6 pb-6 text-center ${
+                      t.previewImage
+                        ? 'text-white drop-shadow-md'
+                        : ''
+                    }`}
+                    style={t.previewImage ? undefined : { color: t.accent }}
+                  >
+                    <div className="font-serif text-2xl font-medium tracking-wide">
+                      민준
+                      <span className="mx-2 font-light">&amp;</span>
+                      서연
+                    </div>
+                    <div
+                      className={`mx-auto my-2 h-px w-6 ${
+                        t.previewImage
+                          ? 'bg-white/60'
+                          : ''
+                      }`}
+                      style={
+                        t.previewImage
+                          ? undefined
+                          : { background: t.accent, opacity: 0.4 }
+                      }
+                    />
+                    <p className={`font-serif text-[11px] ${t.previewImage ? 'text-white/90' : 'text-neutral-500'}`}>
+                      우리 결혼합니다
+                    </p>
+                  </div>
+
                   {/* 상태 뱃지 */}
-                  <div className="absolute top-3 left-3">
+                  <div className="absolute top-3 left-3 z-10">
                     {t.available ? (
                       <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/95 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur">
                         <span className="h-1.5 w-1.5 rounded-full bg-white" />

@@ -6,6 +6,7 @@ const themes = [
     name: 'Blush',
     bg: 'linear-gradient(140deg,#fff0f4 0%,#fddde6 100%)',
     accent: '#d9748b',
+    previewImage: '/images/main1-ai.png' as string | null,
     available: true,
   },
   {
@@ -13,6 +14,7 @@ const themes = [
     name: 'Ink',
     bg: 'linear-gradient(140deg,#f5f5f5 0%,#e8e8e8 100%)',
     accent: '#525252',
+    previewImage: null as string | null,
     available: false,
   },
 ]
@@ -48,25 +50,68 @@ export default function ThemesSection() {
               }`}
             >
               <div
-                className={`relative flex h-56 items-center justify-center overflow-hidden ${
+                className={`relative flex aspect-[3/4] flex-col justify-between overflow-hidden ${
                   t.available ? '' : 'opacity-60 grayscale'
                 }`}
-                style={{ background: t.bg }}
+                style={t.previewImage ? undefined : { background: t.bg }}
               >
-                <div className="flex w-full flex-col items-center gap-2 px-6">
-                  <div
-                    className="font-serif text-xl font-semibold tracking-wide"
-                    style={{ color: t.accent }}
-                  >
-                    M &amp; S
-                  </div>
-                  <div className="h-px w-6" style={{ background: t.accent, opacity: 0.4 }} />
-                  <div className="text-[9px] tracking-[0.3em] text-neutral-500">
-                    2026 · 05 · 18
-                  </div>
+                {t.previewImage && (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={t.previewImage}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                    <div
+                      aria-hidden
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%)',
+                      }}
+                    />
+                  </>
+                )}
+
+                {/* 상단 */}
+                <div
+                  className={`relative w-full px-4 pt-4 text-center ${
+                    t.previewImage ? 'text-white drop-shadow-sm' : ''
+                  }`}
+                  style={t.previewImage ? undefined : { color: t.accent }}
+                >
+                  <p className="text-[8px] font-medium tracking-[0.35em] uppercase">
+                    Wedding Invitation
+                  </p>
                 </div>
 
-                <div className="absolute top-3 left-3">
+                {/* 하단 */}
+                <div
+                  className={`relative w-full px-4 pb-5 text-center ${
+                    t.previewImage ? 'text-white drop-shadow-md' : ''
+                  }`}
+                  style={t.previewImage ? undefined : { color: t.accent }}
+                >
+                  <div className="font-serif text-xl font-medium tracking-wide">
+                    민준
+                    <span className="mx-1.5 font-light">&amp;</span>
+                    서연
+                  </div>
+                  <div
+                    className={`mx-auto my-1.5 h-px w-5 ${t.previewImage ? 'bg-white/60' : ''}`}
+                    style={
+                      t.previewImage
+                        ? undefined
+                        : { background: t.accent, opacity: 0.4 }
+                    }
+                  />
+                  <p className={`text-[9px] tracking-[0.25em] ${t.previewImage ? 'text-white/85' : 'text-neutral-500'}`}>
+                    2027 · 05 · 15
+                  </p>
+                </div>
+
+                <div className="absolute top-3 left-3 z-10">
                   {t.available ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/95 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur">
                       <span className="h-1.5 w-1.5 rounded-full bg-white" />
