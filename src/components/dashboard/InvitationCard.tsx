@@ -20,6 +20,40 @@ function formatDate(dateStr: string) {
   return `${y}. ${String(m).padStart(2, '0')}. ${String(d).padStart(2, '0')} (${day})`
 }
 
+/** 카카오톡 공유 description — "2026. 09. 01 화요일 오후 1시 · 명성교회" 형식 */
+function buildShareDescription({
+  ceremonyDate,
+  ceremonyTime,
+  venueName,
+}: {
+  ceremonyDate: string
+  ceremonyTime: string
+  venueName: string
+}): string {
+  if (!ceremonyDate) return '결혼식에 초대합니다'
+  const [y, m, d] = ceremonyDate.split('-').map(Number)
+  if (!y || !m || !d) return '결혼식에 초대합니다'
+  const dow = ['일', '월', '화', '수', '목', '금', '토'][new Date(y, m - 1, d).getDay()]
+
+  const parts: string[] = []
+  parts.push(
+    `${y}. ${String(m).padStart(2, '0')}. ${String(d).padStart(2, '0')} ${dow}요일`
+  )
+
+  if (ceremonyTime) {
+    const [hh, mm] = ceremonyTime.split(':').map(Number)
+    if (!Number.isNaN(hh)) {
+      const ampm = hh < 12 ? '오전' : '오후'
+      const hour12 = hh > 12 ? hh - 12 : hh === 0 ? 12 : hh
+      const minPart = mm ? ` ${mm}분` : ''
+      parts.push(`${ampm} ${hour12}시${minPart}`)
+    }
+  }
+
+  const dateTime = parts.join(' ')
+  return venueName ? `${dateTime} · ${venueName}` : dateTime
+}
+
 function formatUpdated(iso: string) {
   const now = new Date()
   const then = new Date(iso)
@@ -112,13 +146,33 @@ export default function InvitationCard({ item, onDelete }: Props) {
       flashToast('공개된 청첩장만 공유할 수 있어요')
       return
     }
+    const origin =
+      typeof window !== 'undefined' ? window.location.origin : ''
+    // 사진 없으면 Blush 기본 이미지로 대체 (카톡이 imageUrl 필수라 회색 카드 방지)
+    const imageUrl = mainPhotoUrl
+      ? mainPhotoUrl.startsWith('http')
+        ? mainPhotoUrl
+        : `${origin}${mainPhotoUrl}`
+      : `${origin}/images/main1-ai.png`
+
+    // Title: "신랑 💜 신부 결혼합니다"
+    const title =
+      groomName && brideName
+        ? `${groomName} 💜 ${brideName} 결혼합니다`
+        : item.title || '결혼합니다'
+
+    // Description: "2026. 09. 01 화요일 오후 1시 · 명성교회"
+    const description = buildShareDescription({
+      ceremonyDate,
+      ceremonyTime,
+      venueName,
+    })
+
     try {
       await shareToKakao({
-        title: displayTitle,
-        description: ceremonyDate
-          ? `${formatDate(ceremonyDate)} · ${venueName}`
-          : '결혼합니다',
-        imageUrl: mainPhotoUrl ?? undefined,
+        title,
+        description,
+        imageUrl,
         url: shareUrl,
       })
     } catch (err) {

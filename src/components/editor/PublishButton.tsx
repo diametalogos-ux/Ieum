@@ -133,6 +133,7 @@ export default function PublishButton() {
                         { key: 'venueName', label: '예식장 이름' },
                         { key: 'venueAddress', label: '예식장 주소' },
                         { key: 'venueHall', label: '상세 주소 (홀·층)' },
+                        { key: 'mainPhotoUrl', label: '메인 사진' },
                       ] as const
                     ).map((f) => {
                       const missing = readiness.missing.some(

@@ -37,6 +37,9 @@ export function checkPublishReadiness(
   if (!data.ceremony.venueHall) {
     missing.push({ key: 'venueHall', label: '상세 주소 (홀·층)' })
   }
+  if (!data.mainPhotoUrl) {
+    missing.push({ key: 'mainPhotoUrl', label: '메인 사진' })
+  }
 
   return { ready: missing.length === 0, missing }
 }
