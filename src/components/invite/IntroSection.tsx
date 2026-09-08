@@ -30,7 +30,7 @@ export default function IntroSection({ data }: Props) {
 
   return (
     <section
-      className={`relative flex min-h-[100svh] w-full flex-col justify-between overflow-hidden ${introAnim}`}
+      className={`relative flex h-[100svh] w-full flex-col justify-between overflow-hidden ${introAnim}`}
     >
       {/* 배경: 메인 이미지 풀 커버 (섹션 안에 갇힘) */}
       <div className="absolute inset-0 overflow-hidden">

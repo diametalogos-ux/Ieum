@@ -11,7 +11,6 @@ const OWNER_BAR_HEIGHT = 90
 export default function BgmPlayer({ bgmId, previewMode = false }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [playing, setPlaying] = useState(true) // 기본: 재생 상태
-  const [showLabel, setShowLabel] = useState(false)
   const userInteractedRef = useRef(false)
 
   const track = findBgm(bgmId) ?? BGM_LIST[0]
@@ -82,12 +81,8 @@ export default function BgmPlayer({ bgmId, previewMode = false }: Props) {
         await audio.play()
         setPlaying(true)
       }
-      setShowLabel(true)
-      setTimeout(() => setShowLabel(false), 2000)
     } catch {
       setPlaying((v) => !v)
-      setShowLabel(true)
-      setTimeout(() => setShowLabel(false), 2000)
     }
   }
 
@@ -105,28 +100,18 @@ export default function BgmPlayer({ bgmId, previewMode = false }: Props) {
       />
 
       <div
-        className="fixed right-4 z-40 flex items-center gap-2"
+        className="fixed right-4 z-40"
         style={{
           top: `calc(env(safe-area-inset-top) + ${
             previewMode ? OWNER_BAR_HEIGHT + 16 : 16
           }px)`,
         }}
       >
-        {showLabel && (
-          <div className="rounded-full bg-neutral-900/85 px-3 py-1.5 text-[11px] font-medium text-white shadow-lg backdrop-blur">
-            {playing ? `♪ ${track.label}` : '일시정지'}
-          </div>
-        )}
-
         <button
           type="button"
           onClick={toggle}
           aria-label={playing ? '음악 일시정지' : '음악 재생'}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-white shadow-lg backdrop-blur transition-all hover:scale-110"
-          style={{
-            background: 'var(--p-strong)',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-          }}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-neutral-900/40 text-white/90 backdrop-blur-md transition-all hover:bg-neutral-900/60"
         >
           {playing ? (
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
