@@ -6,6 +6,7 @@ import FeaturesSection from '@/components/landing/FeaturesSection'
 import ThemesSection from '@/components/landing/ThemesSection'
 import CtaSection from '@/components/landing/CtaSection'
 import Footer from '@/components/landing/Footer'
+import LandingFloatingCta from '@/components/landing/LandingFloatingCta'
 
 export default function HomePage() {
   return (
@@ -18,6 +19,7 @@ export default function HomePage() {
       <ThemesSection />
       <CtaSection />
       <Footer />
+      <LandingFloatingCta />
     </main>
   )
 }

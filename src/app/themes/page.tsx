@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 
 type Theme = {
   key: string
-  category: string
   name: string
   desc: string
   bg: string
@@ -22,7 +21,6 @@ type Theme = {
 const themes: Theme[] = [
   {
     key: 'photo-blush',
-    category: 'Photo',
     name: 'Blush',
     desc: '사진이 첫인상, 은은한 분홍 무드',
     bg: 'linear-gradient(140deg,#fff0f4 0%,#fddde6 100%)',
@@ -32,7 +30,6 @@ const themes: Theme[] = [
   },
   {
     key: 'typography-ink',
-    category: 'Typography',
     name: 'Ink',
     desc: '텍스트가 주인공, 절제된 흑백 모노',
     bg: 'linear-gradient(140deg,#f5f5f5 0%,#e8e8e8 100%)',
@@ -59,8 +56,8 @@ export default function ThemesPage() {
             테마를 골라보세요
           </h1>
           <p className="mt-5 text-sm text-neutral-500 md:text-base">
-            지금은 <strong className="font-semibold text-neutral-700">Photo · Blush</strong> 가 준비되어 있어요
-            <br />더 다양한 레이아웃과 무드가 계속 추가될 예정입니다
+            <strong className="font-semibold text-neutral-700">Blush</strong>로 만나보세요
+            <br />새로운 테마도 준비 중입니다
           </p>
         </div>
       </section>
@@ -68,20 +65,15 @@ export default function ThemesPage() {
       {/* 테마 그리드 */}
       <section className="pb-20">
         <div className="mx-auto max-w-6xl px-6 md:px-8">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {themes.map((t) => (
-              <div
-                key={t.key}
-                className={`group relative overflow-hidden rounded-2xl bg-white ring-1 ring-neutral-100 transition-all ${
-                  t.available
-                    ? 'hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/40'
-                    : ''
-                }`}
-              >
+              <div key={t.key} className="group relative">
                 {/* 미리보기 카드 — 실제 IntroSection 미니어처 */}
                 <div
-                  className={`relative flex aspect-[3/4] flex-col justify-between overflow-hidden ${
-                    t.available ? '' : 'opacity-60 grayscale'
+                  className={`relative flex aspect-[3/4] flex-col justify-between overflow-hidden rounded-2xl shadow-md shadow-neutral-200/60 ring-1 ring-neutral-100 transition-all ${
+                    t.available
+                      ? 'group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-neutral-200/40'
+                      : 'opacity-70 grayscale'
                   }`}
                   style={t.previewImage ? undefined : { background: t.bg }}
                 >
@@ -186,33 +178,20 @@ export default function ThemesPage() {
                   </div>
                 </div>
 
-                {/* 메타 */}
-                <div className="border-t border-neutral-100 bg-white p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-medium tracking-[0.15em] text-neutral-400 uppercase">
-                        {t.category}
-                      </p>
-                      <p className="font-serif mt-0.5 text-base font-semibold text-neutral-900">
-                        {t.name}
-                      </p>
-                    </div>
-                    <span
-                      className="h-4 w-4 flex-shrink-0 rounded-full ring-1 ring-inset ring-black/10"
-                      style={{ background: t.accent, opacity: t.available ? 1 : 0.4 }}
-                    />
+                {/* 카드 하단 설명 · CTA */}
+                <div className="mt-3 space-y-3 text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <p className="font-serif text-sm font-semibold text-neutral-900">
+                      {t.name}
+                    </p>
+                    <span className="text-neutral-300">·</span>
+                    <p className="text-[11px] text-neutral-500">{t.desc}</p>
                   </div>
-                  <p className="mt-2 text-[11px] text-neutral-500">{t.desc}</p>
-
                   {t.available ? (
-                    <div className="mt-4">
-                      <ThemePickButton themeKey={t.key} />
-                    </div>
+                    <ThemePickButton themeKey={t.key} />
                   ) : (
-                    <div className="mt-4">
-                      <div className="w-full rounded-full bg-neutral-100 py-2.5 text-center text-xs font-medium text-neutral-400">
-                        곧 만나요
-                      </div>
+                    <div className="w-full rounded-full bg-neutral-100 py-2.5 text-center text-xs font-medium text-neutral-400">
+                      곧 만나요
                     </div>
                   )}
                 </div>

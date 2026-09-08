@@ -2,7 +2,6 @@ import Link from 'next/link'
 
 const themes = [
   {
-    category: 'Photo',
     name: 'Blush',
     bg: 'linear-gradient(140deg,#fff0f4 0%,#fddde6 100%)',
     accent: '#d9748b',
@@ -10,7 +9,6 @@ const themes = [
     available: true,
   },
   {
-    category: 'Typography',
     name: 'Ink',
     bg: 'linear-gradient(140deg,#f5f5f5 0%,#e8e8e8 100%)',
     accent: '#525252',
@@ -33,25 +31,20 @@ export default function ThemesSection() {
             테마를 골라보세요
           </h2>
           <p className="mt-5 text-base text-neutral-500">
-            지금은 <strong className="font-semibold text-neutral-700">Photo · Blush</strong> 가 준비되어 있어요
+            <strong className="font-semibold text-neutral-700">Blush</strong>로 만나보세요
             <br />
-            더 다양한 레이아웃과 무드가 계속 추가될 예정이에요
+            새로운 테마도 준비 중입니다
           </p>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-1 gap-8 sm:grid-cols-2">
           {themes.map((t) => (
-            <div
-              key={t.name}
-              className={`group relative overflow-hidden rounded-2xl bg-white text-left ring-1 ring-neutral-100 transition-all ${
-                t.available
-                  ? 'hover:-translate-y-1 hover:shadow-lg hover:shadow-neutral-200/40'
-                  : ''
-              }`}
-            >
+            <div key={t.name} className="group relative">
               <div
-                className={`relative flex aspect-[3/4] flex-col justify-between overflow-hidden ${
-                  t.available ? '' : 'opacity-60 grayscale'
+                className={`relative flex aspect-[3/4] flex-col justify-between overflow-hidden rounded-2xl shadow-md shadow-neutral-200/60 ring-1 ring-neutral-100 transition-all ${
+                  t.available
+                    ? 'group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-neutral-200/40'
+                    : 'opacity-70 grayscale'
                 }`}
                 style={t.previewImage ? undefined : { background: t.bg }}
               >
@@ -124,14 +117,9 @@ export default function ThemesSection() {
                   )}
                 </div>
               </div>
-              <div className="border-t border-neutral-100 bg-white px-4 py-3">
-                <p className="text-[9px] font-medium tracking-[0.2em] text-neutral-400 uppercase">
-                  {t.category}
-                </p>
-                <p className="font-serif mt-0.5 text-sm font-semibold text-neutral-900">
-                  {t.name}
-                </p>
-              </div>
+              <p className="mt-3 text-center font-serif text-sm font-semibold text-neutral-900">
+                {t.name}
+              </p>
             </div>
           ))}
         </div>

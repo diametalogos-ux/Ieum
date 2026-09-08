@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '@/components/providers/AuthProvider'
 
@@ -11,11 +11,16 @@ const navItems = [
 
 export default function Header() {
   const router = useRouter()
+  const pathname = usePathname() ?? '/'
   const { user, loading, signOut } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const isThemesActive = pathname === '/themes' || pathname.startsWith('/themes/')
+  const isDashboardActive =
+    pathname === '/dashboard' || pathname.startsWith('/dashboard/')
 
   const handleSignOut = async () => {
     if (signingOut) return
@@ -81,9 +86,20 @@ export default function Header() {
           ))}
           <Link
             href="/themes"
-            className="text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+            aria-current={isThemesActive ? 'page' : undefined}
+            className={`relative text-sm transition-colors ${
+              isThemesActive
+                ? 'font-semibold text-neutral-900'
+                : 'text-neutral-600 hover:text-neutral-900'
+            }`}
           >
             테마
+            {isThemesActive && (
+              <span
+                aria-hidden
+                className="absolute -bottom-1.5 left-0 right-0 mx-auto h-0.5 w-4 rounded-full bg-neutral-900"
+              />
+            )}
           </Link>
         </nav>
 
@@ -95,7 +111,12 @@ export default function Header() {
             <>
               <Link
                 href="/dashboard"
-                className="rounded-full px-4 py-2 text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+                aria-current={isDashboardActive ? 'page' : undefined}
+                className={`rounded-full px-4 py-2 text-sm transition-colors ${
+                  isDashboardActive
+                    ? 'bg-neutral-100 font-semibold text-neutral-900'
+                    : 'text-neutral-600 hover:text-neutral-900'
+                }`}
               >
                 대시보드
               </Link>
@@ -130,7 +151,12 @@ export default function Header() {
         <div className="relative flex items-center gap-1 md:hidden" ref={dropdownRef}>
           <Link
             href="/themes"
-            className="px-2.5 py-2 text-[13px] text-neutral-600 transition-colors hover:text-neutral-900"
+            aria-current={isThemesActive ? 'page' : undefined}
+            className={`rounded-full px-2.5 py-1.5 text-[13px] transition-colors ${
+              isThemesActive
+                ? 'bg-neutral-100 font-semibold text-neutral-900'
+                : 'text-neutral-600 hover:text-neutral-900'
+            }`}
           >
             테마
           </Link>
@@ -139,7 +165,12 @@ export default function Header() {
           ) : user ? (
             <Link
               href="/dashboard"
-              className="px-2.5 py-2 text-[13px] font-medium text-neutral-800 transition-colors hover:text-neutral-950"
+              aria-current={isDashboardActive ? 'page' : undefined}
+              className={`rounded-full px-2.5 py-1.5 text-[13px] transition-colors ${
+                isDashboardActive
+                  ? 'bg-neutral-100 font-semibold text-neutral-900'
+                  : 'font-medium text-neutral-800 hover:text-neutral-950'
+              }`}
             >
               대시보드
             </Link>
