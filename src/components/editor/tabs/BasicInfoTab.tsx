@@ -232,6 +232,7 @@ export default function BasicInfoTab() {
           }}
           aspect="portrait"
           width="140px"
+          scope="main"
         />
         <TextArea
           label="메인 문구"

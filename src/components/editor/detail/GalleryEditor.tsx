@@ -3,7 +3,8 @@
 import { useRef, useState } from 'react'
 import { useEditor } from '../EditorContext'
 import { OptionGroup } from '../ui/EditorField'
-import { IMAGE_ACCEPT, processImage, validateImage } from '@/lib/image-utils'
+import { IMAGE_ACCEPT } from '@/lib/image-utils'
+import { deleteStorageImage, processAndUploadImage } from '@/lib/storage'
 import type { GalleryLayoutType } from '@/types/invitation'
 
 const LAYOUT_OPTIONS: { value: GalleryLayoutType; label: string }[] = [
@@ -34,43 +35,34 @@ export default function GalleryEditor() {
 
     setUploading(true)
     let added = 0
-    try {
-      for (const file of filesArr) {
-        const check = validateImage(file)
-        if (!check.ok) {
-          setError(check.reason)
-          continue
-        }
-        const dataUrl = await processImage(file)
-        addItem('gallery', {
-          id: `g-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          url: dataUrl,
-          order: data.gallery.length + 1,
-        })
-        added += 1
+    for (const file of filesArr) {
+      const result = await processAndUploadImage({ file, scope: 'gallery' })
+      if (!result.ok) {
+        setError(result.error)
+        continue
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '업로드에 실패했어요')
-    } finally {
-      setUploading(false)
-      if (inputRef.current) inputRef.current.value = ''
-      if (added > 0) requestImmediateSave()
+      addItem('gallery', {
+        id: `g-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        url: result.url,
+        order: data.gallery.length + 1,
+      })
+      added += 1
     }
+    setUploading(false)
+    if (inputRef.current) inputRef.current.value = ''
+    if (added > 0) requestImmediateSave()
   }
 
   const handleReplace = async (id: string, file: File) => {
-    const check = validateImage(file)
-    if (!check.ok) {
-      setError(check.reason)
+    const previous = data.gallery.find((g) => g.id === id)?.url
+    const result = await processAndUploadImage({ file, scope: 'gallery' })
+    if (!result.ok) {
+      setError(result.error)
       return
     }
-    try {
-      const dataUrl = await processImage(file)
-      updateItem('gallery', id, { url: dataUrl })
-      requestImmediateSave()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '업로드에 실패했어요')
-    }
+    updateItem('gallery', id, { url: result.url })
+    if (previous) void deleteStorageImage(previous)
+    requestImmediateSave()
   }
 
   return (
@@ -145,7 +137,10 @@ export default function GalleryEditor() {
                 idx={idx}
                 total={data.gallery.length}
                 onReplace={handleReplace}
-                onRemove={() => removeItem('gallery', item.id)}
+                onRemove={() => {
+                  void deleteStorageImage(item.url)
+                  removeItem('gallery', item.id)
+                }}
                 onMoveUp={() => moveItem('gallery', item.id, 'up')}
                 onMoveDown={() => moveItem('gallery', item.id, 'down')}
               />

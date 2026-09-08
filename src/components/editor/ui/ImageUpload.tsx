@@ -1,7 +1,8 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { IMAGE_ACCEPT, processImage, validateImage } from '@/lib/image-utils'
+import { IMAGE_ACCEPT } from '@/lib/image-utils'
+import { deleteStorageImage, processAndUploadImage } from '@/lib/storage'
 
 type Aspect = 'square' | 'portrait' | 'landscape' | 'og'
 
@@ -14,12 +15,14 @@ const ASPECT_CLASS: Record<Aspect, string> = {
 
 type Props = {
   value: string | null
-  onChange: (dataUrl: string | null) => void
+  onChange: (url: string | null) => void
   label?: string
   hint?: string
   aspect?: Aspect
   width?: string
   placeholderText?: string
+  /** Storage에 저장될 폴더 스코프 (예: "main", "og") */
+  scope?: string
 }
 
 export default function ImageUpload({
@@ -30,6 +33,7 @@ export default function ImageUpload({
   aspect = 'portrait',
   width,
   placeholderText = '사진 추가',
+  scope = 'main',
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
@@ -42,21 +46,18 @@ export default function ImageUpload({
 
   const handleFile = async (file: File) => {
     setError(null)
-    const check = validateImage(file)
-    if (!check.ok) {
-      setError(check.reason)
+    setLoading(true)
+    const previous = value
+    const result = await processAndUploadImage({ file, scope })
+    setLoading(false)
+    if (inputRef.current) inputRef.current.value = ''
+    if (!result.ok) {
+      setError(result.error)
       return
     }
-    setLoading(true)
-    try {
-      const dataUrl = await processImage(file)
-      onChange(dataUrl)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '업로드에 실패했어요')
-    } finally {
-      setLoading(false)
-      if (inputRef.current) inputRef.current.value = ''
-    }
+    onChange(result.url)
+    // 새 이미지로 교체된 경우 이전 파일 정리 (외부 URL이면 무시됨)
+    if (previous) void deleteStorageImage(previous)
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,8 +67,10 @@ export default function ImageUpload({
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation()
+    const previous = value
     onChange(null)
     setError(null)
+    if (previous) void deleteStorageImage(previous)
   }
 
   return (

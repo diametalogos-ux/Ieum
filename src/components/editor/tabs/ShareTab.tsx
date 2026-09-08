@@ -266,6 +266,7 @@ export default function ShareTab() {
           aspect="og"
           hint="권장 1200 × 630px · JPG, PNG, WebP"
           placeholderText="공유 이미지 업로드"
+          scope="og"
         />
       </EditorSection>
 
