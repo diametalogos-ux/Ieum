@@ -274,12 +274,14 @@ export default function BasicInfoTab() {
           type="date"
           value={data.ceremony.date}
           onChange={(e) => updateCeremony({ date: e.target.value })}
+          className="min-w-0 max-w-full"
         />
         <TextField
           label="예식 시간"
           type="time"
           value={data.ceremony.time}
           onChange={(e) => updateCeremony({ time: e.target.value })}
+          className="min-w-0 max-w-full"
         />
         <TextField
           label="예식장 이름"
