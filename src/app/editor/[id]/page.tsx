@@ -103,15 +103,15 @@ export default function EditorPage({ params }: Props) {
       initialPalette={state.palette}
       initialStatus={state.publishStatus}
     >
-      <div className="flex h-[100dvh] flex-col bg-white">
+      <div className="flex h-[100dvh] flex-col overflow-x-hidden bg-white">
         <EditorTopBar />
 
         <div className="flex flex-1 overflow-hidden">
-          <div className="w-full flex-shrink-0 border-r border-neutral-100 md:w-[420px]">
+          <div className="w-full min-w-0 flex-shrink-0 border-r border-neutral-100 md:w-[420px]">
             <EditorPanel />
           </div>
 
-          <div className="hidden flex-1 md:block">
+          <div className="hidden min-w-0 flex-1 md:block">
             <EditorPreview />
           </div>
         </div>
