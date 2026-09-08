@@ -32,13 +32,13 @@ export default function IntroSection({ data }: Props) {
     <section
       className={`relative flex min-h-[100svh] w-full flex-col justify-between overflow-hidden ${introAnim}`}
     >
-      {/* 배경: 메인 이미지 풀 커버 */}
-      <div className="absolute inset-0 -z-10">
+      {/* 배경: 메인 이미지 풀 커버 (섹션 안에 갇힘) */}
+      <div className="absolute inset-0 overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageSrc}
           alt=""
-          className="h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         {/* 텍스트 가독성용 위·아래 그라디언트 오버레이 */}
         <div
@@ -55,7 +55,7 @@ export default function IntroSection({ data }: Props) {
 
       {/* 상단: Wedding Invitation + 날짜 라인 */}
       <div
-        className="w-full px-8 pt-14 text-center text-white"
+        className="relative w-full px-8 pt-14 text-center text-white"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 56px)' }}
       >
         <p className="font-serif text-[11px] tracking-[0.5em] uppercase drop-shadow-sm">
@@ -71,7 +71,7 @@ export default function IntroSection({ data }: Props) {
       </div>
 
       {/* 하단: 이름·문구·일시·예식장 */}
-      <div className="w-full px-8 pb-14 pt-16 text-center text-white">
+      <div className="relative w-full px-8 pb-14 pt-16 text-center text-white">
         <h1 className="font-serif text-4xl font-medium leading-tight tracking-wide drop-shadow-md md:text-5xl">
           {data.couple.groom.firstName}
           <span
