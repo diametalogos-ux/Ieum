@@ -83,7 +83,7 @@ export default function EditorTopBar() {
       <div className="mx-auto flex h-14 w-full items-center justify-between px-4 md:h-16 md:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <Link
-            href="/dashboard"
+            href="/wedding/dashboard"
             aria-label="대시보드로"
             className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-neutral-600 transition-colors hover:bg-neutral-100"
           >
@@ -136,7 +136,7 @@ export default function EditorTopBar() {
         <div className="flex flex-shrink-0 items-center gap-1.5">
           {/* 모바일: 미리보기 = 실제 청첩장 페이지로 이동 (데스크탑은 우측에 이미 프레임 있음) */}
           <Link
-            href={`/invite/${data.slug}?edit=1`}
+            href={`/wedding/invite/${data.slug}?edit=1`}
             className="flex h-9 items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-50 md:hidden"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
@@ -147,7 +147,7 @@ export default function EditorTopBar() {
           </Link>
 
           <Link
-            href={`/dashboard/invitations/${data.id}`}
+            href={`/wedding/dashboard/invitations/${data.id}`}
             className="hidden h-9 items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-50 md:flex"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
@@ -160,7 +160,7 @@ export default function EditorTopBar() {
           <PublishButton />
 
           <Link
-            href={`/invite/${data.slug}`}
+            href={`/wedding/invite/${data.slug}`}
             target="_blank"
             className="hidden h-9 items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 text-xs font-medium text-neutral-700 transition-colors hover:bg-neutral-50 md:flex"
           >

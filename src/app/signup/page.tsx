@@ -2,8 +2,23 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+
+function readNextParam(): string {
+  if (typeof window === 'undefined') return '/wedding/dashboard'
+  const raw = new URLSearchParams(window.location.search).get('next')
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return '/wedding/dashboard'
+  return raw
+}
+
+function getServiceHome(nextPath: string): string {
+  const seg = nextPath.split('/')[1]
+  if (seg === 'wedding' || seg === 'obituary' || seg === 'wreath') {
+    return `/${seg}`
+  }
+  return '/'
+}
 
 export default function SignupPage() {
   const router = useRouter()
@@ -14,6 +29,10 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [needConfirm, setNeedConfirm] = useState(false)
+  const [serviceHome, setServiceHome] = useState<string>('/')
+  useEffect(() => {
+    setServiceHome(getServiceHome(readNextParam()))
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,7 +70,7 @@ export default function SignupPage() {
       return
     }
 
-    router.push('/dashboard')
+    router.push(readNextParam())
     router.refresh()
   }
 
@@ -94,7 +113,7 @@ export default function SignupPage() {
               메일 안 링크를 눌러 인증을 완료하면 바로 로그인할 수 있어요.
             </p>
             <Link
-              href="/login"
+              href={serviceHome === '/' ? '/login' : `/login?next=${encodeURIComponent(readNextParam())}`}
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-6 py-3 text-xs font-semibold text-white transition-colors hover:bg-neutral-800"
             >
               로그인 화면으로
@@ -118,7 +137,7 @@ export default function SignupPage() {
 
       <div className="w-full max-w-sm">
         <Link
-          href="/"
+          href={serviceHome}
           className="mb-10 flex items-center justify-center gap-2 text-sm text-neutral-500 transition-colors hover:text-neutral-900"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
@@ -131,7 +150,7 @@ export default function SignupPage() {
         <div className="rounded-3xl border border-neutral-100 bg-white/70 p-10 shadow-xl shadow-neutral-200/30 backdrop-blur">
           <div className="text-center">
             <Link
-              href="/"
+              href={serviceHome}
               className="font-serif inline-block text-3xl font-semibold tracking-tight text-neutral-900"
             >
               이음
@@ -234,7 +253,7 @@ export default function SignupPage() {
 
           <p className="mt-6 text-center text-[11px] text-neutral-500">
             이미 계정이 있으신가요?{' '}
-            <Link href="/login" className="font-medium text-neutral-800 underline underline-offset-2">
+            <Link href={serviceHome === '/' ? '/login' : `/login?next=${encodeURIComponent(readNextParam())}`} className="font-medium text-neutral-800 underline underline-offset-2">
               로그인
             </Link>
           </p>

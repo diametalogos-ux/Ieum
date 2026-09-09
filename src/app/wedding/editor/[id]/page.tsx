@@ -35,7 +35,8 @@ export default function EditorPage({ params }: Props) {
   useEffect(() => {
     if (authLoading) return
     if (!user) {
-      router.replace('/login')
+      const next = id === 'new' ? '/wedding/editor/new' : `/wedding/editor/${id}`
+      router.replace(`/login?next=${encodeURIComponent(next)}`)
       return
     }
 
@@ -50,10 +51,10 @@ export default function EditorPage({ params }: Props) {
         const result = await createInvitation({ themeKey })
         if (!result.ok) {
           alert(result.error)
-          router.replace('/dashboard')
+          router.replace('/wedding/dashboard')
           return
         }
-        router.replace(`/editor/${result.id}`)
+        router.replace(`/wedding/editor/${result.id}`)
       })()
       return
     }
@@ -88,7 +89,7 @@ export default function EditorPage({ params }: Props) {
           청첩장을 찾을 수 없거나 권한이 없어요.
         </p>
         <button
-          onClick={() => router.replace('/dashboard')}
+          onClick={() => router.replace('/wedding/dashboard')}
           className="rounded-full bg-neutral-900 px-5 py-2 text-xs font-medium text-white hover:bg-neutral-800"
         >
           대시보드로

@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
-  const next = url.searchParams.get('next') ?? '/dashboard'
+  const next = url.searchParams.get('next') ?? '/wedding/dashboard'
 
   // next dev -H 0.0.0.0 로 바인딩할 때 request.url origin이 0.0.0.0로 잡히는 이슈 회피 —
   // 실제 브라우저가 접속한 호스트(Host 헤더)를 기준으로 리다이렉트

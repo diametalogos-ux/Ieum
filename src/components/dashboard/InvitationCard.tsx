@@ -83,8 +83,8 @@ export default function InvitationCard({ item, onDelete }: Props) {
   const updatedAt = item.updatedAt
   const palette = item.palette
 
-  const previewHref = `/invite/${item.slug}?edit=1`
-  const publicHref = `/invite/${item.slug}`
+  const previewHref = `/wedding/invite/${item.slug}?edit=1`
+  const publicHref = `/wedding/invite/${item.slug}`
   const shareUrl =
     typeof window !== 'undefined'
       ? `${window.location.origin}${publicHref}`
@@ -253,7 +253,7 @@ export default function InvitationCard({ item, onDelete }: Props) {
 
           <div className="mt-4 flex items-center gap-2 border-t border-neutral-100 pt-4">
             <Link
-              href={`/editor/${item.id}`}
+              href={`/wedding/editor/${item.id}`}
               onClick={stop}
               className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-neutral-800"
             >
@@ -319,7 +319,7 @@ export default function InvitationCard({ item, onDelete }: Props) {
                     label="QR 코드 저장"
                   />
                   <Link
-                    href={`/dashboard/invitations/${item.id}`}
+                    href={`/wedding/dashboard/invitations/${item.id}`}
                     onClick={() => setMenuOpen(false)}
                     className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-xs text-neutral-700 transition-colors hover:bg-neutral-50"
                   >

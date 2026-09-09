@@ -58,11 +58,11 @@ export default function InvitationManagePage({ params }: Props) {
   useEffect(() => {
     if (authLoading) return
     if (!user) {
-      router.replace('/login')
+      router.replace(`/login?next=${encodeURIComponent(`/wedding/dashboard/invitations/${id}`)}`)
       return
     }
     refresh()
-  }, [authLoading, user, router, refresh])
+  }, [authLoading, user, router, refresh, id])
 
   const filteredRsvps = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -120,7 +120,7 @@ export default function InvitationManagePage({ params }: Props) {
           청첩장을 찾을 수 없거나 권한이 없어요.
         </p>
         <Link
-          href="/dashboard"
+          href="/wedding/dashboard"
           className="rounded-full bg-neutral-900 px-5 py-2 text-xs font-medium text-white hover:bg-neutral-800"
         >
           대시보드로
@@ -134,7 +134,7 @@ export default function InvitationManagePage({ params }: Props) {
       <header className="border-b border-neutral-100 bg-white">
         <div className="mx-auto flex h-14 w-full max-w-4xl items-center justify-between px-5">
           <Link
-            href="/dashboard"
+            href="/wedding/dashboard"
             className="flex items-center gap-1.5 text-sm text-neutral-600 transition-colors hover:text-neutral-900"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
@@ -144,7 +144,7 @@ export default function InvitationManagePage({ params }: Props) {
             대시보드
           </Link>
           <Link
-            href={`/editor/${id}`}
+            href={`/wedding/editor/${id}`}
             className="rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
           >
             편집으로

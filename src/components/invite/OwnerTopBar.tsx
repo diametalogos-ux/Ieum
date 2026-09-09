@@ -22,7 +22,7 @@ export default function OwnerTopBar({ invitationId, slug }: Props) {
   const shareUrl =
     typeof window !== 'undefined'
       ? `${window.location.origin}/invite/${slug}`
-      : `/invite/${slug}`
+      : `/wedding/invite/${slug}`
 
   const handleCopy = async () => {
     try {
@@ -41,7 +41,7 @@ export default function OwnerTopBar({ invitationId, slug }: Props) {
     >
       <div className="mx-auto flex h-14 max-w-[430px] items-center justify-between px-4">
         <Link
-          href="/dashboard"
+          href="/wedding/dashboard"
           className="flex items-center gap-1.5 text-[13px] text-white/80 transition-colors hover:text-white"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
@@ -76,7 +76,7 @@ export default function OwnerTopBar({ invitationId, slug }: Props) {
           </button>
 
           <Link
-            href={`/editor/${invitationId}`}
+            href={`/wedding/editor/${invitationId}`}
             className="flex h-9 items-center gap-1.5 rounded-full bg-white px-4 text-[11px] font-semibold text-neutral-900 transition-colors hover:bg-neutral-100"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">

@@ -46,7 +46,7 @@ export default function HeroSection() {
             청첩장 만들기
           </Link>
           <Link
-            href="/invite/sample"
+            href="/wedding/invite/sample"
             className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-7 py-3.5 text-sm font-medium text-neutral-700 transition-colors hover:border-neutral-300 hover:bg-neutral-50"
           >
             샘플 자세히 보기

@@ -17,7 +17,7 @@ export default function CreateNewCard() {
       setCreating(false)
       return
     }
-    router.push(`/editor/${result.id}`)
+    router.push(`/wedding/editor/${result.id}`)
   }
 
   return (

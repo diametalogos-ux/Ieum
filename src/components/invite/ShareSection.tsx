@@ -11,7 +11,7 @@ export default function ShareSection({ data }: Props) {
   const shareUrl =
     typeof window !== 'undefined'
       ? window.location.href
-      : `https://ieum.co/invite/${data.slug}`
+      : `https://ieum-log.shop/wedding/invite/${data.slug}`
 
   const handleCopy = async () => {
     try {

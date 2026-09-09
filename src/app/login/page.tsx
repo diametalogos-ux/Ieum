@@ -7,11 +7,20 @@ import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/components/providers/AuthProvider'
 
 function readNextParam(): string {
-  if (typeof window === 'undefined') return '/dashboard'
+  if (typeof window === 'undefined') return '/wedding/dashboard'
   const raw = new URLSearchParams(window.location.search).get('next')
   // open-redirect 방지 — 절대 URL/외부 링크 차단, 내부 경로만 허용
-  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return '/dashboard'
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return '/wedding/dashboard'
   return raw
+}
+
+/** next 경로에서 서비스 홈 유추 (/wedding/... → /wedding, /obituary/... → /obituary, 그 외 → /) */
+function getServiceHome(nextPath: string): string {
+  const seg = nextPath.split('/')[1] // '/wedding/dashboard' → 'wedding'
+  if (seg === 'wedding' || seg === 'obituary' || seg === 'wreath') {
+    return `/${seg}`
+  }
+  return '/'
 }
 
 export default function LoginPage() {
@@ -22,6 +31,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // 유입된 서비스 유추 (hydration 대응 — 마운트 후 계산)
+  const [serviceHome, setServiceHome] = useState<string>('/')
+  useEffect(() => {
+    setServiceHome(getServiceHome(readNextParam()))
+  }, [])
 
   // 이미 로그인된 유저는 next(또는 dashboard)로 자동 이동
   useEffect(() => {
@@ -62,7 +76,7 @@ export default function LoginPage() {
     // next 파라미터는 sessionStorage로 넘겨 OAuth 왕복에도 살아남게 함
     // (redirectTo 에 ?next=... 붙이면 Supabase 정확 매칭 실패로 Site URL 폴백됨)
     const next = readNextParam()
-    if (typeof window !== 'undefined' && next !== '/dashboard') {
+    if (typeof window !== 'undefined' && next !== '/wedding/dashboard') {
       sessionStorage.setItem('post_login_next', next)
     }
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
@@ -90,7 +104,7 @@ export default function LoginPage() {
 
       <div className="w-full max-w-sm">
         <Link
-          href="/"
+          href={serviceHome}
           className="mb-10 flex items-center justify-center gap-2 text-sm text-neutral-500 transition-colors hover:text-neutral-900"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
@@ -103,7 +117,7 @@ export default function LoginPage() {
         <div className="rounded-3xl border border-neutral-100 bg-white/70 p-10 shadow-xl shadow-neutral-200/30 backdrop-blur">
           <div className="text-center">
             <Link
-              href="/"
+              href={serviceHome}
               className="font-serif inline-block text-3xl font-semibold tracking-tight text-neutral-900"
             >
               이음
@@ -195,7 +209,7 @@ export default function LoginPage() {
           </button>
 
           <Link
-            href="/signup"
+            href={serviceHome === '/' ? '/signup' : `/signup?next=${encodeURIComponent(readNextParam())}`}
             className="mt-3 flex w-full items-center justify-center rounded-full border border-neutral-200 bg-white py-3 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-50"
           >
             새 계정 만들기

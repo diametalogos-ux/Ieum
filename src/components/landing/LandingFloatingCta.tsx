@@ -33,7 +33,7 @@ export default function LandingFloatingCta() {
         }`}
       >
         <Link
-          href="/editor/new"
+          href="/wedding/editor/new"
           className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold text-neutral-900 transition-transform hover:-translate-y-0.5"
         >
           <svg
@@ -52,7 +52,7 @@ export default function LandingFloatingCta() {
           청첩장 만들기
         </Link>
         <Link
-          href="/themes"
+          href="/wedding/themes"
           className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium text-white/90 transition-colors hover:text-white"
         >
           <svg

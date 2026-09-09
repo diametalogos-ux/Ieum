@@ -41,7 +41,7 @@ export default function DashboardHeader() {
     <header className="sticky top-0 z-40 border-b border-neutral-100 bg-white/90 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6 md:px-8">
         <Link
-          href="/"
+          href="/wedding"
           className="font-serif text-xl font-semibold tracking-tight text-neutral-900"
         >
           이음
@@ -49,7 +49,7 @@ export default function DashboardHeader() {
 
         <div className="flex items-center gap-1">
           <Link
-            href="/themes"
+            href="/wedding/themes"
             className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-900"
           >
           
@@ -99,7 +99,7 @@ export default function DashboardHeader() {
               </div>
               <nav className="py-1">
                 <Link
-                  href="/dashboard"
+                  href="/wedding/dashboard"
                   onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50"
                 >

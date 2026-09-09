@@ -126,7 +126,7 @@ export default function ThemesSection() {
 
         <div className="mt-10 flex flex-col items-center gap-2">
           <Link
-            href="/themes"
+            href="/wedding/themes"
             className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-5 py-2.5 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-50"
           >
             전체 테마 보기

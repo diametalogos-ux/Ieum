@@ -8,6 +8,12 @@ const nextConfig: NextConfig = {
     '*.ngrok-free.app',
     '*.ngrok.io',
   ],
+  // 서비스 분리 이전에 배포/공유된 URL 하위호환 유지
+  async redirects() {
+    return [
+      { source: '/invite/:slug', destination: '/wedding/invite/:slug', permanent: true },
+    ]
+  },
 };
 
 export default nextConfig;

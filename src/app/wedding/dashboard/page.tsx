@@ -25,7 +25,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.replace('/login')
+      router.replace('/login?next=/wedding/dashboard')
       return
     }
     // OAuth 로그인 후 sessionStorage에 저장된 next 경로가 있으면 그리로 이동

@@ -25,7 +25,7 @@ export default function ThemePickButton({
     if (loading) return
     if (!user) {
       // 로그인 후 이 테마로 만들기 흐름 이어가도록 next 파라미터 전달
-      const nextUrl = `/editor/new?theme=${encodeURIComponent(themeKey)}`
+      const nextUrl = `/wedding/editor/new?theme=${encodeURIComponent(themeKey)}`
       router.push(`/login?next=${encodeURIComponent(nextUrl)}`)
       return
     }
@@ -36,7 +36,7 @@ export default function ThemePickButton({
       setCreating(false)
       return
     }
-    router.push(`/editor/${result.id}`)
+    router.push(`/wedding/editor/${result.id}`)
   }
 
   return (

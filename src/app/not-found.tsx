@@ -46,7 +46,7 @@ export default function NotFound() {
             홈으로 가기
           </Link>
           <Link
-            href="/dashboard"
+            href="/wedding/dashboard"
             className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
           >
             내 청첩장 보기
