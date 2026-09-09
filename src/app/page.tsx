@@ -7,237 +7,234 @@ export const metadata: Metadata = {
     '모바일 청첩장, 부고장, 화환 주문까지. 소중한 순간을 정성스럽게 전하세요.',
 }
 
-type ServiceCard = {
-  key: string
-  title: string
-  subtitle: string
-  desc: string
+type Service = {
+  index: string
+  label: string
+  ko: string
+  tagline: string
   href: string
-  bg: string
   accent: string
   available: boolean
-  icon: React.ReactNode
 }
 
-const services: ServiceCard[] = [
+const services: Service[] = [
   {
-    key: 'wedding',
-    title: '모바일 청첩장',
-    subtitle: 'Wedding',
-    desc: '두 사람의 이야기를\n가장 아름답게 전하세요',
+    index: '01',
+    label: 'Wedding',
+    ko: '모바일 청첩장',
+    tagline: '두 사람의 이야기를 잇다',
     href: '/wedding',
-    bg: 'linear-gradient(140deg,#fff0f4 0%,#fddde6 100%)',
-    accent: '#d9748b',
+    accent: '#c88a97',
     available: true,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6"
-      >
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
-    ),
   },
   {
-    key: 'obituary',
-    title: '모바일 부고장',
-    subtitle: 'Obituary',
-    desc: '고인을 기리는 마음을\n정갈하게 전합니다',
+    index: '02',
+    label: 'Obituary',
+    ko: '모바일 부고장',
+    tagline: '남겨진 마음을 잇다',
     href: '/obituary',
-    bg: 'linear-gradient(140deg,#f5f5f7 0%,#e0e0e6 100%)',
-    accent: '#525260',
+    accent: '#7a7a82',
     available: false,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6"
-      >
-        <path d="M12 2v20" />
-        <path d="M7 8s5-3 5 0 5-3 5 0" />
-        <path d="M5 13s7-5 7 0 7-5 7 0" />
-      </svg>
-    ),
   },
   {
-    key: 'wreath',
-    title: '화환 주문',
-    subtitle: 'Wreath',
-    desc: '축하와 조의를\n꽃으로 전해보세요',
+    index: '03',
+    label: 'Wreath',
+    ko: '화환 주문',
+    tagline: '정성을 꽃으로 잇다',
     href: '/wreath',
-    bg: 'linear-gradient(140deg,#f7f0e8 0%,#e8d8c4 100%)',
-    accent: '#a88b5a',
+    accent: '#b5946a',
     available: false,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6"
-      >
-        <circle cx="12" cy="13" r="7" />
-        <path d="M9 4l3 4 3-4" />
-        <circle cx="12" cy="13" r="1.5" fill="currentColor" />
-      </svg>
-    ),
   },
 ]
 
 export default function HubPage() {
   return (
     <main className="relative min-h-screen bg-white">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            'radial-gradient(ellipse 60% 40% at 20% 30%, rgba(247,236,236,0.5), transparent 70%), radial-gradient(ellipse 50% 40% at 80% 70%, rgba(245,240,232,0.4), transparent 70%)',
-        }}
-      />
+      <div className="absolute inset-x-0 top-0 h-px bg-neutral-900/10" />
 
-      {/* 상단 브랜드 */}
-      <header className="pt-24 pb-8 text-center md:pt-32 md:pb-10">
-        <p className="text-[11px] font-medium tracking-[0.5em] text-neutral-400 uppercase">
-          Ieum
-        </p>
-        <h1 className="font-serif mt-4 text-4xl font-semibold tracking-tight text-neutral-900 md:text-5xl">
-          이음
-        </h1>
-        <p className="mt-5 text-sm text-neutral-500 md:text-base">
-          인생의 소중한 순간을
-          <br className="sm:hidden" />
-          <span className="hidden sm:inline"> </span>
-          정성스럽게 전하는 이음의 서비스
-        </p>
-      </header>
+      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-6 md:px-10">
+        {/* 상단 브랜드 라벨 */}
+        <header className="flex items-center justify-between pt-8 md:pt-10">
+          <p className="text-[10px] font-medium tracking-[0.4em] text-neutral-500 uppercase">
+            Ieum · Est. 2026
+          </p>
+          <p className="text-[10px] font-medium tracking-[0.3em] text-neutral-500 uppercase">
+            Seoul, KR
+          </p>
+        </header>
 
-      {/* 서비스 카드 */}
-      <section className="pb-24 md:pb-32">
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-6 md:grid-cols-3 md:gap-8 md:px-8">
-          {services.map((s) => {
-            const inner = (
-              <div
-                className={`group relative flex h-full flex-col overflow-hidden rounded-3xl bg-white p-8 shadow-md shadow-neutral-200/60 ring-1 ring-neutral-100 transition-all ${
-                  s.available
-                    ? 'hover:-translate-y-1 hover:shadow-xl hover:shadow-neutral-200/50'
-                    : 'opacity-70'
-                }`}
-              >
-                <div
-                  aria-hidden
-                  className="absolute inset-0 opacity-60"
-                  style={{ background: s.bg }}
-                />
+        {/* 브랜드 히어로 */}
+        <section className="pt-16 pb-16 md:grid md:grid-cols-12 md:gap-8 md:pt-24 md:pb-24">
+          <div className="md:col-span-7 md:pr-8">
+            <p className="font-serif text-[11px] italic tracking-widest text-neutral-500">
+              A journal for
+              <br />
+              life&apos;s quiet moments
+            </p>
+            <h1
+              className="font-serif mt-6 leading-[0.9] tracking-tight text-neutral-900"
+              style={{ fontSize: 'clamp(4.5rem, 14vw, 11rem)' }}
+            >
+              이음
+            </h1>
+            <div className="mt-8 flex items-center gap-4">
+              <span className="h-px w-16 bg-neutral-900/40" />
+              <p className="text-xs tracking-[0.25em] text-neutral-600 uppercase">
+                To connect
+              </p>
+            </div>
+          </div>
 
-                <div className="relative flex h-full flex-col">
-                  <div className="flex items-start justify-between">
-                    <div
-                      className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/70 backdrop-blur"
+          <div className="mt-10 md:col-span-5 md:mt-0 md:flex md:flex-col md:justify-end">
+            <p className="font-serif text-[15px] leading-[1.9] text-neutral-700 md:text-base">
+              결혼과 이별,
+              <br />
+              축하와 위로 사이에
+              <br />
+              우리는 서로를 잇습니다.
+            </p>
+            <p className="mt-6 text-[11px] leading-relaxed text-neutral-500">
+              이음은 인생의 결정적 순간을
+              <br />
+              가장 정성스러운 방식으로 전하는
+              <br />
+              디지털 종이 서비스입니다.
+            </p>
+          </div>
+        </section>
+
+        {/* 서비스 리스트 */}
+        <section className="pb-24">
+          <div className="mb-4 flex items-baseline justify-between border-b border-neutral-900/15 pb-3">
+            <p className="text-[10px] font-semibold tracking-[0.35em] text-neutral-800 uppercase">
+              Our Services
+            </p>
+            <p className="text-[10px] tracking-[0.3em] text-neutral-500 uppercase">
+              No. 001—003
+            </p>
+          </div>
+
+          <ul>
+            {services.map((s, i) => {
+              const inner = (
+                <article className="group relative flex items-center gap-6 py-10 md:gap-10 md:py-14">
+                  {/* hover 배경 */}
+                  {s.available && (
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-[-1.5rem] inset-y-0 -z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:inset-x-[-2.5rem]"
+                      style={{ background: `${s.accent}0d` }}
+                    />
+                  )}
+
+                  {/* 인덱스 (큼직) */}
+                  <div className="w-16 shrink-0 md:w-24">
+                    <p
+                      className="font-serif text-4xl leading-none md:text-6xl"
                       style={{ color: s.accent }}
                     >
-                      {s.icon}
-                    </div>
-                    {!s.available && (
-                      <span className="inline-flex items-center rounded-full bg-neutral-800/70 px-2.5 py-1 text-[10px] font-medium tracking-wider text-white backdrop-blur">
-                        준비 중
+                      {s.index}
+                    </p>
+                  </div>
+
+                  {/* 텍스트 그룹 */}
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className="text-[10px] font-semibold tracking-[0.4em] uppercase"
+                      style={{ color: s.accent }}
+                    >
+                      {s.label}
+                    </p>
+                    <h2 className="font-serif mt-3 text-[28px] leading-none tracking-tight text-neutral-900 md:text-[44px]">
+                      {s.ko}
+                    </h2>
+                    <p className="font-serif mt-3 text-sm italic text-neutral-500 md:text-base">
+                      {s.tagline}
+                    </p>
+                  </div>
+
+                  {/* 우측 상태 */}
+                  <div className="shrink-0">
+                    {s.available ? (
+                      <div className="flex items-center gap-3 text-neutral-900">
+                        <span className="hidden text-[10px] font-medium tracking-[0.3em] uppercase md:inline">
+                          Enter
+                        </span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-2 md:h-7 md:w-7"
+                        >
+                          <line x1="5" y1="12" x2="19" y2="12" />
+                          <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                      </div>
+                    ) : (
+                      <span
+                        className="inline-flex items-center rounded-full border border-neutral-200 px-3 py-1 text-[10px] font-medium tracking-[0.2em] text-neutral-500 uppercase"
+                      >
+                        Soon
                       </span>
                     )}
                   </div>
+                </article>
+              )
 
-                  <div className="mt-10">
-                    <p
-                      className="text-[10px] font-medium tracking-[0.35em] uppercase"
-                      style={{ color: s.accent, opacity: 0.7 }}
-                    >
-                      {s.subtitle}
-                    </p>
-                    <h2 className="font-serif mt-2 text-xl font-semibold text-neutral-900 md:text-2xl">
-                      {s.title}
-                    </h2>
-                    <p className="mt-4 whitespace-pre-line text-[13px] leading-relaxed text-neutral-600">
-                      {s.desc}
-                    </p>
-                  </div>
+              return (
+                <li
+                  key={s.index}
+                  className={
+                    i === services.length - 1
+                      ? ''
+                      : 'border-b border-neutral-900/10'
+                  }
+                >
+                  {s.available ? (
+                    <Link href={s.href} className="block">
+                      {inner}
+                    </Link>
+                  ) : (
+                    <div className="cursor-not-allowed opacity-70">{inner}</div>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </section>
 
-                  <div className="mt-10 flex-1" />
-
-                  <div className="flex items-center justify-between text-sm">
-                    <span
-                      className={`font-medium ${
-                        s.available ? 'text-neutral-900' : 'text-neutral-400'
-                      }`}
-                    >
-                      {s.available ? '시작하기' : '곧 만나요'}
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={`h-4 w-4 transition-transform ${
-                        s.available
-                          ? 'text-neutral-900 group-hover:translate-x-1'
-                          : 'text-neutral-400'
-                      }`}
-                    >
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            )
-            return s.available ? (
-              <Link key={s.key} href={s.href} className="block">
-                {inner}
+        {/* 하단 */}
+        <footer className="border-t border-neutral-900/10 py-8">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <p className="font-serif text-sm italic text-neutral-700">
+                Ieum &nbsp;·&nbsp; 이음
+              </p>
+              <p className="mt-1 text-[10px] tracking-[0.25em] text-neutral-400 uppercase">
+                © 2026 All rights reserved
+              </p>
+            </div>
+            <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] tracking-wide text-neutral-500">
+              <Link href="/privacy" className="hover:text-neutral-900">
+                개인정보처리방침
               </Link>
-            ) : (
-              <div key={s.key} className="cursor-not-allowed">
-                {inner}
-              </div>
-            )
-          })}
-        </div>
-      </section>
-
-      {/* 하단 */}
-      <footer className="border-t border-neutral-100 py-10">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-2 px-6 md:flex-row md:justify-between md:px-8">
-          <p className="text-xs text-neutral-400">© 2026 이음 (Ieum)</p>
-          <nav className="flex flex-wrap gap-x-6 text-xs text-neutral-500">
-            <Link href="/privacy" className="hover:text-neutral-900">
-              개인정보처리방침
-            </Link>
-            <Link href="/terms" className="hover:text-neutral-900">
-              이용약관
-            </Link>
-            <a
-              href="mailto:tkdkagody@gmail.com"
-              className="hover:text-neutral-900"
-            >
-              문의
-            </a>
-          </nav>
-        </div>
-      </footer>
+              <Link href="/terms" className="hover:text-neutral-900">
+                이용약관
+              </Link>
+              <a
+                href="mailto:tkdkagody@gmail.com"
+                className="hover:text-neutral-900"
+              >
+                문의
+              </a>
+            </nav>
+          </div>
+        </footer>
+      </div>
     </main>
   )
 }
