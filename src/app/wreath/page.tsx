@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { WREATH_CATEGORIES } from '@/lib/wreath-orders/types'
+import InquiryLink from '@/components/ui/InquiryLink'
 
 export const metadata: Metadata = {
   title: '화환 주문 · 이음 (Ieum)',
@@ -41,18 +42,18 @@ export default function WreathHomePage() {
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 pt-8 md:px-10 md:pt-10">
         <Link
           href="/"
-          className="font-editorial text-xl text-neutral-800 transition-opacity hover:opacity-70"
+          className="font-editorial text-2xl text-neutral-800 transition-opacity hover:opacity-70"
         >
           이음
         </Link>
-        <p className="text-[10px] font-medium tracking-[0.35em] text-neutral-500 uppercase">
+        <p className="text-[12px] font-semibold tracking-[0.3em] text-neutral-500 uppercase">
           Wreath
         </p>
       </header>
 
       {/* 히어로 */}
-      <section className="mx-auto w-full max-w-6xl px-6 pt-16 pb-14 md:px-10 md:pt-28 md:pb-20">
-        <p className="font-editorial text-[11px] tracking-widest text-neutral-500">
+      <section className="mx-auto w-full max-w-6xl px-6 pt-14 pb-14 md:px-10 md:pt-24 md:pb-20">
+        <p className="font-editorial text-[14px] font-medium tracking-widest text-neutral-500">
           A gift for
           <br />
           those who matter
@@ -65,7 +66,7 @@ export default function WreathHomePage() {
           <br />
           당신의 마음
         </h1>
-        <p className="mt-8 max-w-lg text-[14px] leading-[1.9] text-neutral-600 md:text-[15px]">
+        <p className="mt-8 max-w-lg text-[16px] leading-[1.9] text-neutral-700 md:text-[18px]">
           멀리서도 함께하고 싶은 자리가 있습니다.
           <br />
           이음은 축하와 위로를 꽃으로 정성스럽게 전합니다.
@@ -75,10 +76,10 @@ export default function WreathHomePage() {
       {/* 카테고리 선택 */}
       <section className="mx-auto w-full max-w-6xl px-6 pb-20 md:px-10 md:pb-32">
         <div className="mb-6 flex items-baseline justify-between border-b border-neutral-900/15 pb-3">
-          <p className="text-[10px] font-semibold tracking-[0.35em] text-neutral-800 uppercase">
+          <p className="text-[12px] font-semibold tracking-[0.3em] text-neutral-800 uppercase">
             Select Type
           </p>
-          <p className="text-[10px] tracking-[0.3em] text-neutral-500 uppercase">
+          <p className="text-[12px] font-medium tracking-[0.25em] text-neutral-500 uppercase">
             Step 01 / 02
           </p>
         </div>
@@ -92,7 +93,7 @@ export default function WreathHomePage() {
             >
               <div>
                 <p
-                  className="text-[10px] font-semibold tracking-[0.4em] uppercase"
+                  className="text-[12px] font-semibold tracking-[0.35em] uppercase"
                   style={{ color: c.accent }}
                 >
                   {c.tone}
@@ -100,13 +101,13 @@ export default function WreathHomePage() {
                 <h2 className="font-editorial mt-4 text-[32px] leading-none tracking-tight text-neutral-900 md:text-[40px]">
                   {c.label}
                 </h2>
-                <p className="mt-5 whitespace-pre-line text-[13px] leading-relaxed text-neutral-500 md:text-sm">
+                <p className="mt-5 whitespace-pre-line text-[15px] leading-relaxed text-neutral-600 md:text-[16px]">
                   {c.desc}
                 </p>
               </div>
 
               <div className="mt-10 flex items-center justify-between">
-                <span className="text-[11px] font-medium tracking-[0.3em] text-neutral-700 uppercase">
+                <span className="text-[14px] font-semibold tracking-[0.25em] text-neutral-800 uppercase">
                   주문하기
                 </span>
                 <svg
@@ -129,20 +130,20 @@ export default function WreathHomePage() {
 
         {/* 안내 */}
         <div className="mt-14 rounded-2xl border border-neutral-200 bg-neutral-50/50 p-6 md:p-8">
-          <p className="font-editorial text-sm text-neutral-700">
+          <p className="font-editorial text-base font-semibold text-neutral-800">
             How it works
           </p>
-          <ol className="mt-4 space-y-2.5 text-[13px] leading-relaxed text-neutral-600 md:text-sm">
+          <ol className="mt-4 space-y-3 text-[15px] leading-relaxed text-neutral-700 md:text-base">
             <li>
-              <span className="mr-2 font-medium text-neutral-900">01.</span>
+              <span className="mr-2 font-semibold text-neutral-900">01.</span>
               화환 종류 선택 후, 받는분과 배송 정보를 입력합니다.
             </li>
             <li>
-              <span className="mr-2 font-medium text-neutral-900">02.</span>
+              <span className="mr-2 font-semibold text-neutral-900">02.</span>
               꽃비 파트너 상점으로 이동해 상품을 고르고 결제합니다.
             </li>
             <li>
-              <span className="mr-2 font-medium text-neutral-900">03.</span>
+              <span className="mr-2 font-semibold text-neutral-900">03.</span>
               결제 완료 후 배송·수령까지 파트너가 진행합니다.
             </li>
           </ol>
@@ -152,21 +153,30 @@ export default function WreathHomePage() {
       {/* 하단 */}
       <footer className="border-t border-neutral-900/10 py-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-4 px-6 md:flex-row md:items-center md:px-10">
-          <p className="font-editorial text-sm text-neutral-700">
+          <p className="font-editorial text-base font-medium text-neutral-700">
             Ieum &nbsp;·&nbsp; 이음
           </p>
-          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] tracking-wide text-neutral-500">
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-neutral-600">
             <Link href="/privacy" className="hover:text-neutral-900">
               개인정보처리방침
             </Link>
             <Link href="/terms" className="hover:text-neutral-900">
               이용약관
             </Link>
+            <InquiryLink className="hover:text-neutral-900" />
             <a
-              href="mailto:tkdkagody@gmail.com"
-              className="hover:text-neutral-900"
+              href="https://www.instagram.com/ieum.mlog"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 hover:text-neutral-900"
+              aria-label="이음 인스타그램"
             >
-              문의
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+              </svg>
+              @ieum.mlog
             </a>
           </nav>
         </div>

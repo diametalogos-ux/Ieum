@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import InquiryLink from '@/components/ui/InquiryLink'
 
 export const metadata: Metadata = {
   title: '이음 (Ieum) — 인생의 순간을 잇는 서비스',
@@ -218,18 +219,27 @@ export default function HubPage() {
                 © 2026 All rights reserved
               </p>
             </div>
-            <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] tracking-wide text-neutral-500">
+            <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] tracking-wide text-neutral-500">
               <Link href="/privacy" className="hover:text-neutral-900">
                 개인정보처리방침
               </Link>
               <Link href="/terms" className="hover:text-neutral-900">
                 이용약관
               </Link>
+              <InquiryLink className="hover:text-neutral-900" />
               <a
-                href="mailto:tkdkagody@gmail.com"
-                className="hover:text-neutral-900"
+                href="https://www.instagram.com/ieum.mlog"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 hover:text-neutral-900"
+                aria-label="이음 인스타그램"
               >
-                문의
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+                </svg>
+                @ieum.mlog
               </a>
             </nav>
           </div>

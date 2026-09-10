@@ -1,10 +1,5 @@
 import Link from 'next/link'
-
-const footerLinks = [
-  { label: '개인정보처리방침', href: '/privacy' },
-  { label: '이용약관', href: '/terms' },
-  { label: '문의', href: 'mailto:tkdkagody@gmail.com' },
-]
+import InquiryLink from '@/components/ui/InquiryLink'
 
 export default function Footer() {
   return (
@@ -19,26 +14,34 @@ export default function Footer() {
           </p>
         </div>
 
-        <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-          {footerLinks.map((item) =>
-            item.href.startsWith('mailto:') ? (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-xs text-neutral-500 transition-colors hover:text-neutral-900"
-              >
-                {item.label}
-              </a>
-            ) : (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-xs text-neutral-500 transition-colors hover:text-neutral-900"
-              >
-                {item.label}
-              </Link>
-            )
-          )}
+        <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <Link
+            href="/privacy"
+            className="text-xs text-neutral-500 transition-colors hover:text-neutral-900"
+          >
+            개인정보처리방침
+          </Link>
+          <Link
+            href="/terms"
+            className="text-xs text-neutral-500 transition-colors hover:text-neutral-900"
+          >
+            이용약관
+          </Link>
+          <InquiryLink className="text-xs text-neutral-500 transition-colors hover:text-neutral-900" />
+          <a
+            href="https://www.instagram.com/ieum.mlog"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-neutral-500 transition-colors hover:text-neutral-900"
+            aria-label="이음 인스타그램"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+            </svg>
+            @ieum.mlog
+          </a>
         </nav>
 
         <p className="text-xs text-neutral-400">© 2026 이음 (Ieum)</p>
