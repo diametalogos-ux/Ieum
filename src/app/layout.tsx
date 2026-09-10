@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   verification: {
+    google: 'AD-S-ocX_epaOTmYhB-mmbNiBw00whvOSh4yC4vHbZ4',
     other: {
       'naver-site-verification': 'e8a20d8234df63310a59f065638a3e1cac5e2ccd',
     },
