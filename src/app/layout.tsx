@@ -11,6 +11,11 @@ export const metadata: Metadata = {
     description: '제작부터 공유, 수정, 평생 소장까지 완전 무료.',
     type: 'website',
   },
+  verification: {
+    other: {
+      'naver-site-verification': 'e8a20d8234df63310a59f065638a3e1cac5e2ccd',
+    },
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
