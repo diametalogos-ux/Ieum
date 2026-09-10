@@ -3,9 +3,25 @@ import type { Metadata } from 'next'
 import { WREATH_CATEGORIES } from '@/lib/wreath-orders/types'
 import InquiryLink from '@/components/ui/InquiryLink'
 
+const OG_DESC =
+  '결혼식·장례식·개업식 등 소중한 자리에 축하와 위로를 꽃으로 대신 전하세요. 이음이 도와드립니다.'
+
+// og:image는 같은 폴더의 opengraph-image.tsx가 자동 사용됨
 export const metadata: Metadata = {
   title: '화환 주문 · 이음 (Ieum)',
-  description: '축하와 위로의 마음을 대신 전하는 이음의 화환 서비스.',
+  description: OG_DESC,
+  openGraph: {
+    title: '이음 · 화환 주문',
+    description: OG_DESC,
+    type: 'website',
+    url: 'https://ieum-log.shop/wreath',
+    siteName: '이음 (Ieum)',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '이음 · 화환 주문',
+    description: OG_DESC,
+  },
 }
 
 type Category = {
