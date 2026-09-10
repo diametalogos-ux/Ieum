@@ -26,11 +26,19 @@ async function loadBySlug(slug: string): Promise<LoadResult> {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const loaded = await loadBySlug(slug)
-  if (!loaded) return { title: '청첩장을 찾을 수 없어요' }
+  if (!loaded) {
+    return {
+      title: '청첩장을 찾을 수 없어요',
+      robots: { index: false, follow: false },
+    }
+  }
   const { data } = loaded
   return {
     title: data.ogTitle || data.title,
     description: data.ogDescription,
+    // 개별 청첩장은 개인정보 보호를 위해 검색엔진 노출 차단
+    // (카카오톡 등의 OG 미리보기는 robots와 무관하게 동작)
+    robots: { index: false, follow: false },
     openGraph: {
       title: data.ogTitle || data.title,
       description: data.ogDescription,

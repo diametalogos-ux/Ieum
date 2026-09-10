@@ -3,10 +3,11 @@ import './globals.css'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 
 export const metadata: Metadata = {
-  title: '이음 (Ieum) — 무료 모바일 청첩장',
+  metadataBase: new URL('https://ieum-log.shop'),
+  title: '이음 (Ieum) — 고급 무료 모바일 청첩장',
   description: '제작부터 공유, 수정, 평생 소장까지 완전 무료. 워터마크 없는 감성 모바일 청첩장.',
   openGraph: {
-    title: '이음 (Ieum) — 무료 모바일 청첩장',
+    title: '이음 (Ieum) — 고급 무료 모바일 청첩장',
     description: '제작부터 공유, 수정, 평생 소장까지 완전 무료.',
     type: 'website',
   },

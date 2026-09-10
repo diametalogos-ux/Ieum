@@ -8,8 +8,22 @@ const OG_DESC =
 
 // og:image는 같은 폴더의 opengraph-image.tsx가 자동 사용됨
 export const metadata: Metadata = {
-  title: '화환 주문 · 이음 (Ieum)',
+  title: '이음 화환 · 축하화환·근조화환 주문',
   description: OG_DESC,
+  keywords: [
+    '이음 화환',
+    '화환 주문',
+    '축하화환',
+    '근조화환',
+    '결혼식 화환',
+    '장례식 화환',
+    '개업식 화환',
+    '이음',
+    'Ieum',
+  ],
+  alternates: {
+    canonical: '/wreath',
+  },
   openGraph: {
     title: '이음 · 화환 주문',
     description: OG_DESC,
@@ -22,6 +36,29 @@ export const metadata: Metadata = {
     title: '이음 · 화환 주문',
     description: OG_DESC,
   },
+}
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': 'https://ieum-log.shop/wreath#webpage',
+      url: 'https://ieum-log.shop/wreath',
+      name: '이음 화환 · 축하화환·근조화환 주문',
+      description: OG_DESC,
+      inLanguage: 'ko-KR',
+      isPartOf: { '@id': 'https://ieum-log.shop/#website' },
+    },
+    {
+      '@type': 'Service',
+      name: '이음 화환',
+      serviceType: '화환 주문·배송',
+      provider: { '@type': 'Organization', name: '이음 (Ieum)' },
+      areaServed: 'KR',
+      description: OG_DESC,
+    },
+  ],
 }
 
 type Category = {
@@ -52,6 +89,10 @@ const categories: Category[] = [
 export default function WreathHomePage() {
   return (
     <main className="relative min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="absolute inset-x-0 top-0 h-px bg-neutral-900/10" />
 
       {/* 헤더 */}
