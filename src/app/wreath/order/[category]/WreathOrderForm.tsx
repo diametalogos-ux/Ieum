@@ -290,7 +290,7 @@ export default function WreathOrderForm({
           label="받는분과의 관계"
           required
           error={errors.receiverRelationship}
-        // hint="결제 단계에서 받으시는 분을 구분하는 라벨로 사용돼요 (예: 신랑 김철수)"
+         hint="결제 단계에서 받으시는 분을 구분하는 라벨로 사용돼요 (예: 신랑 김철수, 혼주 김영희)"
         >
           <div className="flex flex-wrap gap-2">
             <button
@@ -413,10 +413,13 @@ export default function WreathOrderForm({
       <fieldset className="space-y-5">
         <legend className="mb-2 text-lg font-bold text-neutral-900">
           배송 일시
-          <span className="ml-1 text-red-500">*</span>
         </legend>
 
-        <div id="field-deliveryDate" className="grid grid-cols-2 gap-3">
+        <Field
+          id="field-deliveryDate"
+          label="날짜"
+          required
+        >
           <input
             type="date"
             value={form.deliveryDate}
@@ -425,6 +428,15 @@ export default function WreathOrderForm({
             onBlur={() => handleBlur('deliveryDate')}
             className={inputCls(errors.deliveryDate)}
           />
+        </Field>
+
+        <Field
+          id="field-deliveryTime"
+          label="시간"
+          required
+          error={errors.deliveryDate}
+          hint="행사 시작 30분~1시간 전으로 지정하시는 것을 권장드려요."
+        >
           <input
             type="time"
             value={form.deliveryTime}
@@ -432,21 +444,7 @@ export default function WreathOrderForm({
             onBlur={() => handleBlur('deliveryDate')}
             className={inputCls(errors.deliveryDate)}
           />
-        </div>
-        {errors.deliveryDate ? (
-          <p className="text-[13px] font-medium text-red-600">
-            {errors.deliveryDate}
-          </p>
-        ) : categoryKey === 'congrats' ? (
-          <p className="text-[13px] leading-relaxed text-neutral-600">
-            결혼식의 경우 예식 시작 시간을 정확히 기입해 주세요.
-            예식 시작 30분~1시간 사이에 도착합니다.
-          </p>
-        ) : (
-          <p className="text-[13px] leading-relaxed text-neutral-600">
-            행사 시작 30분~1시간 전으로 지정하시는 것을 권장드려요.
-          </p>
-        )}
+        </Field>
       </fieldset>
 
       {/* 리본 문구 (필수) */}
@@ -606,9 +604,9 @@ function Field({
         {children}
       </label>
       {error ? (
-        <p className="mt-2 text-[13px] font-medium text-red-600">{error}</p>
+        <p className="mt-2 text-[14px] font-medium text-red-600">{error}</p>
       ) : hint ? (
-        <p className="mt-2 text-[13px] leading-relaxed text-neutral-600">
+        <p className="mt-2 text-[14px] leading-relaxed text-neutral-600">
           {hint}
         </p>
       ) : null}
