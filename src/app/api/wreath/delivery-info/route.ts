@@ -88,6 +88,8 @@ async function handleWreathToken(request: Request, url: URL, token: string) {
     console.warn('[wreath/delivery-info] status update failed:', err)
   )
 
+  const origin = resolveOrigin(request, url)
+
   return NextResponse.json({
     success: true,
     zipcode: order.zipcode ?? '',
@@ -101,9 +103,13 @@ async function handleWreathToken(request: Request, url: URL, token: string) {
         tel: order.receiverTel || '010-0000-0000',
       },
     ],
+    // 주문자 정보 — 꽃비 결제 페이지에 자동 채워짐
+    name: order.ordererName ?? '',
+    phone: order.ordererPhone ?? '',
     ribbon_name: order.ribbonName ?? '',
     ribbon_message: order.ribbonMessage ?? '',
-    url: `${resolveOrigin(request, url)}/wreath`,
+    // 우리 token 포함 URL — 꽃비 주문내역 조회 시 callbackurl 필드로 남음 → 매칭 근거
+    url: `${origin}/wreath?order=${order.token}`,
   })
 }
 

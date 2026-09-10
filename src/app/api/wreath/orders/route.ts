@@ -20,13 +20,61 @@ export async function POST(request: Request) {
 
   const receiverName = String(body.receiverName ?? '').trim()
   const receiverRelationship = String(body.receiverRelationship ?? '').trim()
+  const receiverTel = String(body.receiverTel ?? '').trim()
   const address = String(body.address ?? '').trim()
   const deliveryDatetime = String(body.deliveryDatetime ?? '').trim()
+  const ribbonName = String(body.ribbonName ?? '').trim()
+  const ribbonMessage = String(body.ribbonMessage ?? '').trim()
+  const ordererName = String(body.ordererName ?? '').trim()
+  const ordererPhone = String(body.ordererPhone ?? '').trim()
 
+  // 필수 필드
   if (!receiverName) return field('receiverName')
   if (!receiverRelationship) return field('receiverRelationship')
   if (!address) return field('address')
   if (!deliveryDatetime) return field('deliveryDatetime')
+  if (!ribbonName) return field('ribbonName')
+  if (!ribbonMessage) return field('ribbonMessage')
+  if (!ordererName) return field('ordererName')
+  if (!ordererPhone) return field('ordererPhone')
+
+  // 서버 사이드 형식 재검증 (클라이언트 우회 방지)
+  if (!/^[가-힣a-zA-Z\s·]{1,20}$/.test(receiverName)) {
+    return NextResponse.json(
+      { error: 'invalid receiverName format' },
+      { status: 400 }
+    )
+  }
+  if (!/^[가-힣a-zA-Z\s]{1,20}$/.test(receiverRelationship)) {
+    return NextResponse.json(
+      { error: 'invalid receiverRelationship format' },
+      { status: 400 }
+    )
+  }
+  if (receiverTel && !/^01[016789]-\d{3,4}-\d{4}$/.test(receiverTel)) {
+    return NextResponse.json(
+      { error: 'invalid receiverTel format' },
+      { status: 400 }
+    )
+  }
+  if (ribbonName.length > 30 || ribbonMessage.length > 30) {
+    return NextResponse.json(
+      { error: 'ribbon text too long (max 30)' },
+      { status: 400 }
+    )
+  }
+  if (!/^[가-힣a-zA-Z\s·]{1,20}$/.test(ordererName)) {
+    return NextResponse.json(
+      { error: 'invalid ordererName format' },
+      { status: 400 }
+    )
+  }
+  if (!/^01[016789]-\d{3,4}-\d{4}$/.test(ordererPhone)) {
+    return NextResponse.json(
+      { error: 'invalid ordererPhone format' },
+      { status: 400 }
+    )
+  }
 
   // 배송일시가 미래인지 최소 검증
   const dt = new Date(deliveryDatetime)
@@ -53,6 +101,8 @@ export async function POST(request: Request) {
       ribbonMessage: body.ribbonMessage
         ? String(body.ribbonMessage)
         : undefined,
+      ordererName,
+      ordererPhone,
     })
 
     return NextResponse.json({ token: order.token, categoryId: order.categoryId })

@@ -26,6 +26,8 @@ export type WreathOrderInput = {
   deliveryDatetime: string // ISO 8601
   ribbonName?: string
   ribbonMessage?: string
+  ordererName: string
+  ordererPhone: string
 }
 
 export type WreathOrder = {
@@ -42,6 +44,8 @@ export type WreathOrder = {
   deliveryDatetime: string
   ribbonName: string | null
   ribbonMessage: string | null
+  ordererName: string | null
+  ordererPhone: string | null
   status: 'pending' | 'redirected' | 'callback_hit'
   callbackHitAt: string | null
   createdAt: string

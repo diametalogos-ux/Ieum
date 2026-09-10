@@ -24,6 +24,8 @@ type DbRow = {
   delivery_datetime: string
   ribbon_name: string | null
   ribbon_message: string | null
+  orderer_name: string | null
+  orderer_phone: string | null
   status: 'pending' | 'redirected' | 'callback_hit'
   callback_hit_at: string | null
   created_at: string
@@ -44,6 +46,8 @@ function mapRow(row: DbRow): WreathOrder {
     deliveryDatetime: row.delivery_datetime,
     ribbonName: row.ribbon_name,
     ribbonMessage: row.ribbon_message,
+    ordererName: row.orderer_name,
+    ordererPhone: row.orderer_phone,
     status: row.status,
     callbackHitAt: row.callback_hit_at,
     createdAt: row.created_at,
@@ -74,6 +78,8 @@ export async function createWreathOrder(
       delivery_datetime: input.deliveryDatetime,
       ribbon_name: input.ribbonName?.trim() || null,
       ribbon_message: input.ribbonMessage?.trim() || null,
+      orderer_name: input.ordererName.trim(),
+      orderer_phone: input.ordererPhone.trim(),
     })
     .select()
     .single()

@@ -406,6 +406,10 @@ CREATE TABLE IF NOT EXISTS public.wreath_orders (
   ribbon_name TEXT,
   ribbon_message TEXT,
 
+  -- 주문자 (결제·연락 담당)
+  orderer_name TEXT,
+  orderer_phone TEXT,
+
   -- 상태 추적
   status TEXT NOT NULL DEFAULT 'pending'
     CHECK (status IN ('pending', 'redirected', 'callback_hit')),
@@ -414,8 +418,13 @@ CREATE TABLE IF NOT EXISTS public.wreath_orders (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 기존 테이블에 orderer 컬럼 추가 (재실행 안전)
+ALTER TABLE public.wreath_orders ADD COLUMN IF NOT EXISTS orderer_name TEXT;
+ALTER TABLE public.wreath_orders ADD COLUMN IF NOT EXISTS orderer_phone TEXT;
+
 CREATE INDEX IF NOT EXISTS wreath_orders_token_idx ON public.wreath_orders(token);
 CREATE INDEX IF NOT EXISTS wreath_orders_created_at_idx ON public.wreath_orders(created_at DESC);
+CREATE INDEX IF NOT EXISTS wreath_orders_orderer_phone_idx ON public.wreath_orders(orderer_phone);
 
 ALTER TABLE public.wreath_orders ENABLE ROW LEVEL SECURITY;
 
