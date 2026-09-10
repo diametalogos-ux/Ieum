@@ -1,0 +1,71 @@
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import type { Metadata } from 'next'
+import { WREATH_CATEGORIES } from '@/lib/wreath-orders/types'
+import WreathOrderForm from './WreathOrderForm'
+
+type Props = {
+  params: Promise<{ category: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { category } = await params
+  const key = category as keyof typeof WREATH_CATEGORIES
+  const meta = WREATH_CATEGORIES[key]
+  if (!meta) return { title: '화환 주문 · 이음' }
+  return {
+    title: `${meta.label} 주문 · 이음`,
+    description: `${meta.label} 배송 정보를 입력하고 주문을 진행합니다.`,
+  }
+}
+
+export default async function WreathOrderPage({ params }: Props) {
+  const { category } = await params
+  const key = category as keyof typeof WREATH_CATEGORIES
+  const meta = WREATH_CATEGORIES[key]
+  if (!meta) notFound()
+
+  return (
+    <main className="min-h-screen bg-white">
+      {/* 헤더 */}
+      <header className="border-b border-neutral-100">
+        <div className="mx-auto flex h-14 w-full max-w-3xl items-center justify-between px-5 md:h-16 md:px-8">
+          <Link
+            href="/wreath"
+            className="flex items-center gap-2 text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 19" />
+            </svg>
+            뒤로
+          </Link>
+          <p className="text-[10px] font-medium tracking-[0.35em] text-neutral-500 uppercase">
+            {key === 'congrats' ? 'Celebrations' : 'Condolences'}
+          </p>
+        </div>
+      </header>
+
+      <div className="mx-auto w-full max-w-3xl px-5 pt-10 pb-16 md:px-8 md:pt-14 md:pb-24">
+        <div>
+          <p className="text-[10px] font-semibold tracking-[0.35em] text-neutral-500 uppercase">
+            Step 02 / 02 · 배송 정보 입력
+          </p>
+          <h1 className="font-editorial mt-4 text-[36px] leading-tight tracking-tight text-neutral-900 md:text-[48px]">
+            {meta.label}
+          </h1>
+          <p className="mt-3 text-sm text-neutral-500">
+            받는분과 배송 정보를 입력해 주세요.
+            <br className="sm:hidden" />
+            <span className="hidden sm:inline"> </span>
+            다음 단계에서 상품을 고르고 결제할 수 있어요.
+          </p>
+        </div>
+
+        <div className="mt-10">
+          <WreathOrderForm categoryKey={key} categoryLabel={meta.label} />
+        </div>
+      </div>
+    </main>
+  )
+}

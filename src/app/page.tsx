@@ -22,7 +22,7 @@ const services: Service[] = [
     index: '01',
     label: 'Wedding',
     ko: '모바일 청첩장',
-    tagline: '두 사람의 이야기를 잇다',
+    tagline: '두 사람의 이야기를 전하다',
     href: '/wedding',
     accent: '#c88a97',
     available: true,
@@ -31,7 +31,7 @@ const services: Service[] = [
     index: '02',
     label: 'Obituary',
     ko: '모바일 부고장',
-    tagline: '남겨진 마음을 잇다',
+    tagline: '삼가 마지막 소식을 알리다',
     href: '/obituary',
     accent: '#7a7a82',
     available: false,
@@ -40,10 +40,10 @@ const services: Service[] = [
     index: '03',
     label: 'Wreath',
     ko: '화환 주문',
-    tagline: '정성을 꽃으로 잇다',
+    tagline: '축하와 위로를 대신 보내다',
     href: '/wreath',
     accent: '#b5946a',
-    available: false,
+    available: true,
   },
 ]
 
@@ -66,13 +66,13 @@ export default function HubPage() {
         {/* 브랜드 히어로 */}
         <section className="pt-16 pb-16 md:grid md:grid-cols-12 md:gap-8 md:pt-24 md:pb-24">
           <div className="md:col-span-7 md:pr-8">
-            <p className="font-serif text-[11px] italic tracking-widest text-neutral-500">
+            <p className="font-editorial text-[11px] tracking-widest text-neutral-500">
               A journal for
               <br />
               life&apos;s quiet moments
             </p>
             <h1
-              className="font-serif mt-6 leading-[0.9] tracking-tight text-neutral-900"
+              className="font-editorial mt-6 leading-[0.9] tracking-tight text-neutral-900"
               style={{ fontSize: 'clamp(4.5rem, 14vw, 11rem)' }}
             >
               이음
@@ -86,7 +86,7 @@ export default function HubPage() {
           </div>
 
           <div className="mt-10 md:col-span-5 md:mt-0 md:flex md:flex-col md:justify-end">
-            <p className="font-serif text-[15px] leading-[1.9] text-neutral-700 md:text-base">
+            <p className="font-editorial text-[15px] leading-[1.9] text-neutral-700 md:text-base">
               결혼과 이별,
               <br />
               축하와 위로 사이에
@@ -130,7 +130,7 @@ export default function HubPage() {
                   {/* 인덱스 (큼직) */}
                   <div className="w-16 shrink-0 md:w-24">
                     <p
-                      className="font-serif text-4xl leading-none md:text-6xl"
+                      className="font-editorial text-4xl leading-none md:text-6xl"
                       style={{ color: s.accent }}
                     >
                       {s.index}
@@ -145,10 +145,10 @@ export default function HubPage() {
                     >
                       {s.label}
                     </p>
-                    <h2 className="font-serif mt-3 text-[28px] leading-none tracking-tight text-neutral-900 md:text-[44px]">
+                    <h2 className="font-editorial mt-3 text-[28px] leading-none tracking-tight text-neutral-900 md:text-[44px]">
                       {s.ko}
                     </h2>
-                    <p className="font-serif mt-3 text-sm italic text-neutral-500 md:text-base">
+                    <p className="font-editorial mt-3 text-sm text-neutral-500 md:text-base">
                       {s.tagline}
                     </p>
                   </div>
@@ -211,7 +211,7 @@ export default function HubPage() {
         <footer className="border-t border-neutral-900/10 py-8">
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <p className="font-serif text-sm italic text-neutral-700">
+              <p className="font-editorial text-sm text-neutral-700">
                 Ieum &nbsp;·&nbsp; 이음
               </p>
               <p className="mt-1 text-[10px] tracking-[0.25em] text-neutral-400 uppercase">

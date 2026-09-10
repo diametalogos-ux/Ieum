@@ -64,6 +64,17 @@ body {
   font-family: 'Noto Serif KR', 'Nanum Myeongjo', Georgia, serif;
 }
 
+/*
+ * 허브·화환 서비스 공용 폰트 — Pretendard 기반(에어비엔비 톤).
+ * 클래스명은 유지(참조처 다수) — 실제 톤은 지오메트릭 산세리프로 전환.
+ */
+.font-editorial {
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system,
+    BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  font-feature-settings: 'ss03', 'ss04', 'cv01', 'cv09';
+  letter-spacing: -0.01em;
+}
+
 /* 청첩장 글꼴 — 에디터에서 선택 가능 */
 [data-font="serif"] {
   --p-font-body: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;

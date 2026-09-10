@@ -374,3 +374,55 @@ DROP POLICY IF EXISTS "images_select_public" ON storage.objects;
 CREATE POLICY "images_select_public"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'invitation-images');
+
+
+-- ============================================
+-- 11. wreath_orders (독립 화환 주문 — 익명, 청첩장 없음)
+-- ============================================
+-- 흐름: 유저가 /wreath/order 폼 작성 → 저장(token) → 꽃비로 이동 →
+-- 꽃비가 delivery_url?token=xxx 호출 → 저장된 배송정보 응답.
+CREATE TABLE IF NOT EXISTS public.wreath_orders (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  token VARCHAR(32) UNIQUE NOT NULL,
+
+  -- 카테고리 (꽃비 상품 분류 id)
+  category_id INT NOT NULL,
+  category_label TEXT NOT NULL,
+
+  -- 받는분
+  receiver_name TEXT NOT NULL,
+  receiver_relationship TEXT NOT NULL,
+  receiver_tel TEXT,
+
+  -- 배송지
+  zipcode TEXT,
+  address TEXT NOT NULL,
+  address_detail TEXT,
+
+  -- 배송 일시
+  delivery_datetime TIMESTAMPTZ NOT NULL,
+
+  -- 리본 문구
+  ribbon_name TEXT,
+  ribbon_message TEXT,
+
+  -- 상태 추적
+  status TEXT NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'redirected', 'callback_hit')),
+  callback_hit_at TIMESTAMPTZ,
+
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS wreath_orders_token_idx ON public.wreath_orders(token);
+CREATE INDEX IF NOT EXISTS wreath_orders_created_at_idx ON public.wreath_orders(created_at DESC);
+
+ALTER TABLE public.wreath_orders ENABLE ROW LEVEL SECURITY;
+
+-- INSERT: 익명(anon) 허용 — 로그인 없이 주문 가능
+DROP POLICY IF EXISTS "wreath_orders_insert_anon" ON public.wreath_orders;
+CREATE POLICY "wreath_orders_insert_anon" ON public.wreath_orders
+  FOR INSERT WITH CHECK (true);
+
+-- SELECT/UPDATE: 서비스롤 전용 (콜백 라우트에서만 접근)
+-- anon/authenticated 는 정책 없음 → 접근 불가

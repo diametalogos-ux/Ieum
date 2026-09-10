@@ -3,41 +3,51 @@ import {
   getInvitationBySlug,
   getInvitationBySlugAdmin,
 } from '@/lib/invitations/server'
+import {
+  getWreathOrderByToken,
+  markWreathOrderCallbackHit,
+} from '@/lib/wreath-orders/server'
 import { buildDeliveryPayload } from '@/lib/wreath'
 import { sampleInvitation } from '@/lib/mock/sample-invitation'
 import type { StoredInvitation } from '@/lib/invitations/types'
+import type { WreathOrder } from '@/lib/wreath-orders/types'
 
 /**
- * 꽃비(flowerbiz)가 화환 주문 폼 렌더 시 POST 로 호출하는 콜백.
- * 우리는 청첩장 slug 로 invitation 을 찾아 배송지·수령인 정보를 JSON 으로 반환.
- * GET 도 허용 (개발 단계에서 브라우저로 페이로드 확인용).
+ * 꽃비(flowerbiz) 배달 관련 정보 콜백.
+ * 두 진입 경로 지원:
+ *  1) ?invite=<slug>  — 청첩장에서 화환 주문 (예식장/신랑신부 → 배송지/수신자)
+ *  2) ?token=<token>  — 독립 화환 주문 (/wreath/order 폼에서 저장된 정보)
  */
 async function handle(request: Request) {
   const url = new URL(request.url)
   const slug = url.searchParams.get('invite')
+  const token = url.searchParams.get('token')
 
-  if (!slug) {
-    return NextResponse.json(
-      { error: 'invite param required' },
-      { status: 400 }
-    )
+  if (token) {
+    return handleWreathToken(request, url, token)
   }
+  if (slug) {
+    return handleInviteSlug(request, url, slug)
+  }
+  return NextResponse.json(
+    { error: 'invite or token param required' },
+    { status: 400 }
+  )
+}
 
-  // 데모용 sample 슬러그는 mock 반환.
+async function handleInviteSlug(request: Request, url: URL, slug: string) {
   if (slug === 'sample') {
-    return respond(request, url, slug, { data: sampleInvitation })
+    return respondInvite(request, url, slug, { data: sampleInvitation })
   }
 
-  // 1차: admin(service role) 로 조회. draft/published 무관하게 접근 가능.
   let stored: StoredInvitation | Pick<StoredInvitation, 'data'> | null = null
   try {
     stored = await getInvitationBySlugAdmin(slug)
   } catch (err) {
     console.warn(
-      '[wreath/delivery-info] admin client unavailable, falling back to anon server client. Cause:',
+      '[wreath/delivery-info] admin client unavailable, falling back to anon. Cause:',
       err instanceof Error ? err.message : err
     )
-    // 2차 fallback: 일반 서버 클라이언트. published 상태만 조회됨 (RLS)
     stored = await getInvitationBySlug(slug)
   }
 
@@ -47,25 +57,72 @@ async function handle(request: Request) {
       { status: 404 }
     )
   }
-
-  return respond(request, url, slug, stored)
+  return respondInvite(request, url, slug, stored)
 }
 
-function respond(
+function respondInvite(
   request: Request,
   url: URL,
   slug: string,
   stored: Pick<StoredInvitation, 'data'>
 ) {
-  // 실제 브라우저가 접속한 host 를 기준으로 invite URL 생성 (0.0.0.0 이슈 회피)
+  const inviteUrl = `${resolveOrigin(request, url)}/wedding/invite/${slug}`
+  const payload = buildDeliveryPayload(stored.data, inviteUrl)
+  return NextResponse.json(payload)
+}
+
+async function handleWreathToken(request: Request, url: URL, token: string) {
+  let order: WreathOrder | null
+  try {
+    order = await getWreathOrderByToken(token)
+  } catch (err) {
+    console.error('[wreath/delivery-info] token lookup failed:', err)
+    return NextResponse.json({ error: 'lookup failed' }, { status: 500 })
+  }
+  if (!order) {
+    return NextResponse.json({ error: 'order not found' }, { status: 404 })
+  }
+
+  // 콜백 도달 기록 (실패해도 응답에는 영향 없게)
+  markWreathOrderCallbackHit(token).catch((err) =>
+    console.warn('[wreath/delivery-info] status update failed:', err)
+  )
+
+  return NextResponse.json({
+    success: true,
+    zipcode: order.zipcode ?? '',
+    address: order.address,
+    address_detail: order.addressDetail ?? '',
+    delivery_datetime: formatFlowerbizDatetime(order.deliveryDatetime),
+    receiver: [
+      {
+        name: order.receiverName,
+        relationship: order.receiverRelationship,
+        tel: order.receiverTel || '010-0000-0000',
+      },
+    ],
+    ribbon_name: order.ribbonName ?? '',
+    ribbon_message: order.ribbonMessage ?? '',
+    url: `${resolveOrigin(request, url)}/wreath`,
+  })
+}
+
+function resolveOrigin(request: Request, url: URL): string {
   const forwardedHost = request.headers.get('x-forwarded-host')
   const forwardedProto = request.headers.get('x-forwarded-proto')
   const host = forwardedHost ?? request.headers.get('host') ?? url.host
   const proto = forwardedProto ?? url.protocol.replace(':', '')
-  const inviteUrl = `${proto}://${host}/invite/${slug}`
+  return `${proto}://${host}`
+}
 
-  const payload = buildDeliveryPayload(stored.data, inviteUrl)
-  return NextResponse.json(payload)
+/** ISO → yyyy-mm-dd hh:mm:ss (꽃비 포맷) */
+function formatFlowerbizDatetime(iso: string): string {
+  const dt = new Date(iso)
+  if (Number.isNaN(dt.getTime())) return ''
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(
+    dt.getDate()
+  )} ${pad(dt.getHours())}:${pad(dt.getMinutes())}:00`
 }
 
 export const GET = handle
