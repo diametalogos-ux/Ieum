@@ -99,7 +99,7 @@ async function handleWreathToken(request: Request, url: URL, token: string) {
     receiver: [
       {
         name: order.receiverName,
-        // 꽃비 스펙: relationship 공란 불가. 화환 외 카테고리는 기본값으로 대체
+        // 꽃비 스펙: relationship 공란 불가. 빈 값이면 기본값으로 대체
         relationship: order.receiverRelationship || '받는분',
         tel: order.receiverTel || '010-0000-0000',
       },

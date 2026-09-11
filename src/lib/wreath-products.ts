@@ -75,7 +75,9 @@ function parseFilename(
     code,
     name,
     price,
-    imageSrc: `/product-image/${dirName}/${filename}`,
+    // 파일명·폴더명에 공백, '+', 한글 등이 있어서 URL 인코딩 필요
+    // (특히 '+'는 URL 스펙상 공백으로 해석될 수 있어 액박 원인이 됨)
+    imageSrc: `/product-image/${encodeURIComponent(dirName)}/${encodeURIComponent(filename)}`,
   }
 }
 
