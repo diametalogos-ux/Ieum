@@ -2,12 +2,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { WREATH_CATEGORIES } from '@/lib/wreath-orders/types'
+import { getWreathProducts } from '@/lib/wreath-products'
 
 const PHONE_NUMBER = '070-4453-1063'
-const FLOWERBIZ_SHOP =
-  process.env.NEXT_PUBLIC_FLOWERBIZ_SHOP_URL ?? 'https://shop4.flowerbiz.co.kr'
-const FLOWERBIZ_AGENCY =
-  process.env.NEXT_PUBLIC_FLOWERBIZ_AGENCY_ID ?? 'dia3346'
 
 type Props = {
   params: Promise<{ category: string }>
@@ -29,6 +26,8 @@ export default async function WreathPreviewPage({ params }: Props) {
   const key = category as keyof typeof WREATH_CATEGORIES
   const meta = WREATH_CATEGORIES[key]
   if (!meta) notFound()
+
+  const products = getWreathProducts(key)
 
   return (
     <main className="min-h-screen bg-white">
@@ -90,31 +89,42 @@ export default async function WreathPreviewPage({ params }: Props) {
 
         {/* 상품 미리보기 */}
         <section className="mt-10">
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-[11px] font-semibold tracking-[0.3em] text-neutral-500 uppercase">
-              상품 미리보기
-            </h2>
-            <a
-              href={`${FLOWERBIZ_SHOP}/gb/products/product-category/${meta.id}?agencyid=${FLOWERBIZ_AGENCY}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[11px] text-neutral-500 underline underline-offset-4 hover:text-neutral-900"
-            >
-              새 탭에서 열기
-            </a>
-          </div>
-          <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50">
-            <iframe
-              src={`${FLOWERBIZ_SHOP}/gb/products/product-category/${meta.id}?agencyid=${FLOWERBIZ_AGENCY}&hide_product_category=true&hide_title=true`}
-              title={`${meta.label} 상품 목록`}
-              loading="lazy"
-              className="block h-[520px] w-full md:h-[640px]"
-            />
-          </div>
-          <p className="mt-2 text-xs leading-relaxed text-neutral-500">
-            상품 종류 미리보기 화면입니다
+          <h2 className="mb-4 text-[11px] font-semibold tracking-[0.3em] text-neutral-500 uppercase">
+            상품 미리보기
+          </h2>
+
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 md:gap-x-6 md:gap-y-10">
+            {products.map((p) => (
+              <li key={p.code}>
+                <div className="aspect-[3/5] overflow-hidden rounded-xl bg-neutral-50">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={p.imageSrc}
+                    alt={p.name}
+                    loading="lazy"
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+                <p className="mt-3 text-[11px] font-medium tracking-wide text-neutral-400">
+                  {p.code}
+                </p>
+                <p className="mt-1 text-sm font-medium text-neutral-900">
+                  {p.name}
+                </p>
+                <p className="mt-1 text-base font-bold text-neutral-900">
+                  {p.price.toLocaleString()}원
+                </p>
+                <span className="mt-2 inline-block rounded-md border border-neutral-200 px-2 py-0.5 text-[10px] font-medium tracking-wide text-neutral-500">
+                  전국당일배송
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-6 text-xs leading-relaxed text-neutral-500">
+            상품 종류 미리보기 화면입니다.
             <br className="sm:hidden" />
-            상품 상세보기 및 상품 선택은 아래 <strong className="text-neutral-700">주문 폼</strong>입력 후 가능합니다.
+            상품 상세보기·선택은 아래 <strong className="text-neutral-700">주문폼</strong> 입력 후 결제 페이지에서 하실 수 있어요.
           </p>
         </section>
 

@@ -64,26 +64,17 @@ const jsonLd = {
 type Category = {
   key: keyof typeof WREATH_CATEGORIES
   label: string
-  desc: string
-  tone: string
   accent: string
 }
 
 const categories: Category[] = [
-  {
-    key: 'congrats',
-    label: '축하화환',
-    desc: '결혼식, 개업식, 승진 등\n기쁜 자리에 축하의 마음을',
-    tone: 'Celebrations',
-    accent: '#c88a97',
-  },
-  {
-    key: 'condolence',
-    label: '근조화환',
-    desc: '고인의 마지막 길에\n삼가 조의를 표합니다',
-    tone: 'Condolences',
-    accent: '#4a4a52',
-  },
+  { key: 'congrats', label: '축하화환', accent: '#c88a97' },
+  { key: 'condolence', label: '근조화환', accent: '#4a4a52' },
+  { key: 'foliage', label: '관엽', accent: '#6b7d5a' },
+  { key: 'basket', label: '꽃바구니·꽃다발', accent: '#d4a574' },
+  { key: 'oriental', label: '동양란', accent: '#a08c6c' },
+  { key: 'western', label: '서양란', accent: '#c9b5d4' },
+  { key: 'bonsai', label: '분재', accent: '#7a9a7a' },
 ]
 
 export default function WreathHomePage() {
@@ -141,30 +132,23 @@ export default function WreathHomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
           {categories.map((c) => (
             <Link
               key={c.key}
               href={`/wreath/order/${c.key}`}
-              className="group relative flex min-h-[280px] flex-col justify-between overflow-hidden rounded-2xl border border-neutral-200 bg-white p-8 transition-all hover:-translate-y-0.5 hover:border-neutral-900/30 hover:shadow-xl hover:shadow-neutral-200/60 md:p-10"
+              className="group relative flex min-h-[140px] flex-col justify-between overflow-hidden rounded-2xl border border-neutral-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-neutral-900/30 hover:shadow-lg hover:shadow-neutral-200/60 md:min-h-[160px] md:p-6"
             >
-              <div>
-                <p
-                  className="text-[12px] font-semibold tracking-[0.35em] uppercase"
-                  style={{ color: c.accent }}
-                >
-                  {c.tone}
-                </p>
-                <h2 className="font-editorial mt-4 text-[32px] leading-none tracking-tight text-neutral-900 md:text-[40px]">
-                  {c.label}
-                </h2>
-                <p className="mt-5 whitespace-pre-line text-[15px] leading-relaxed text-neutral-600 md:text-[16px]">
-                  {c.desc}
-                </p>
-              </div>
-
-              <div className="mt-10 flex items-center justify-between">
-                <span className="text-[14px] font-semibold tracking-[0.25em] text-neutral-800 uppercase">
+              <span
+                aria-hidden
+                className="absolute top-0 left-0 h-full w-1"
+                style={{ background: c.accent }}
+              />
+              <h2 className="font-editorial text-[20px] leading-tight tracking-tight text-neutral-900 md:text-[22px]">
+                {c.label}
+              </h2>
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-semibold tracking-[0.25em] text-neutral-500 uppercase">
                   주문하기
                 </span>
                 <svg
@@ -172,10 +156,10 @@ export default function WreathHomePage() {
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="1.4"
+                  strokeWidth="1.6"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="h-6 w-6 text-neutral-900 transition-transform duration-300 group-hover:translate-x-2"
+                  className="h-5 w-5 text-neutral-800 transition-transform duration-300 group-hover:translate-x-1"
                 >
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
@@ -193,11 +177,11 @@ export default function WreathHomePage() {
           <ol className="mt-4 space-y-3 text-[15px] leading-relaxed text-neutral-700 md:text-base">
             <li>
               <span className="mr-2 font-semibold text-neutral-900">01.</span>
-              화환 종류 선택 후, 받는분과 배송 정보를 입력합니다.
+              받는분과 배송 정보를 입력합니다.
             </li>
             <li>
               <span className="mr-2 font-semibold text-neutral-900">02.</span>
-              꽃비 파트너 상점으로 이동해 상품을 고르고 결제합니다.
+              꽃비 파트너 상점에서 원하는 화환을 고르고 결제합니다.
             </li>
             <li>
               <span className="mr-2 font-semibold text-neutral-900">03.</span>
