@@ -30,6 +30,12 @@ type FieldErrors = Partial<Record<keyof FormState, string>>
 
 const RELATIONSHIP_PRESETS = ['가족', '혼주', '신랑', '신부', '상주', '유족']
 
+/** 관계·리본 문구 필드가 필요한 카테고리 (축하화환·근조화환만) */
+const WREATH_CATEGORY_KEYS: readonly WreathCategoryKey[] = [
+  'congrats',
+  'condolence',
+]
+
 // 검증 규칙
 const NAME_RE = /^[가-힣a-zA-Z\s·]{1,20}$/
 const RELATIONSHIP_RE = /^[가-힣a-zA-Z\s]{1,20}$/
@@ -108,6 +114,8 @@ export default function WreathOrderForm({
   categoryKey,
   categoryLabel,
 }: Props) {
+  const isWreath = WREATH_CATEGORY_KEYS.includes(categoryKey)
+
   const now = useMemo(() => new Date(), [])
   const minDate = useMemo(() => toDateInput(now), [now])
   const suggestedRibbon = useMemo(
@@ -177,17 +185,19 @@ export default function WreathOrderForm({
   }
 
   const validateAll = (): boolean => {
-    const keys: (keyof FormState)[] = [
+    const commonKeys: (keyof FormState)[] = [
       'receiverName',
-      'receiverRelationship',
       'receiverTel',
       'address',
       'deliveryDate',
-      'ribbonMessage',
-      'ribbonName',
       'ordererName',
       'ordererPhone',
     ]
+    // 화환(축하/근조) 카테고리만 관계·리본 필수
+    const wreathOnlyKeys: (keyof FormState)[] = isWreath
+      ? ['receiverRelationship', 'ribbonMessage', 'ribbonName']
+      : []
+    const keys = [...commonKeys, ...wreathOnlyKeys]
     const next: FieldErrors = {}
     let hasError = false
     for (const k of keys) {
@@ -232,14 +242,15 @@ export default function WreathOrderForm({
         body: JSON.stringify({
           category: categoryKey,
           receiverName: form.receiverName,
-          receiverRelationship: form.receiverRelationship,
+          // 화환 카테고리가 아니면 관계·리본은 서버에 안 보냄 (선택 취급)
+          receiverRelationship: isWreath ? form.receiverRelationship : '',
           receiverTel: form.receiverTel,
           zipcode: form.zipcode,
           address: form.address,
           addressDetail: form.addressDetail,
           deliveryDatetime: deliveryDatetime.toISOString(),
-          ribbonName: form.ribbonName,
-          ribbonMessage: form.ribbonMessage,
+          ribbonName: isWreath ? form.ribbonName : '',
+          ribbonMessage: isWreath ? form.ribbonMessage : '',
           ordererName: form.ordererName,
           ordererPhone: form.ordererPhone,
         }),
@@ -285,67 +296,69 @@ export default function WreathOrderForm({
           />
         </Field>
 
-        <Field
-          id="field-receiverRelationship"
-          label="받는분과의 관계"
-          required
-          error={errors.receiverRelationship}
-         hint="결제 단계에서 받으시는 분을 구분하는 라벨로 사용돼요 (예: 신랑 김철수, 혼주 김영희)"
-        >
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                update('receiverRelationship', '')
-                setTouched((t) => ({ ...t, receiverRelationship: true }))
-                document
-                  .getElementById('relationship-custom-input')
-                  ?.focus()
-              }}
-              className={`rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
-                !RELATIONSHIP_PRESETS.includes(form.receiverRelationship)
-                  ? 'border-neutral-900 bg-neutral-900 text-white'
-                  : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400'
-              }`}
-            >
-              직접입력
-            </button>
-            {RELATIONSHIP_PRESETS.map((r) => (
+        {isWreath && (
+          <Field
+            id="field-receiverRelationship"
+            label="받는분과의 관계"
+            required
+            error={errors.receiverRelationship}
+            hint="결제 단계에서 받으시는 분을 구분하는 라벨로 사용돼요 (예: 신랑 김철수, 혼주 김영희)"
+          >
+            <div className="flex flex-wrap gap-2">
               <button
-                key={r}
                 type="button"
                 onClick={() => {
-                  update('receiverRelationship', r)
+                  update('receiverRelationship', '')
                   setTouched((t) => ({ ...t, receiverRelationship: true }))
+                  document
+                    .getElementById('relationship-custom-input')
+                    ?.focus()
                 }}
                 className={`rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
-                  form.receiverRelationship === r
+                  !RELATIONSHIP_PRESETS.includes(form.receiverRelationship)
                     ? 'border-neutral-900 bg-neutral-900 text-white'
                     : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400'
                 }`}
               >
-                {r}
+                직접입력
               </button>
-            ))}
-          </div>
-          <input
-            id="relationship-custom-input"
-            type="text"
-            value={
-              RELATIONSHIP_PRESETS.includes(form.receiverRelationship)
-                ? ''
-                : form.receiverRelationship
-            }
-            onChange={(e) => update('receiverRelationship', e.target.value)}
-            onBlur={() => handleBlur('receiverRelationship')}
-            maxLength={20}
-            disabled={RELATIONSHIP_PRESETS.includes(
-              form.receiverRelationship
-            )}
-            placeholder="예) 친구, 회사동료, 이모부 등"
-            className={`${inputCls(errors.receiverRelationship)} mt-2 disabled:bg-neutral-50 disabled:text-neutral-400`}
-          />
-        </Field>
+              {RELATIONSHIP_PRESETS.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => {
+                    update('receiverRelationship', r)
+                    setTouched((t) => ({ ...t, receiverRelationship: true }))
+                  }}
+                  className={`rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
+                    form.receiverRelationship === r
+                      ? 'border-neutral-900 bg-neutral-900 text-white'
+                      : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400'
+                  }`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+            <input
+              id="relationship-custom-input"
+              type="text"
+              value={
+                RELATIONSHIP_PRESETS.includes(form.receiverRelationship)
+                  ? ''
+                  : form.receiverRelationship
+              }
+              onChange={(e) => update('receiverRelationship', e.target.value)}
+              onBlur={() => handleBlur('receiverRelationship')}
+              maxLength={20}
+              disabled={RELATIONSHIP_PRESETS.includes(
+                form.receiverRelationship
+              )}
+              placeholder="예) 친구, 회사동료, 이모부 등"
+              className={`${inputCls(errors.receiverRelationship)} mt-2 disabled:bg-neutral-50 disabled:text-neutral-400`}
+            />
+          </Field>
+        )}
 
         <Field
           id="field-receiverTel"
@@ -447,46 +460,48 @@ export default function WreathOrderForm({
         </Field>
       </fieldset>
 
-      {/* 리본 문구 (필수) */}
-      <fieldset className="space-y-5">
-        <legend className="mb-2 text-lg font-bold text-neutral-900">
-          리본 문구
-        </legend>
+      {/* 리본 문구 (화환 카테고리만) */}
+      {isWreath && (
+        <fieldset className="space-y-5">
+          <legend className="mb-2 text-lg font-bold text-neutral-900">
+            리본 문구
+          </legend>
 
-        <Field
-          id="field-ribbonMessage"
-          label="경조사어 · 리본 오른쪽"
-          required
-          error={errors.ribbonMessage}
-        >
-          <input
-            type="text"
-            value={form.ribbonMessage}
-            onChange={(e) => update('ribbonMessage', e.target.value)}
-            onBlur={() => handleBlur('ribbonMessage')}
-            maxLength={30}
-            placeholder={suggestedRibbon}
-            className={inputCls(errors.ribbonMessage)}
-          />
-        </Field>
+          <Field
+            id="field-ribbonMessage"
+            label="경조사어 · 리본 오른쪽"
+            required
+            error={errors.ribbonMessage}
+          >
+            <input
+              type="text"
+              value={form.ribbonMessage}
+              onChange={(e) => update('ribbonMessage', e.target.value)}
+              onBlur={() => handleBlur('ribbonMessage')}
+              maxLength={30}
+              placeholder={suggestedRibbon}
+              className={inputCls(errors.ribbonMessage)}
+            />
+          </Field>
 
-        <Field
-          id="field-ribbonName"
-          label="보내는분 · 리본 왼쪽"
-          required
-          error={errors.ribbonName}
-        >
-          <input
-            type="text"
-            value={form.ribbonName}
-            onChange={(e) => update('ribbonName', e.target.value)}
-            onBlur={() => handleBlur('ribbonName')}
-            maxLength={30}
-            placeholder={suggestedSender}
-            className={inputCls(errors.ribbonName)}
-          />
-        </Field>
-      </fieldset>
+          <Field
+            id="field-ribbonName"
+            label="보내는분 · 리본 왼쪽"
+            required
+            error={errors.ribbonName}
+          >
+            <input
+              type="text"
+              value={form.ribbonName}
+              onChange={(e) => update('ribbonName', e.target.value)}
+              onBlur={() => handleBlur('ribbonName')}
+              maxLength={30}
+              placeholder={suggestedSender}
+              className={inputCls(errors.ribbonName)}
+            />
+          </Field>
+        </fieldset>
+      )}
 
       {/* 주문자 정보 */}
       <fieldset className="space-y-5">

@@ -18,6 +18,9 @@ export async function POST(request: Request) {
     )
   }
 
+  // 관계·리본 문구는 축하화환·근조화환에만 필수
+  const isWreath = category === 'congrats' || category === 'condolence'
+
   const receiverName = String(body.receiverName ?? '').trim()
   const receiverRelationship = String(body.receiverRelationship ?? '').trim()
   const receiverTel = String(body.receiverTel ?? '').trim()
@@ -28,15 +31,19 @@ export async function POST(request: Request) {
   const ordererName = String(body.ordererName ?? '').trim()
   const ordererPhone = String(body.ordererPhone ?? '').trim()
 
-  // 필수 필드
+  // 공통 필수 필드
   if (!receiverName) return field('receiverName')
-  if (!receiverRelationship) return field('receiverRelationship')
   if (!address) return field('address')
   if (!deliveryDatetime) return field('deliveryDatetime')
-  if (!ribbonName) return field('ribbonName')
-  if (!ribbonMessage) return field('ribbonMessage')
   if (!ordererName) return field('ordererName')
   if (!ordererPhone) return field('ordererPhone')
+
+  // 화환 카테고리 전용 필수
+  if (isWreath) {
+    if (!receiverRelationship) return field('receiverRelationship')
+    if (!ribbonName) return field('ribbonName')
+    if (!ribbonMessage) return field('ribbonMessage')
+  }
 
   // 서버 사이드 형식 재검증 (클라이언트 우회 방지)
   if (!/^[가-힣a-zA-Z\s·]{1,20}$/.test(receiverName)) {
@@ -45,7 +52,10 @@ export async function POST(request: Request) {
       { status: 400 }
     )
   }
-  if (!/^[가-힣a-zA-Z\s]{1,20}$/.test(receiverRelationship)) {
+  if (
+    receiverRelationship &&
+    !/^[가-힣a-zA-Z\s]{1,20}$/.test(receiverRelationship)
+  ) {
     return NextResponse.json(
       { error: 'invalid receiverRelationship format' },
       { status: 400 }
