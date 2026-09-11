@@ -1,7 +1,7 @@
 import type { InvitationData } from '@/types/invitation'
 
 const FLOWERBIZ_SHOP_URL =
-  process.env.NEXT_PUBLIC_FLOWERBIZ_SHOP_URL ?? 'https://shop5.flowerbiz.co.kr'
+  process.env.NEXT_PUBLIC_FLOWERBIZ_SHOP_URL ?? 'https://shop4.flowerbiz.co.kr'
 const FLOWERBIZ_AGENCY_ID =
   process.env.NEXT_PUBLIC_FLOWERBIZ_AGENCY_ID ?? 'dia3346'
 
