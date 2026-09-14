@@ -30,6 +30,7 @@ export default function CtaSection() {
         </p>
 
         <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row">
+          {/* TODO: 카카오 OAuth 실제 구현 후 재활성화
           <Link
             href="/login"
             className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-sm font-semibold transition-opacity hover:opacity-90"
@@ -37,6 +38,7 @@ export default function CtaSection() {
           >
             카카오로 시작하기
           </Link>
+          */}
           <Link
             href="/login"
             className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-100"
