@@ -26,19 +26,18 @@ export default function NoticeSection({ data }: Props) {
         </div>
       </div>
 
-      <ul className="mt-10 space-y-3">
-        {data.notices.map((n) => (
-          <li
-            key={n.id}
-            className="relative rounded-xl border-l-2 bg-white px-5 py-4 shadow-sm ring-1 ring-neutral-100"
-            style={{ borderLeftColor: 'var(--p-strong)' }}
-          >
-            <p className="text-sm leading-relaxed text-neutral-700">
+      <ol className="mx-auto mt-10 max-w-md divide-y divide-neutral-200 border-t border-b border-neutral-200">
+        {data.notices.map((n, idx) => (
+          <li key={n.id} className="flex gap-4 py-4">
+            <span className="font-serif text-[11px] font-light tracking-[0.2em] text-neutral-400 pt-0.5">
+              {String(idx + 1).padStart(2, '0')}
+            </span>
+            <p className="font-serif flex-1 text-[13px] leading-[1.9] text-neutral-700">
               {n.content}
             </p>
           </li>
         ))}
-      </ul>
+      </ol>
     </section>
   )
 }

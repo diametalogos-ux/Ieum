@@ -7,7 +7,7 @@ export const sampleNoirInvitation: InvitationData = {
   slug: 'sample-noir',
   title: '도윤 · 서아 청첩장',
 
-  theme: 'minimal',
+  theme: 'noir',
   primaryColor: '#1a1a1a',
   fontType: 'serif',
   fontSize: 'md',
@@ -25,6 +25,7 @@ export const sampleNoirInvitation: InvitationData = {
 
   mainPhotoGrayscale: true,
   galleryGrayscale: true,
+  guestbookStyle: 'letter',
 
   couple: {
     groom: {
@@ -84,11 +85,11 @@ export const sampleNoirInvitation: InvitationData = {
     transport: true,
     notice: true,
     account: true,
-    guestbook: true,
-    rsvp: true,
+    guestbook: false,
+    rsvp: false,
     photodrop: false,
     bgm: false,
-    flowerOrder: true,
+    flowerOrder: false,
   },
 
   greetingText:

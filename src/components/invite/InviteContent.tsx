@@ -50,7 +50,7 @@ export default function InviteContent({
         className="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden overflow-y-visible bg-white"
         style={{ boxShadow: '0 0 60px rgba(0,0,0,0.08)' }}
       >
-        {view.theme === 'minimal' ? (
+        {view.theme === 'noir' ? (
           <IntroSectionNoir data={view} />
         ) : (
           <IntroSection data={view} />

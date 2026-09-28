@@ -1,9 +1,11 @@
-export type ThemeType = 'romantic' | 'modern' | 'garden' | 'vintage' | 'minimal' | 'luxury' | 'bohemian' | 'classic' | 'floral' | 'elegant'
+export type ThemeType = 'romantic' | 'modern' | 'garden' | 'vintage' | 'minimal' | 'noir' | 'luxury' | 'bohemian' | 'classic' | 'floral' | 'elegant'
 
 export type EffectType = 'none' | 'fog' | 'wave'
 export type ParticleType = 'none' | 'cherry' | 'snow' | 'confetti' | 'star'
 export type IntroEffectType = 'none' | 'fade' | 'slide' | 'zoom'
 export type GalleryLayoutType = 'slide' | 'grid'
+export type GuestbookStyle = 'sticky' | 'letter'
+export type TextAlign = 'center' | 'left'
 export type FontType = 'nanum' | 'malgun' | 'gothic' | 'serif'
 
 export interface ParentInfo {
@@ -115,6 +117,8 @@ export interface InvitationData {
   introText: string
   mainPhotoGrayscale?: boolean
   galleryGrayscale?: boolean
+  guestbookStyle?: GuestbookStyle
+  greetingAlign?: TextAlign
 
   // OG / 공유
   ogTitle: string

@@ -49,6 +49,11 @@ export default function GuestbookSection({ data }: Props) {
   const [submitting, setSubmitting] = useState(false)
   const [justSubmitted, setJustSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [expanded, setExpanded] = useState(false)
+
+  const INITIAL_VISIBLE = 5
+  const visibleEntries = expanded ? entries : entries.slice(0, INITIAL_VISIBLE)
+  const remainingCount = entries.length - visibleEntries.length
 
   useEffect(() => {
     if (isDemo) return
@@ -98,13 +103,37 @@ export default function GuestbookSection({ data }: Props) {
       </div>
 
       {/* 방명록 목록 */}
-      <div className="mt-10 space-y-3.5">
+      <div
+        className={
+          data.guestbookStyle === 'letter' ? 'mt-10 space-y-4' : 'mt-10 space-y-3.5'
+        }
+      >
         {entries.length === 0 ? (
           <p className="text-center text-xs text-neutral-400">
             첫 번째 방명록의 주인공이 되어주세요
           </p>
+        ) : data.guestbookStyle === 'letter' ? (
+          visibleEntries.map((entry) => (
+            <div
+              key={entry.id}
+              className="border border-neutral-200 bg-white px-6 py-5"
+            >
+              <p className="font-serif text-[14px] leading-[1.9] text-neutral-800 whitespace-pre-line">
+                {entry.message}
+              </p>
+              <div className="mt-5 flex items-center gap-3">
+                <span className="h-px w-6 bg-neutral-300" />
+                <span className="font-serif text-[11px] tracking-wider text-neutral-600">
+                  From. {entry.name}
+                </span>
+                <span className="ml-auto text-[10px] tracking-wider text-neutral-400">
+                  {formatDate(entry.createdAt)}
+                </span>
+              </div>
+            </div>
+          ))
         ) : (
-          entries.map((entry, idx) => {
+          visibleEntries.map((entry, idx) => {
             const style = CARD_STYLES[idx % CARD_STYLES.length]
             return (
               <div
@@ -129,6 +158,21 @@ export default function GuestbookSection({ data }: Props) {
               </div>
             )
           })
+        )}
+
+        {remainingCount > 0 && (
+          <div className="pt-2 text-center">
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-4 py-2 text-[11px] font-medium text-neutral-600 transition-colors hover:border-neutral-300 hover:text-neutral-900"
+            >
+              축하글 {remainingCount}개 더 보기
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+          </div>
         )}
       </div>
 

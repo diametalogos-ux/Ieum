@@ -13,7 +13,7 @@ const SAMPLE_NAMES: Record<
     bride: { lastName: string; firstName: string }
   }
 > = {
-  minimal: {
+  noir: {
     groom: { lastName: '김', firstName: '도윤' },
     bride: { lastName: '이', firstName: '서아' },
   },

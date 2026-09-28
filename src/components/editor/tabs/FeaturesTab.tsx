@@ -3,7 +3,7 @@
 import { useEditor } from '../EditorContext'
 import EditorSection from '../ui/EditorSection'
 import FeatureCard from '../ui/FeatureCard'
-import { TextArea } from '../ui/EditorField'
+import { TextArea, OptionGroup } from '../ui/EditorField'
 import GalleryEditor from '../detail/GalleryEditor'
 import TransportEditor from '../detail/TransportEditor'
 import NoticeEditor from '../detail/NoticeEditor'
@@ -217,22 +217,43 @@ export default function FeaturesTab() {
                 onToggle={(v) => toggleFeature(f.key, v)}
               >
                 {f.key === 'greeting' && (
-                  <TextArea
-                    label="인사말 문구"
-                    value={data.greetingText}
-                    onChange={(e) => update('greetingText', e.target.value)}
-                    rows={4}
-                    placeholder="서로 다른 길을 걸어온 저희 두 사람이..."
-                  />
+                  <>
+                    <TextArea
+                      label="인사말 문구"
+                      value={data.greetingText}
+                      onChange={(e) => update('greetingText', e.target.value)}
+                      rows={4}
+                      placeholder="서로 다른 길을 걸어온 저희 두 사람이..."
+                    />
+                    <OptionGroup
+                      label="정렬"
+                      value={data.greetingAlign ?? 'center'}
+                      options={[
+                        { value: 'center', label: '가운데' },
+                        { value: 'left', label: '왼쪽' },
+                      ]}
+                      onChange={(v) => update('greetingAlign', v)}
+                    />
+                  </>
                 )}
                 {f.key === 'gallery' && <GalleryEditor />}
                 {f.key === 'transport' && <TransportEditor />}
                 {f.key === 'notice' && <NoticeEditor />}
                 {f.key === 'account' && <AccountEditor />}
                 {f.key === 'bgm' && <BgmEditor />}
+                {f.key === 'guestbook' && (
+                  <OptionGroup
+                    label="방명록 스타일"
+                    value={data.guestbookStyle ?? 'sticky'}
+                    options={[
+                      { value: 'sticky', label: '포스트잇' },
+                      { value: 'letter', label: '편지' },
+                    ]}
+                    onChange={(v) => update('guestbookStyle', v)}
+                  />
+                )}
                 {(f.key === 'dday' ||
                   f.key === 'countdown' ||
-                  f.key === 'guestbook' ||
                   f.key === 'rsvp' ||
                   f.key === 'photodrop' ||
                   f.key === 'flowerOrder') && (
