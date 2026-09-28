@@ -254,7 +254,18 @@ export default function ThemesPage() {
                     <p className="text-[11px] text-neutral-500">{t.desc}</p>
                   </div>
                   {t.available ? (
-                    <ThemePickButton themeKey={t.key} />
+                    <div className="space-y-1.5">
+                      <ThemePickButton themeKey={t.key} />
+                      <a
+                        href={`/wedding/sample/${t.key}`}
+                        className="inline-flex w-full items-center justify-center gap-1 rounded-full border border-neutral-200 bg-white py-2 text-[11px] font-medium text-neutral-600 transition-colors hover:border-neutral-300 hover:text-neutral-900"
+                      >
+                        샘플 보기
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </a>
+                    </div>
                   ) : (
                     <div className="w-full rounded-full bg-neutral-100 py-2.5 text-center text-xs font-medium text-neutral-400">
                       곧 만나요
