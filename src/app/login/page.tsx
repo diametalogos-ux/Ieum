@@ -70,6 +70,14 @@ export default function LoginPage() {
   }
 
   const handleGoogle = async () => {
+    await handleOAuth('google')
+  }
+
+  const handleKakao = async () => {
+    await handleOAuth('kakao')
+  }
+
+  const handleOAuth = async (provider: 'google' | 'kakao') => {
     if (loading) return
     setError(null)
     setLoading(true)
@@ -80,13 +88,14 @@ export default function LoginPage() {
       sessionStorage.setItem('post_login_next', next)
     }
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     })
     if (oauthError) {
-      setError('구글 로그인에 실패했어요. 잠시 후 다시 시도해주세요.')
+      const label = provider === 'google' ? '구글' : '카카오'
+      setError(`${label} 로그인에 실패했어요. 잠시 후 다시 시도해주세요.`)
       setLoading(false)
     }
   }
@@ -195,9 +204,22 @@ export default function LoginPage() {
 
           <button
             type="button"
+            onClick={handleKakao}
+            disabled={loading}
+            className="flex w-full items-center justify-center gap-2.5 rounded-full py-3 text-sm font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            style={{ background: '#FEE500', color: '#3a1d1d' }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+              <path d="M12 3C6.48 3 2 6.58 2 11c0 2.87 1.9 5.38 4.72 6.79-.14.51-.9 3.27-.93 3.42 0 0-.02.13.06.19.09.05.19.01.19.01.27-.04 3.13-2.04 3.62-2.38.77.11 1.55.17 2.34.17 5.52 0 10-3.58 10-8s-4.48-8-10-8z" />
+            </svg>
+            카카오로 계속하기
+          </button>
+
+          <button
+            type="button"
             onClick={handleGoogle}
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2.5 rounded-full border border-neutral-200 bg-white py-3 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-2 flex w-full items-center justify-center gap-2.5 rounded-full border border-neutral-200 bg-white py-3 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4">
               <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.44c-.28 1.48-1.12 2.73-2.39 3.57v2.97h3.85c2.25-2.08 3.59-5.14 3.59-8.78z"/>
