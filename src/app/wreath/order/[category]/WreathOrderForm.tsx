@@ -434,7 +434,7 @@ export default function WreathOrderForm({
           label="시간"
           required
           error={errors.deliveryDate}
-          hint="행사 시작 30분~1시간 전으로 지정하시는 것을 권장드려요."
+          hint="행사 시작 30분~1시간 전으로 지정하시는 것을 권장드려요. "
         >
           <input
             type="time"

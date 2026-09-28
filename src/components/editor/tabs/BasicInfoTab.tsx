@@ -242,6 +242,12 @@ export default function BasicInfoTab() {
           placeholder="우리 결혼합니다"
           rows={2}
         />
+        <Toggle
+          label="메인 사진 흑백 처리"
+          description="첫 화면의 메인 사진이 자동으로 흑백으로 표시돼요"
+          checked={!!data.mainPhotoGrayscale}
+          onChange={(v) => update('mainPhotoGrayscale', v)}
+        />
       </EditorSection>
 
       {/* 5. 인트로 & 효과 */}

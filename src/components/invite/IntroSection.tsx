@@ -38,7 +38,9 @@ export default function IntroSection({ data }: Props) {
         <img
           src={imageSrc}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className={`absolute inset-0 h-full w-full object-cover ${
+            data.mainPhotoGrayscale ? 'grayscale' : ''
+          }`}
         />
         {/* 텍스트 가독성용 위·아래 그라디언트 오버레이 */}
         <div

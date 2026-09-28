@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { useEditor } from '../EditorContext'
-import { OptionGroup } from '../ui/EditorField'
+import { OptionGroup, Toggle } from '../ui/EditorField'
 import { IMAGE_ACCEPT } from '@/lib/image-utils'
 import { deleteStorageImage, processAndUploadImage } from '@/lib/storage'
 import type { GalleryLayoutType } from '@/types/invitation'
@@ -72,6 +72,13 @@ export default function GalleryEditor() {
         value={data.galleryLayout}
         options={LAYOUT_OPTIONS}
         onChange={(v) => update('galleryLayout', v)}
+      />
+
+      <Toggle
+        label="갤러리 사진 흑백 처리"
+        description="갤러리에 등록된 사진이 자동으로 흑백으로 표시돼요"
+        checked={!!data.galleryGrayscale}
+        onChange={(v) => update('galleryGrayscale', v)}
       />
 
       <div>

@@ -113,6 +113,8 @@ export interface InvitationData {
   particle: ParticleType
   introEffect: IntroEffectType
   introText: string
+  mainPhotoGrayscale?: boolean
+  galleryGrayscale?: boolean
 
   // OG / 공유
   ogTitle: string

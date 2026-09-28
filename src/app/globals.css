@@ -41,6 +41,84 @@
   --p-bg: #f6f1fb;
 }
 
+/* ─────────────────────────────
+ * Noir 테마 — 얇은 헤어라인 · 여백 · 절제된 타이포
+ * data-theme="minimal" 는 photo-noir 프리셋의 theme 값
+ * ───────────────────────────── */
+
+/* 팔레트 오버라이드 — 순수 뉴트럴 모노 (베이지·핑크 제거) */
+[data-theme="minimal"] {
+  --p-strong: #1a1a1a;
+  --p-mid: #d4d4d4;
+  --p-soft: #f0f0f0;
+  --p-bg: #f7f7f7;
+}
+
+/* 청첩장 전체를 감싸는 좌우 엣지 헤어라인 — 매거진 프레임 */
+[data-theme="minimal"] {
+  border-left: 1px solid #ececec;
+  border-right: 1px solid #ececec;
+}
+
+/* 섹션 사이 얇은 헤어라인 · 인트로만 예외 */
+[data-theme="minimal"] section {
+  border-top: 1px solid #ececec;
+}
+[data-theme="minimal"] section:first-of-type {
+  border-top: none;
+}
+
+/* 얇고 넓은 타이포 */
+[data-theme="minimal"] h2,
+[data-theme="minimal"] h3 {
+  font-weight: 300;
+  letter-spacing: 0.06em;
+}
+
+/* 카드 라운드 축소 — 각진 정갈함 */
+[data-theme="minimal"] .rounded-3xl {
+  border-radius: 6px;
+}
+[data-theme="minimal"] .rounded-2xl {
+  border-radius: 6px;
+}
+[data-theme="minimal"] .rounded-xl {
+  border-radius: 4px;
+}
+[data-theme="minimal"] .rounded-lg {
+  border-radius: 2px;
+}
+
+/* 그림자 제거 — depth 대신 라인으로 승부 */
+[data-theme="minimal"] .shadow-sm,
+[data-theme="minimal"] .shadow-md,
+[data-theme="minimal"] .shadow-lg,
+[data-theme="minimal"] .shadow-2xl {
+  box-shadow: none;
+}
+
+/* 캘린더 주말 컬러 → 웜 모노 */
+[data-theme="minimal"] .text-rose-400 {
+  color: #8b8680;
+}
+[data-theme="minimal"] .text-blue-400 {
+  color: #a5a19c;
+}
+
+/* 연락처 시트 side dot 컬러 → 모노 */
+[data-theme="minimal"] .bg-sky-400 {
+  background-color: #4a4a4a;
+}
+[data-theme="minimal"] .bg-rose-400 {
+  background-color: #8b8680;
+}
+
+/* 섹션 헤더 장식 ✿ 숨김 — 헤어라인만 남겨 정돈 */
+[data-theme="minimal"] .h-px.w-8 + .text-sm {
+  display: none;
+}
+
+
 * {
   box-sizing: border-box;
 }

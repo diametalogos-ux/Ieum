@@ -115,7 +115,9 @@ export default function GallerySection({ data }: Props) {
                   <img
                     src={item.url}
                     alt={`Gallery ${idx + 1}`}
-                    className="h-full w-full object-cover"
+                    className={`h-full w-full object-cover ${
+                      data.galleryGrayscale ? 'grayscale' : ''
+                    }`}
                   />
                 ) : (
                   <div
@@ -185,7 +187,9 @@ export default function GallerySection({ data }: Props) {
               <img
                 src={data.gallery[openIdx].url}
                 alt={`Gallery ${openIdx + 1}`}
-                className="h-full w-full rounded-sm object-cover"
+                className={`h-full w-full rounded-sm object-cover ${
+                  data.galleryGrayscale ? 'grayscale' : ''
+                }`}
               />
             ) : (
               <div

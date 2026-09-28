@@ -6,6 +6,7 @@ import type { PaletteKey } from '@/components/editor/EditorContext'
 import { withDisplayDefaults } from '@/lib/invitations/display-defaults'
 
 import IntroSection from './IntroSection'
+import IntroSectionNoir from './IntroSectionNoir'
 import GreetingSection from './GreetingSection'
 import CoupleSection from './CoupleSection'
 import CalendarSection from './CalendarSection'
@@ -45,10 +46,15 @@ export default function InviteContent({
         data-palette={palette}
         data-font={view.fontType}
         data-font-size={view.fontSize}
+        data-theme={view.theme}
         className="mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden overflow-y-visible bg-white"
         style={{ boxShadow: '0 0 60px rgba(0,0,0,0.08)' }}
       >
-        <IntroSection data={view} />
+        {view.theme === 'minimal' ? (
+          <IntroSectionNoir data={view} />
+        ) : (
+          <IntroSection data={view} />
+        )}
         {view.features.greeting && <GreetingSection data={view} />}
         <CoupleSection data={view} />
         <CalendarSection data={view} />

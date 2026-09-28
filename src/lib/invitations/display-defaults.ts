@@ -2,7 +2,31 @@ import type {
   InvitationData,
   ParentInfo,
   PersonInfo,
+  ThemeType,
 } from '@/types/invitation'
+
+/** 테마별 샘플 이름 — 빈 필드 채울 때 테마 무드에 맞게 */
+const SAMPLE_NAMES: Record<
+  string,
+  {
+    groom: { lastName: string; firstName: string }
+    bride: { lastName: string; firstName: string }
+  }
+> = {
+  minimal: {
+    groom: { lastName: '김', firstName: '도윤' },
+    bride: { lastName: '이', firstName: '서아' },
+  },
+}
+
+const DEFAULT_SAMPLE = {
+  groom: { lastName: '김', firstName: '민준' },
+  bride: { lastName: '이', firstName: '서연' },
+}
+
+function sampleFor(theme: ThemeType) {
+  return SAMPLE_NAMES[theme] ?? DEFAULT_SAMPLE
+}
 
 /**
  * 편집 중 미리보기에서 빈 필드를 예시 값으로 채워서 청첩장이 비어보이지 않게 한다.
@@ -10,6 +34,7 @@ import type {
  */
 export function withDisplayDefaults(data: InvitationData): InvitationData {
   const c = data.couple
+  const sample = sampleFor(data.theme)
   return {
     ...data,
     mainText: data.mainText || '우리 결혼합니다',
@@ -22,10 +47,10 @@ export function withDisplayDefaults(data: InvitationData): InvitationData {
     ogTitle: data.ogTitle || '결혼합니다',
     ogDescription: data.ogDescription || '초대합니다',
     couple: {
-      groom: fillPerson(c.groom, { lastName: '김', firstName: '민준', contact: '010-1234-5678' }),
+      groom: fillPerson(c.groom, { ...sample.groom, contact: '010-1234-5678' }),
       groomFather: fillParent(c.groomFather, { lastName: '김', firstName: '상철', contact: '010-2222-3333' }),
       groomMother: fillParent(c.groomMother, { lastName: '이', firstName: '영희', contact: '010-3333-4444' }),
-      bride: fillPerson(c.bride, { lastName: '이', firstName: '서연', contact: '010-8765-4321' }),
+      bride: fillPerson(c.bride, { ...sample.bride, contact: '010-8765-4321' }),
       brideFather: fillParent(c.brideFather, { lastName: '이', firstName: '대호', contact: '010-4444-5555' }),
       brideMother: fillParent(c.brideMother, { lastName: '박', firstName: '미경', contact: '010-5555-6666' }),
     },

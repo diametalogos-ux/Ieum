@@ -16,6 +16,7 @@ type Theme = {
   accent: string
   previewImage: string | null
   available: boolean
+  variant?: 'cover' | 'noir'
 }
 
 const themes: Theme[] = [
@@ -27,6 +28,17 @@ const themes: Theme[] = [
     accent: '#d9748b',
     previewImage: '/images/main1-ai.png',
     available: true,
+    variant: 'cover',
+  },
+  {
+    key: 'photo-noir',
+    name: 'Noir',
+    desc: '메인 사진 한 장, 절제된 모노 무드',
+    bg: '#ffffff',
+    accent: '#1a1a1a',
+    previewImage: '/images/main4-noir.png',
+    available: true,
+    variant: 'noir',
   },
   {
     key: 'typography-ink',
@@ -56,7 +68,8 @@ export default function ThemesPage() {
             테마를 골라보세요
           </h1>
           <p className="mt-5 text-sm text-neutral-500 md:text-base">
-            <strong className="font-semibold text-neutral-700">Blush</strong>로 만나보세요
+            <strong className="font-semibold text-neutral-700">Blush</strong>·
+            <strong className="font-semibold text-neutral-700">Noir</strong>로 만나보세요
             <br />새로운 테마도 준비 중입니다
           </p>
         </div>
@@ -70,14 +83,22 @@ export default function ThemesPage() {
               <div key={t.key} className="group relative">
                 {/* 미리보기 카드 — 실제 IntroSection 미니어처 */}
                 <div
-                  className={`relative flex aspect-[3/4] flex-col justify-between overflow-hidden rounded-2xl shadow-md shadow-neutral-200/60 ring-1 ring-neutral-100 transition-all ${
+                  className={`relative flex aspect-[3/4] flex-col overflow-hidden rounded-2xl shadow-md shadow-neutral-200/60 ring-1 ring-neutral-100 transition-all ${
+                    t.variant === 'noir' ? 'justify-start' : 'justify-between'
+                  } ${
                     t.available
                       ? 'group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-neutral-200/40'
                       : 'opacity-70 grayscale'
                   }`}
-                  style={t.previewImage ? undefined : { background: t.bg }}
+                  style={
+                    t.variant === 'noir'
+                      ? { background: '#ffffff' }
+                      : t.previewImage
+                        ? undefined
+                        : { background: t.bg }
+                  }
                 >
-                  {t.previewImage && (
+                  {t.variant === 'cover' && t.previewImage && (
                     <>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -97,71 +118,116 @@ export default function ThemesPage() {
                     </>
                   )}
 
-                  {/* 상단: Wedding Invitation + 날짜 */}
-                  <div
-                    className={`relative w-full px-6 pt-6 text-center ${
-                      t.previewImage
-                        ? 'text-white drop-shadow-sm'
-                        : ''
-                    }`}
-                    style={t.previewImage ? undefined : { color: t.accent }}
-                  >
-                    <p className="text-[9px] font-medium tracking-[0.35em] uppercase">
-                      Wedding Invitation
-                    </p>
-                    <div className="mt-2 flex items-center justify-center gap-2">
-                      <span
-                        className={`h-px w-3 ${t.previewImage ? 'bg-white/70' : ''}`}
-                        style={
-                          t.previewImage
-                            ? undefined
-                            : { background: t.accent, opacity: 0.4 }
-                        }
-                      />
-                      <span className="text-[10px] tracking-[0.25em]">
-                        2027 · 05 · 15
-                      </span>
-                      <span
-                        className={`h-px w-3 ${t.previewImage ? 'bg-white/70' : ''}`}
-                        style={
-                          t.previewImage
-                            ? undefined
-                            : { background: t.accent, opacity: 0.4 }
-                        }
-                      />
-                    </div>
-                  </div>
+                  {t.variant === 'noir' ? (
+                    <>
+                      {/* Noir 미니어처: 흰 배경 + 프레임 사진 + 얇은 세리프 */}
+                      <div className="relative w-full px-5 pt-5 text-center text-neutral-700">
+                        <p className="text-[8px] font-medium tracking-[0.45em] uppercase text-neutral-500">
+                          Wedding Invitation
+                        </p>
+                        <div className="mt-1.5 flex items-center justify-center gap-1.5">
+                          <span className="h-px w-3 bg-neutral-300" />
+                          <span className="text-[9px] tracking-[0.3em] text-neutral-600">
+                            2027. 05. 15
+                          </span>
+                          <span className="h-px w-3 bg-neutral-300" />
+                        </div>
+                      </div>
 
-                  {/* 하단: 이름 · 문구 */}
-                  <div
-                    className={`relative w-full px-6 pb-6 text-center ${
-                      t.previewImage
-                        ? 'text-white drop-shadow-md'
-                        : ''
-                    }`}
-                    style={t.previewImage ? undefined : { color: t.accent }}
-                  >
-                    <div className="font-serif text-2xl font-medium tracking-wide">
-                      민준
-                      <span className="mx-2 font-light">&amp;</span>
-                      서연
-                    </div>
-                    <div
-                      className={`mx-auto my-2 h-px w-6 ${
-                        t.previewImage
-                          ? 'bg-white/60'
-                          : ''
-                      }`}
-                      style={
-                        t.previewImage
-                          ? undefined
-                          : { background: t.accent, opacity: 0.4 }
-                      }
-                    />
-                    <p className={`font-serif text-[11px] ${t.previewImage ? 'text-white/90' : 'text-neutral-500'}`}>
-                      우리 결혼합니다
-                    </p>
-                  </div>
+                      <div className="relative flex flex-1 items-center justify-center px-6 py-4">
+                        <div className="relative aspect-[3/4] w-full max-w-[140px] overflow-hidden">
+                          {t.previewImage && (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={t.previewImage}
+                              alt=""
+                              className="h-full w-full object-cover grayscale"
+                            />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="relative w-full px-5 pb-5 text-center">
+                        <div className="font-serif text-lg font-light tracking-[0.15em] text-neutral-900">
+                          도윤
+                          <span className="mx-2 font-extralight text-neutral-400">
+                            &amp;
+                          </span>
+                          서아
+                        </div>
+                        <div className="mx-auto my-2 h-px w-5 bg-neutral-300" />
+                        <p className="font-serif text-[9px] tracking-wider text-neutral-500">
+                          우리 결혼합니다
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* 상단: Wedding Invitation + 날짜 */}
+                      <div
+                        className={`relative w-full px-6 pt-6 text-center ${
+                          t.previewImage ? 'text-white drop-shadow-sm' : ''
+                        }`}
+                        style={t.previewImage ? undefined : { color: t.accent }}
+                      >
+                        <p className="text-[9px] font-medium tracking-[0.35em] uppercase">
+                          Wedding Invitation
+                        </p>
+                        <div className="mt-2 flex items-center justify-center gap-2">
+                          <span
+                            className={`h-px w-3 ${t.previewImage ? 'bg-white/70' : ''}`}
+                            style={
+                              t.previewImage
+                                ? undefined
+                                : { background: t.accent, opacity: 0.4 }
+                            }
+                          />
+                          <span className="text-[10px] tracking-[0.25em]">
+                            2027 · 05 · 15
+                          </span>
+                          <span
+                            className={`h-px w-3 ${t.previewImage ? 'bg-white/70' : ''}`}
+                            style={
+                              t.previewImage
+                                ? undefined
+                                : { background: t.accent, opacity: 0.4 }
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      {/* 하단: 이름 · 문구 */}
+                      <div
+                        className={`relative w-full px-6 pb-6 text-center ${
+                          t.previewImage ? 'text-white drop-shadow-md' : ''
+                        }`}
+                        style={t.previewImage ? undefined : { color: t.accent }}
+                      >
+                        <div className="font-serif text-2xl font-medium tracking-wide">
+                          민준
+                          <span className="mx-2 font-light">&amp;</span>
+                          서연
+                        </div>
+                        <div
+                          className={`mx-auto my-2 h-px w-6 ${
+                            t.previewImage ? 'bg-white/60' : ''
+                          }`}
+                          style={
+                            t.previewImage
+                              ? undefined
+                              : { background: t.accent, opacity: 0.4 }
+                          }
+                        />
+                        <p
+                          className={`font-serif text-[11px] ${
+                            t.previewImage ? 'text-white/90' : 'text-neutral-500'
+                          }`}
+                        >
+                          우리 결혼합니다
+                        </p>
+                      </div>
+                    </>
+                  )}
 
                   {/* 상태 뱃지 */}
                   <div className="absolute top-3 left-3 z-10">
