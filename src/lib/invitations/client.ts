@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 import { emptyInvitation } from '@/lib/mock/empty-invitation'
-import { getThemePreset } from '@/lib/themes/presets'
+import { getThemePreset } from '@/lib/themes/catalog'
 import type { InvitationData } from '@/types/invitation'
 import type { PaletteKey } from '@/components/editor/EditorContext'
 import {

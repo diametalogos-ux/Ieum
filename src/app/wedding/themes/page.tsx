@@ -2,56 +2,19 @@ import type { Metadata } from 'next'
 import Header from '@/components/landing/Header'
 import Footer from '@/components/landing/Footer'
 import ThemePickButton from '@/components/themes/ThemePickButton'
+import { THEME_CATALOG } from '@/lib/themes/catalog'
 
 export const metadata: Metadata = {
   title: '테마 · 이음',
   description: '레이아웃과 무드가 다양한 테마 · 모두 무료',
 }
 
-type Theme = {
-  key: string
-  name: string
-  desc: string
-  bg: string
-  accent: string
-  previewImage: string | null
-  available: boolean
-  variant?: 'cover' | 'noir'
-}
-
-const themes: Theme[] = [
-  {
-    key: 'photo-blush',
-    name: 'Blush',
-    desc: '사진이 첫인상, 은은한 분홍 무드',
-    bg: 'linear-gradient(140deg,#fff0f4 0%,#fddde6 100%)',
-    accent: '#d9748b',
-    previewImage: '/images/main1-ai.png',
-    available: true,
-    variant: 'cover',
-  },
-  {
-    key: 'photo-noir',
-    name: 'Noir',
-    desc: '메인 사진 한 장, 절제된 모노 무드',
-    bg: '#ffffff',
-    accent: '#1a1a1a',
-    previewImage: '/images/main4-noir.png',
-    available: true,
-    variant: 'noir',
-  },
-  {
-    key: 'typography-ink',
-    name: 'Ink',
-    desc: '텍스트가 주인공, 절제된 흑백 모노',
-    bg: 'linear-gradient(140deg,#f5f5f5 0%,#e8e8e8 100%)',
-    accent: '#525252',
-    previewImage: null,
-    available: false,
-  },
-]
+const themes = THEME_CATALOG
 
 export default function ThemesPage() {
+  const availableNames = themes
+    .filter((t) => t.available)
+    .map((t) => t.name)
   return (
     <main className="min-h-screen bg-white">
       <Header />
@@ -68,8 +31,13 @@ export default function ThemesPage() {
             테마를 골라보세요
           </h1>
           <p className="mt-5 text-sm text-neutral-500 md:text-base">
-            <strong className="font-semibold text-neutral-700">Blush</strong>·
-            <strong className="font-semibold text-neutral-700">Noir</strong>로 만나보세요
+            {availableNames.map((n, i) => (
+              <span key={n}>
+                <strong className="font-semibold text-neutral-700">{n}</strong>
+                {i < availableNames.length - 1 && ' · '}
+              </span>
+            ))}
+            로 만나보세요
             <br />새로운 테마도 준비 중입니다
           </p>
         </div>

@@ -2,38 +2,15 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import InviteContent from '@/components/invite/InviteContent'
 import ThemePickButton from '@/components/themes/ThemePickButton'
-import { sampleInvitation } from '@/lib/mock/sample-invitation'
-import { sampleNoirInvitation } from '@/lib/mock/sample-noir'
-import type { InvitationData } from '@/types/invitation'
-import type { PaletteKey } from '@/components/editor/EditorContext'
+import { getThemeSample } from '@/lib/themes/catalog'
 
 type Props = {
   params: Promise<{ themeKey: string }>
 }
 
-type SampleEntry = {
-  data: InvitationData
-  palette: PaletteKey
-  themeLabel: string
-}
-
-/** 광고 랜딩용 공개 샘플 데이터 매핑. 새 테마 추가 시 여기에 항목 추가. */
-const SAMPLES: Record<string, SampleEntry> = {
-  'photo-blush': {
-    data: sampleInvitation,
-    palette: 'pink',
-    themeLabel: 'Blush',
-  },
-  'photo-noir': {
-    data: sampleNoirInvitation,
-    palette: 'gray',
-    themeLabel: 'Noir',
-  },
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { themeKey } = await params
-  const entry = SAMPLES[themeKey]
+  const entry = getThemeSample(themeKey)
   if (!entry) {
     return { title: '샘플을 찾을 수 없어요', robots: { index: false, follow: false } }
   }
@@ -50,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SamplePage({ params }: Props) {
   const { themeKey } = await params
-  const entry = SAMPLES[themeKey]
+  const entry = getThemeSample(themeKey)
   if (!entry) notFound()
 
   return (

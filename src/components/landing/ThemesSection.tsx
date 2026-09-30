@@ -1,23 +1,10 @@
 import Link from 'next/link'
+import { THEME_CATALOG } from '@/lib/themes/catalog'
 
-const themes = [
-  {
-    name: 'Blush',
-    bg: 'linear-gradient(140deg,#fff0f4 0%,#fddde6 100%)',
-    accent: '#d9748b',
-    previewImage: '/images/main1-ai.png' as string | null,
-    available: true,
-  },
-  {
-    name: 'Ink',
-    bg: 'linear-gradient(140deg,#f5f5f5 0%,#e8e8e8 100%)',
-    accent: '#525252',
-    previewImage: null as string | null,
-    available: false,
-  },
-]
+const themes = THEME_CATALOG
 
 export default function ThemesSection() {
+  const availableNames = themes.filter((t) => t.available).map((t) => t.name)
   return (
     <section id="themes" className="bg-white py-24 md:py-32">
       <div className="mx-auto w-full max-w-6xl px-6 md:px-8">
@@ -31,13 +18,19 @@ export default function ThemesSection() {
             테마를 골라보세요
           </h2>
           <p className="mt-5 text-base text-neutral-500">
-            <strong className="font-semibold text-neutral-700">Blush</strong>로 만나보세요
+            {availableNames.map((n, i) => (
+              <span key={n}>
+                <strong className="font-semibold text-neutral-700">{n}</strong>
+                {i < availableNames.length - 1 && ' · '}
+              </span>
+            ))}
+            로 만나보세요
             <br />
             새로운 테마도 준비 중입니다
           </p>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-1 gap-8 sm:grid-cols-2">
+        <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
           {themes.map((t) => (
             <div key={t.name} className="group relative">
               <div
